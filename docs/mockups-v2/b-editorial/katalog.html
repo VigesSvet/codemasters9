@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Каталог — ГАВКО</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="extra.css">
+</head>
+<body data-page="catalog" data-title="k.title">
+<div id="hdr"></div>
+
+<main>
+<div class="wrap">
+  <form class="search" role="search" id="sf" style="padding-top:28px">
+    <label for="q" data-i="k.q.l">Поиск по каталогу</label>
+    <div class="row"><div class="inp"><input id="q" name="q" type="text" data-i-ph="k.q.ph"><button type="button" class="clr" id="qc" aria-label="×"><svg><use href="#i-x"/></svg></button></div><button class="btn p" type="submit" data-i="k.q.b">Найти</button></div>
+  </form>
+
+  <div class="tabs" role="tablist" id="tabs">
+    <button role="tab" aria-selected="true" data-c="all" data-i="k.c.all">Все</button>
+    <button role="tab" aria-selected="false" data-c="fond" data-i="k.c.fond">Фонды</button>
+    <button role="tab" aria-selected="false" data-c="opis" data-i="k.c.opis">Описи</button>
+    <button role="tab" aria-selected="false" data-c="delo" data-i="k.c.delo">Дела</button>
+    <button role="tab" aria-selected="false" data-c="foto" data-i="k.c.foto">Фотографии</button>
+    <button role="tab" aria-selected="false" data-c="map" data-i="k.c.map">Карты и чертежи</button>
+    <button role="tab" aria-selected="false" data-c="pers" data-i="k.c.pers">Личного происхождения</button>
+    <button role="tab" aria-selected="false" data-c="av" data-i="k.c.av">Аудио и видео</button>
+  </div>
+
+  <div class="chips" id="chips">
+    <button class="chip" type="button" data-f="type"><span data-i="k.f.type">Тип документа</span><svg><use href="#i-chev-d"/></svg></button>
+    <button class="chip" type="button" data-f="period"><span data-i="k.f.period">Период</span><svg><use href="#i-chev-d"/></svg></button>
+    <button class="chip" type="button" data-f="year"><span data-i="k.f.year">Год</span><svg><use href="#i-chev-d"/></svg></button>
+    <button class="chip" type="button" data-f="theme"><span data-i="k.f.theme">Тематика</span><svg><use href="#i-chev-d"/></svg></button>
+    <button class="chip" type="button" data-f="place"><span data-i="k.f.place">Населённый пункт</span><svg><use href="#i-chev-d"/></svg></button>
+    <button class="chip" type="button" data-f="author"><span data-i="k.f.author">Автор / организация</span><svg><use href="#i-chev-d"/></svg></button>
+    <button class="chip" type="button" data-f="branch"><span data-i="k.f.branch">Филиал</span><svg><use href="#i-chev-d"/></svg></button>
+    <button class="chip all" type="button" id="allf" aria-expanded="true"><span data-i="k.f.all">Все фильтры</span><svg><use href="#i-filt"/></svg></button>
+  </div>
+
+  <form class="allfilters" id="panel" onsubmit="return false">
+    <div class="grid">
+      <label><span data-i="k.p.title">Название документа</span><input type="text" id="f-title"></label>
+      <label><span data-i="k.p.fond">Номер фонда</span><input type="text" class="mono" placeholder="1-П"></label>
+      <label><span data-i="k.p.opis">Номер описи</span><input type="text" class="mono" placeholder="1"></label>
+      <label><span data-i="k.p.delo">Номер дела</span><input type="text" class="mono" placeholder="245"></label>
+      <label><span data-i="k.p.period">Исторический период</span><select><option data-i="k.o.any">Любой</option><option data-i="k.o.p1">до 1868</option><option selected data-i="k.o.p2">1868–1917</option><option data-i="k.o.p3">1917–1941</option><option data-i="k.o.p4">1941–1945</option><option data-i="k.o.p5">1945–1991</option><option data-i="k.o.p6">после 1991</option></select></label>
+      <label><span data-i="k.p.year">Год создания</span><span class="pair"><input type="number" placeholder="1880" aria-label="от"><input type="number" placeholder="1910" aria-label="до"></span></label>
+      <label><span data-i="k.p.author">Автор или организация</span><input type="text"></label>
+      <label><span data-i="k.p.theme">Тематика</span><select><option data-i="k.o.any2">Любая</option><option data-i="k.o.t1">Население и статистика</option><option data-i="k.o.t2">Хозяйство и быт</option><option data-i="k.o.t3">Управление и право</option><option data-i="k.o.t4">Военная история</option><option data-i="k.o.t5">Образование и наука</option></select></label>
+      <label><span data-i="k.p.place">Населённый пункт</span><select><option data-i="k.o.any3">Любой</option><option selected data-i="k.o.pl1">Семипалатинск (Семей)</option><option data-i="k.o.pl2">Усть-Каменогорск</option><option data-i="k.o.pl3">Зайсан</option><option data-i="k.o.pl4">Риддер</option><option data-i="k.o.pl5">Алтай (Зыряновск)</option></select></label>
+      <label><span data-i="k.p.kw">Ключевые слова</span><input type="text" placeholder="перепись, уезд"></label>
+      <label><span data-i="k.p.type">Тип документа</span><select><option data-i="k.o.any4">Любой</option><option data-i="k.o.ty1">Письменные источники</option><option data-i="k.o.ty2">Фотографии</option><option data-i="k.o.ty3">Карты и чертежи</option><option data-i="k.o.ty4">Документы организаций</option><option data-i="k.o.ty5">Аудио и видео</option></select></label>
+      <label><span data-i="k.p.branch">Филиал архива</span><select><option data-i="k.o.any5">Все филиалы</option><option data-i="k.o.b1">ГАВКО, Усть-Каменогорск</option><option data-i="k.o.b2">Усть-Каменогорский (по л/с)</option><option data-i="k.o.b3">Алтай</option><option data-i="k.o.b4">Риддер</option><option data-i="k.o.b5">Зайсан</option></select></label>
+    </div>
+    <div class="act"><button class="btn p sm" type="button" id="apply" data-i="k.apply">Применить</button><button class="btn sm" type="reset" id="reset" data-i="k.reset">Сбросить фильтры</button><span class="act-n mono" data-i="k.p.hint">12 параметров можно комбинировать</span></div>
+  </form>
+
+  <div class="applied" id="applied"><span class="lbl" data-i="k.applied">Применено:</span><span class="ap"><span data-i="k.ap1">Период: 1868–1917</span> <b>×</b></span><span class="ap"><span data-i="k.ap2">Населённый пункт: Семипалатинск</span> <b>×</b></span></div>
+
+  <div class="resbar">
+    <b id="count" data-n="1 284">1 284 результата</b>
+    <div class="rb-r">
+      <label class="sel"><span class="vh" data-i="k.sort">Сортировка</span><select id="sort"><option data-i="k.s.rel">По релевантности</option><option data-i="k.s.dateasc">Дата: сначала старые</option><option data-i="k.s.datedesc">Дата: сначала новые</option><option data-i="k.s.cipher">По шифру</option></select></label>
+      <span class="pg"><span data-i="k.page">Страница</span> <b>1</b> <span data-i="k.of">из</span> 129</span>
+      <button class="rnd" type="button" aria-label="next"><svg><use href="#i-chev-r"/></svg></button>
+    </div>
+  </div>
+
+  <ol class="results" id="res">
+    <li data-c="delo" data-t="перепись населения 1897 семипалатинская область"><div class="tg"><span class="tag g" data-i="k.t.delo">Дело</span><span class="tag o" data-i="k.t.on">Онлайн</span></div><h3><a href="delo.html" data-i="k.r1">Первая всеобщая перепись населения Российской империи 1897 г. Семипалатинская область</a></h3><p class="meta"><span data-i="k.date">Дата</span>: 1905 | <span data-i="k.ref">Шифр</span>: <span class="mono">Ф. 1-П, оп. 1, д. 245</span></p><p class="meta"><span data-i="k.part">Входит в</span>: <span data-i="k.fond1">Ф. 1-П. Канцелярия военного губернатора Семипалатинской области</span></p></li>
+    <li data-c="fond" data-t="канцелярия военного губернатора семипалатинской области фонд"><div class="tg"><span class="tag g" data-i="k.t.fond">Фонд</span></div><h3><a href="fond.html" data-i="k.fond1">Ф. 1-П. Канцелярия военного губернатора Семипалатинской области</a></h3><p class="meta"><span data-i="k.date">Дата</span>: 1854–1917 | <span data-i="k.cnt">Объём</span>: <span data-i="k.r2c">4 описи, 731 дело</span></p><p class="meta"><span data-i="k.place">Место хранения</span>: <span data-i="k.hq">ГАВКО, Усть-Каменогорск</span></p></li>
+    <li data-c="delo" data-t="обзор семипалатинской области за 1893 год отчёт"><div class="tg"><span class="tag g" data-i="k.t.delo2">Дело</span><span class="tag o" data-i="k.t.on2">Онлайн</span></div><h3><a href="delo.html" data-i="k.r3">Обзор Семипалатинской области за 1893 год</a></h3><p class="meta"><span data-i="k.date">Дата</span>: 1893 | <span data-i="k.ref">Шифр</span>: <span class="mono">Ф. 1-П, оп. 1, д. 241</span></p><p class="meta"><span data-i="k.part">Входит в</span>: <span data-i="k.opis1">Ф. 1-П, оп. 1. Дела общего делопроизводства</span></p></li>
+    <li data-c="foto" data-t="паромная переправа иртыш семипалатинск фотография 1885"><div class="tg"><span class="tag g" data-i="k.t.foto">Фотография</span><span class="tag o" data-i="k.t.on3">Онлайн</span></div><h3><a href="vystavka.html" data-i="k.r4">Паромная переправа через Иртыш у Семипалатинска</a></h3><p class="meta"><span data-i="k.date">Дата</span>: 1885 | <span data-i="k.ref">Шифр</span>: <span class="mono">Ф. 98-ФД, оп. 1, д. 14</span></p><p class="meta"><span data-i="k.part">Входит в</span>: <span data-i="k.fond98">Ф. 98-ФД. Фотодокументы по истории региона</span></p></li>
+    <li data-c="map" data-t="план аблайкитского монастыря карта чертёж"><div class="tg"><span class="tag g" data-i="k.t.map">Карта или чертёж</span><span class="tag o" data-i="k.t.on4">Онлайн</span></div><h3><a href="vystavka.html" data-i="k.r5">План Аблайкитского монастыря близ Семипалатинска</a></h3><p class="meta"><span data-i="k.date">Дата</span>: XVIII в. | <span data-i="k.ref">Шифр</span>: <span class="mono">Ф. 5-К, оп. 1, д. 3</span></p><p class="meta"><span data-i="k.part">Входит в</span>: <span data-i="k.fond5">Ф. 5-К. Карты и чертежи Семипалатинской области</span></p></li>
+    <li data-c="pers" data-t="аксенов личный фонд"><div class="tg"><span class="tag g" data-i="k.t.pers">Документы личного происхождения</span></div><h3><a href="fond.html" data-i="k.r6">Аксенов В.С.: личный фонд</a></h3><p class="meta"><span data-i="k.date">Дата</span>: 1956–2004 | <span data-i="k.ref">Шифр</span>: <span class="mono">ГАВКО, ф. 1514, оп. 1</span> | <span data-i="k.r6c">67 ед. хр.</span></p><p class="meta"><span data-i="k.place">Место хранения</span>: <span data-i="k.hq2">ГАВКО, Усть-Каменогорск</span></p></li>
+    <li data-c="delo" data-t="списки населённых мест усть-каменогорского уезда"><div class="tg"><span class="tag g" data-i="k.t.delo3">Дело</span></div><h3><a href="delo.html" data-i="k.r7">Списки населённых мест Усть-Каменогорского уезда</a></h3><p class="meta"><span data-i="k.date">Дата</span>: 1890-е | <span data-i="k.ref">Шифр</span>: <span class="mono">Ф. 1-П, оп. 1, д. 242</span></p><p class="meta"><span data-i="k.part">Входит в</span>: <span data-i="k.opis1b">Ф. 1-П, оп. 1. Дела общего делопроизводства</span></p></li>
+    <li data-c="foto" data-t="базар семипалатинск фотография 1885"><div class="tg"><span class="tag g" data-i="k.t.foto2">Фотография</span><span class="tag o" data-i="k.t.on5">Онлайн</span></div><h3><a href="vystavka.html" data-i="k.r8">Базар в Семипалатинске</a></h3><p class="meta"><span data-i="k.date">Дата</span>: 1885 | <span data-i="k.ref">Шифр</span>: <span class="mono">Ф. 98-ФД, оп. 1, д. 15</span></p><p class="meta"><span data-i="k.part">Входит в</span>: <span data-i="k.fond98b">Ф. 98-ФД. Фотодокументы по истории региона</span></p></li>
+    <li data-c="av" data-t="усть-каменогорск хроника 1960-х кинодокумент видео"><div class="tg"><span class="tag g" data-i="k.t.av">Аудио и видео</span></div><h3><a href="fond.html" data-i="k.r9">Усть-Каменогорск: кинохроника 1960-х</a></h3><p class="meta"><span data-i="k.date">Дата</span>: 1962–1969 | <span data-i="k.ref">Шифр</span>: <span class="mono">Ф. 14-ФК, оп. 1, д. 77</span></p><p class="meta"><span data-i="k.acc">Доступ</span>: <span data-i="k.acc1">только в читальном зале</span></p></li>
+    <li data-c="delo" data-t="метрические книги семипалатинск духовное правление"><div class="tg"><span class="tag g" data-i="k.t.delo4">Дело</span></div><h3><a href="delo.html" data-i="k.r10">Метрические книги Семипалатинской соборной церкви за 1905 год</a></h3><p class="meta"><span data-i="k.date">Дата</span>: 1905 | <span data-i="k.ref">Шифр</span>: <span class="mono">Ф. 12-И, оп. 1, д. 188</span></p><p class="meta"><span data-i="k.part">Входит в</span>: <span data-i="k.fond12">Ф. 12-И. Семипалатинское духовное правление</span></p></li>
+  </ol>
+
+  <nav class="pager" aria-label="pages"><button class="rnd" type="button" disabled aria-label="prev"><svg><use href="#i-chev-l"/></svg></button><span class="pg"><span data-i="k.page2">Страница</span> <b>1</b> <span data-i="k.of2">из</span> 129</span><button class="rnd" type="button" aria-label="next"><svg><use href="#i-chev-r"/></svg></button></nav>
+  <p class="note"><i>ИИ</i><span data-i="k.note">Не нашли нужное? Опишите задачу своими словами в ИИ-помощнике: он подскажет фонд и фильтры.</span></p>
+</div>
+</main>
+
+<div id="ftr"></div>
+<script src="app.js"></script>
+<script>
+T({
+ 'k.title':['Каталог — ГАВКО','Каталог — ШҚО МА','Catalogue — State Archive of EKR'],
+ 'k.q.l':['Поиск по каталогу','Каталог бойынша іздеу','Search the catalogue'],
+ 'k.q.ph':['Название, шифр или ключевые слова','Атауы, шифры немесе кілт сөздер','Title, reference or keywords'],
+ 'k.q.b':['Найти','Іздеу','Search'],
+ 'k.c.all':['Все','Барлығы','All'],'k.c.fond':['Фонды','Қорлар','Fonds'],'k.c.opis':['Описи','Тізімдемелер','Inventories'],'k.c.delo':['Дела','Істер','Files'],'k.c.foto':['Фотографии','Фотосуреттер','Photographs'],'k.c.map':['Карты и чертежи','Карталар мен сызбалар','Maps and plans'],'k.c.pers':['Личного происхождения','Жеке шығу тегі','Personal papers'],'k.c.av':['Аудио и видео','Аудио және бейне','Audio and video'],
+ 'k.f.type':['Тип документа','Құжат түрі','Document type'],'k.f.period':['Период','Кезең','Period'],'k.f.year':['Год','Жыл','Year'],'k.f.theme':['Тематика','Тақырып','Subject'],'k.f.place':['Населённый пункт','Елді мекен','Locality'],'k.f.author':['Автор / организация','Автор / ұйым','Creator / organisation'],'k.f.branch':['Филиал','Филиал','Branch'],'k.f.all':['Все фильтры','Барлық сүзгілер','All filters'],
+ 'k.p.title':['Название документа','Құжат атауы','Document title'],'k.p.fond':['Номер фонда','Қор нөмірі','Fond number'],'k.p.opis':['Номер описи','Тізімдеме нөмірі','Inventory number'],'k.p.delo':['Номер дела','Іс нөмірі','File number'],'k.p.period':['Исторический период','Тарихи кезең','Historical period'],'k.p.year':['Год создания (от и до)','Жасалған жылы (бастап және дейін)','Year of creation (from and to)'],'k.p.author':['Автор или организация','Автор немесе ұйым','Creator or organisation'],'k.p.theme':['Тематика','Тақырып','Subject'],'k.p.place':['Населённый пункт','Елді мекен','Locality'],'k.p.kw':['Ключевые слова','Кілт сөздер','Keywords'],'k.p.type':['Тип документа','Құжат түрі','Document type'],'k.p.branch':['Филиал архива','Архив филиалы','Archive branch'],
+ 'k.o.any':['Любой','Кез келген','Any'],'k.o.any2':['Любая','Кез келген','Any'],'k.o.any3':['Любой','Кез келген','Any'],'k.o.any4':['Любой','Кез келген','Any'],'k.o.any5':['Все филиалы','Барлық филиалдар','All branches'],
+ 'k.o.p1':['до 1868','1868 жылға дейін','before 1868'],'k.o.p2':['1868–1917','1868–1917','1868–1917'],'k.o.p3':['1917–1941','1917–1941','1917–1941'],'k.o.p4':['1941–1945','1941–1945','1941–1945'],'k.o.p5':['1945–1991','1945–1991','1945–1991'],'k.o.p6':['после 1991','1991 жылдан кейін','after 1991'],
+ 'k.o.t1':['Население и статистика','Халық және статистика','Population and statistics'],'k.o.t2':['Хозяйство и быт','Шаруашылық пен тұрмыс','Economy and daily life'],'k.o.t3':['Управление и право','Басқару және құқық','Administration and law'],'k.o.t4':['Военная история','Әскери тарих','Military history'],'k.o.t5':['Образование и наука','Білім және ғылым','Education and science'],
+ 'k.o.pl1':['Семипалатинск (Семей)','Семей (Семипалат)','Semipalatinsk (Semey)'],'k.o.pl2':['Усть-Каменогорск','Өскемен','Ust-Kamenogorsk'],'k.o.pl3':['Зайсан','Зайсан','Zaisan'],'k.o.pl4':['Риддер','Риддер','Ridder'],'k.o.pl5':['Алтай (Зыряновск)','Алтай (Зырян)','Altai (Zyryanovsk)'],
+ 'k.o.ty1':['Письменные источники','Жазба деректер','Written sources'],'k.o.ty2':['Фотографии','Фотосуреттер','Photographs'],'k.o.ty3':['Карты и чертежи','Карталар мен сызбалар','Maps and plans'],'k.o.ty4':['Документы организаций','Ұйымдар құжаттары','Records of organisations'],'k.o.ty5':['Аудио и видео','Аудио және бейне','Audio and video'],
+ 'k.o.b1':['ГАВКО, Усть-Каменогорск','ШҚО МА, Өскемен','State Archive, Ust-Kamenogorsk'],'k.o.b2':['Усть-Каменогорский (по л/с)','Өскемен (жеке құрам бойынша)','Ust-Kamenogorsk (personnel records)'],'k.o.b3':['Алтай','Алтай','Altai'],'k.o.b4':['Риддер','Риддер','Ridder'],'k.o.b5':['Зайсан','Зайсан','Zaisan'],
+ 'k.apply':['Применить','Қолдану','Apply'],'k.reset':['Сбросить фильтры','Сүзгілерді тастау','Reset filters'],'k.p.hint':['12 параметров можно комбинировать','12 параметрді біріктіруге болады','12 parameters can be combined'],
+ 'k.applied':['Применено:','Қолданылды:','Applied:'],
+ 'k.sort':['Сортировка','Сұрыптау','Sort'],'k.s.rel':['По релевантности','Сәйкестігі бойынша','By relevance'],'k.s.dateasc':['Дата: сначала старые','Күні: алдымен ескілері','Date: oldest first'],'k.s.datedesc':['Дата: сначала новые','Күні: алдымен жаңалары','Date: newest first'],'k.s.cipher':['По шифру','Шифр бойынша','By reference'],
+ 'k.page':['Страница','Бет','Page'],'k.of':['из','/','of'],'k.page2':['Страница','Бет','Page'],'k.of2':['из','/','of'],
+ 'k.t.delo':['Дело','Іс','File'],'k.t.delo2':['Дело','Іс','File'],'k.t.delo3':['Дело','Іс','File'],'k.t.delo4':['Дело','Іс','File'],'k.t.fond':['Фонд','Қор','Fond'],'k.t.foto':['Фотография','Фотосурет','Photograph'],'k.t.foto2':['Фотография','Фотосурет','Photograph'],'k.t.map':['Карта или чертёж','Карта немесе сызба','Map or plan'],'k.t.pers':['Документы личного происхождения','Жеке шығу тегі құжаттары','Personal papers'],'k.t.av':['Аудио и видео','Аудио және бейне','Audio and video'],
+ 'k.t.on':['Онлайн','Онлайн','Online'],'k.t.on2':['Онлайн','Онлайн','Online'],'k.t.on3':['Онлайн','Онлайн','Online'],'k.t.on4':['Онлайн','Онлайн','Online'],'k.t.on5':['Онлайн','Онлайн','Online'],
+ 'k.date':['Дата','Күні','Date'],'k.ref':['Шифр','Шифр','Reference'],'k.part':['Входит в','Құрамына кіреді','Part of'],'k.cnt':['Объём','Көлемі','Extent'],'k.place':['Место хранения','Сақтау орны','Location'],'k.acc':['Доступ','Қолжетімділік','Access'],
+ 'k.r1':['Первая всеобщая перепись населения Российской империи 1897 г. Семипалатинская область','1897 жылғы Ресей империясының бірінші жалпыға бірдей халық санағы. Семей облысы','First general census of the Russian Empire, 1897. Semipalatinsk region'],
+ 'k.fond1':['Ф. 1-П. Канцелярия военного губернатора Семипалатинской области','1-П қор. Семей облысы әскери губернаторының кеңсесі','Fond 1-P. Office of the Military Governor of Semipalatinsk Region'],
+ 'k.r2c':['4 описи, 731 дело','4 тізімдеме, 731 іс','4 inventories, 731 files'],'k.hq':['ГАВКО, Усть-Каменогорск','ШҚО МА, Өскемен','State Archive, Ust-Kamenogorsk'],'k.hq2':['ГАВКО, Усть-Каменогорск','ШҚО МА, Өскемен','State Archive, Ust-Kamenogorsk'],
+ 'k.r3':['Обзор Семипалатинской области за 1893 год','1893 жылғы Семей облысына шолу','Survey of Semipalatinsk region for 1893'],
+ 'k.opis1':['Ф. 1-П, оп. 1. Дела общего делопроизводства','1-П қор, 1-тізб. Жалпы іс жүргізу істері','Fond 1-P, inv. 1. General administration files'],'k.opis1b':['Ф. 1-П, оп. 1. Дела общего делопроизводства','1-П қор, 1-тізб. Жалпы іс жүргізу істері','Fond 1-P, inv. 1. General administration files'],
+ 'k.r4':['Паромная переправа через Иртыш у Семипалатинска','Семей маңындағы Ертістен өтетін паром','Ferry crossing of the Irtysh near Semipalatinsk'],
+ 'k.fond98':['Ф. 98-ФД. Фотодокументы по истории региона','98-ФД қор. Өңір тарихы бойынша фотоқұжаттар','Fond 98-FD. Photographic documents on regional history'],'k.fond98b':['Ф. 98-ФД. Фотодокументы по истории региона','98-ФД қор. Өңір тарихы бойынша фотоқұжаттар','Fond 98-FD. Photographic documents on regional history'],
+ 'k.r5':['План Аблайкитского монастыря близ Семипалатинска','Семей маңындағы Аблайкит монастырының жоспары','Plan of the Ablaikit monastery near Semipalatinsk'],
+ 'k.fond5':['Ф. 5-К. Карты и чертежи Семипалатинской области','5-К қор. Семей облысының карталары мен сызбалары','Fond 5-K. Maps and plans of Semipalatinsk region'],
+ 'k.r6':['Аксенов В.С.: личный фонд','Аксенов В.С.: жеке қор','Aksenov V. S.: personal fond'],'k.r6c':['67 ед. хр.','67 сақтау бірлігі','67 units'],
+ 'k.r7':['Списки населённых мест Усть-Каменогорского уезда','Өскемен уезінің елді мекендер тізімдері','Lists of settlements of Ust-Kamenogorsk district'],
+ 'k.r8':['Базар в Семипалатинске','Семейдегі базар','The bazaar in Semipalatinsk'],
+ 'k.r9':['Усть-Каменогорск: кинохроника 1960-х','Өскемен: 1960-жылдардағы кинохроника','Ust-Kamenogorsk: newsreels of the 1960s'],'k.acc1':['только в читальном зале','тек оқу залында','reading room only'],
+ 'k.r10':['Метрические книги Семипалатинской соборной церкви за 1905 год','1905 жылғы Семей соборлық шіркеуінің метрикалық кітаптары','Parish registers of the Semipalatinsk cathedral church for 1905'],
+ 'k.fond12':['Ф. 12-И. Семипалатинское духовное правление','12-И қор. Семей рухани басқармасы','Fond 12-I. Semipalatinsk Spiritual Consistory'],
+ 'k.ap1':['Период: 1868–1917','Кезең: 1868–1917','Period: 1868–1917'],'k.ap2':['Населённый пункт: Семипалатинск','Елді мекен: Семей (Семипалат)','Locality: Semipalatinsk'],
+ 'k.note':['Не нашли нужное? Опишите задачу своими словами в ИИ-помощнике: он подскажет фонд и фильтры.','Керегін таппадыңыз ба? ЖИ-көмекшіге тапсырмаңызды өз сөзіңізбен сипаттаңыз: ол қор мен сүзгілерді ұсынады.','Cannot find it? Describe your task in your own words to the AI assistant: it will suggest a fond and filters.']
+});
+(function(){
+  var q=new URLSearchParams(location.search).get('q'); var inp=document.getElementById('q');
+  if(q!==null) inp.value=q;
+  var items=[].slice.call(document.querySelectorAll('#res li')), cat='all';
+  var cnt=document.getElementById('count'), applied=document.getElementById('applied');
+  function noun(n){var l=getLang();return l==='en'?(n===1?'result':'results'):l==='kk'?'нәтиже':(n%10===1&&n%100!==11?'результат':(n%10>=2&&n%10<=4&&(n%100<10||n%100>=20)?'результата':'результатов'));}
+  function run(){
+    var v=inp.value.trim().toLowerCase(), words=v.split(/\s+/).filter(Boolean), shown=0;
+    items.forEach(function(li){
+      var hay=(li.dataset.t+' '+li.textContent).toLowerCase();
+      var ok=(cat==='all'||li.dataset.c===cat)&&words.every(function(w){return hay.indexOf(w)>-1});
+      li.hidden=!ok; if(ok) shown++;
+    });
+    var plain=(cat==='all'&&!v);
+    cnt.textContent=(plain?'1 284':shown)+' '+noun(plain?1284:shown);
+    document.getElementById('qc').style.visibility=v?'visible':'hidden';
+  }
+  document.getElementById('sf').onsubmit=function(e){e.preventDefault();run()};
+  inp.oninput=run;
+  document.getElementById('qc').onclick=function(){inp.value='';run();inp.focus()};
+  document.querySelectorAll('#tabs button').forEach(function(b){b.onclick=function(){cat=b.dataset.c;document.querySelectorAll('#tabs button').forEach(function(x){x.setAttribute('aria-selected',x===b)});run()}});
+  var panel=document.getElementById('panel'), allf=document.getElementById('allf');
+  function toggle(open){panel.hidden=!open;allf.setAttribute('aria-expanded',open)}
+  toggle(window.innerWidth>760);
+  allf.onclick=function(){toggle(panel.hidden)};
+  document.querySelectorAll('#chips .chip:not(.all)').forEach(function(c){c.onclick=function(){toggle(true);panel.scrollIntoView({block:'nearest'})}});
+  document.getElementById('reset').onclick=function(){setTimeout(function(){applied.hidden=true;inp.value='';cat='all';document.querySelectorAll('#tabs button').forEach(function(x){x.setAttribute('aria-selected',x.dataset.c==='all')});run()},0)};
+  document.getElementById('apply').onclick=function(){run()};
+  applied.querySelectorAll('.ap b').forEach(function(b){b.onclick=function(){b.parentNode.remove()}});
+  document.addEventListener('langchange',run);
+  run();
+})();
+</script>
+</body>
+</html>

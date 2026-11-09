@@ -1,0 +1,190 @@
+{
+ "_note": "Источник: контактные страницы e-arhiv.vko.gov.kz (снято 2026-11-09). Координат и карты на сайте нет: lat/lon = null, approx_city_center_* — приблизительный центр населённого пункта (НЕ адрес здания, уточнить по 2GIS). ФИО руководителей на сайте публичны, но здесь оставлены только должности (ПДн); ФИО смотреть по source_url.",
+ "head_office": {
+  "id": "gavko",
+  "type": "main",
+  "name_ru": "КГУ «Государственный архив» управления цифровизации и архивов Восточно-Казахстанской области",
+  "name_kk": "ШҚО цифрландыру және архивтер басқармасының «Мемлекеттік архив» КММ",
+  "address": "070000 (в др. месте 070004), Республика Казахстан, г. Усть-Каменогорск, ул. Головкова, 26/1",
+  "phones": [
+   "+7 (7232) 25-59-76 (приёмная, факс)",
+   "+7 (7232) 25-13-22 (директор)",
+   "+7 (7232) 57-00-15 (зам. директора)"
+  ],
+  "emails": [
+   "arhiv-ukg@yandex.kz",
+   "ak.zhaparov@akimvko.gov.kz (только на kk-версии страницы)"
+  ],
+  "hours": "пн-пт 9:00-18:00",
+  "reading_room": {
+   "address": "070004, г. Усть-Каменогорск, ул. Крылова, 39",
+   "phone": "+7 (7232) 25-13-47",
+   "hours": "пн-пт 10:00-17:00"
+  },
+  "head_position": "Директор",
+  "lat": null,
+  "lon": null,
+  "approx_city_center_lat": 49.9483,
+  "approx_city_center_lon": 82.6286,
+  "source_url": "http://e-arhiv.vko.gov.kz/ru/Page/Index/1330",
+  "source_url_kk": "http://e-arhiv.vko.gov.kz/kk/Page/Index/1330"
+ },
+ "branches": [
+  {
+   "id": "uka",
+   "slug": "uka",
+   "setgroup_id": 2,
+   "type": "branch",
+   "name_ru": "Усть-Каменогорский филиал по личному составу",
+   "address": "070003, Восточно-Казахстанская область, г. Усть-Каменогорск, ул. Потанина, 12/2",
+   "phones": [
+    "+7 (7232) 76-65-60",
+    "+7 (7232) 76-81-64"
+   ],
+   "emails": [],
+   "hours": "пн-пт 9:00-18:00, обед 13:00-14:00; приём граждан пн-пт 9:00-18:00",
+   "head_position": "Руководитель филиала",
+   "profile": "Документы по личному составу (кадровые), справки социально-правового характера",
+   "lat": null,
+   "lon": null,
+   "approx_city_center_lat": 49.9483,
+   "approx_city_center_lon": 82.6286,
+   "pages": {
+    "contacts": 1696,
+    "history": 1698,
+    "fonds": 1642
+   },
+   "source_url": "http://e-arhiv.vko.gov.kz/ru/Page/Index/1696/uka"
+  },
+  {
+   "id": "zaisan",
+   "slug": "zaisan",
+   "setgroup_id": 4,
+   "type": "branch",
+   "name_ru": "Зайсанский филиал",
+   "address": "070700, Восточно-Казахстанская область, г. Зайсан, ул. Жангельдина, 52",
+   "phones": [
+    "+7 (72340) 21-476",
+    "+7 (72340) 21-221"
+   ],
+   "emails": [
+    "qosarhivzaysan_1@mail.ru"
+   ],
+   "hours": "приём граждан пн-чт 9:00-18:00; читальный зал пн-пт 10:00-17:00, перерыв 13:00-14:00",
+   "head_position": "Директор филиала",
+   "profile": "Документы районного уровня (Зайсанский, Курчумский районы)",
+   "lat": null,
+   "lon": null,
+   "approx_city_center_lat": 47.4667,
+   "approx_city_center_lon": 84.8765,
+   "pages": {
+    "contacts": 1653,
+    "history": 1652,
+    "personal_fonds": 1651,
+    "fonds": 1650
+   },
+   "source_url": "http://e-arhiv.vko.gov.kz/ru/Page/Index/1653/zaisan"
+  },
+  {
+   "id": "ridder",
+   "slug": "ridder",
+   "setgroup_id": 5,
+   "type": "branch",
+   "name_ru": "Риддерский филиал",
+   "address": "071300, Восточно-Казахстанская область, г. Риддер, ул. Ч. Валиханова, 44",
+   "phones": [
+    "+7 (72336) 42-264 (тел./факс)",
+    "+7 (72336) 45-786",
+    "+7 (72336) 42-645"
+   ],
+   "emails": [
+    "priem.arhiv-ridder44@yandex.kz"
+   ],
+   "hours": "ежедневно кроме сб и вс, 9:00-18:00",
+   "head_position": "Директор филиала",
+   "profile": "Документы г. Риддера и района",
+   "lat": null,
+   "lon": null,
+   "approx_city_center_lat": 50.3456,
+   "approx_city_center_lon": 83.51,
+   "pages": {
+    "contacts": 1658,
+    "history": 1657,
+    "personal_fonds": 1656,
+    "fonds": 1655
+   },
+   "source_url": "http://e-arhiv.vko.gov.kz/ru/Page/Index/1658/ridder"
+  },
+  {
+   "id": "zirian",
+   "slug": "zirian",
+   "setgroup_id": 7,
+   "type": "branch",
+   "name_ru": "Филиал Алтай (бывш. Зыряновский)",
+   "address": "070804, Восточно-Казахстанская область, г. Алтай, ул. М. Горького, 33",
+   "phones": [
+    "+7 (72335) 31-260 (тел./факс)",
+    "+7 (72335) 62-888",
+    "+7 (72335) 63-016"
+   ],
+   "emails": [
+    "arhiv.altai@yandex.kz"
+   ],
+   "hours": "приём директора — среда 9:00-18:00",
+   "head_position": "Директор филиала",
+   "profile": "Документы г. Алтай (Зыряновска) и района",
+   "lat": null,
+   "lon": null,
+   "approx_city_center_lat": 49.7187,
+   "approx_city_center_lon": 84.2734,
+   "pages": {
+    "contacts": 1695,
+    "history": 1694,
+    "personal_fonds": [
+     1693,
+     1700,
+     1701
+    ],
+    "fonds": 1692
+   },
+   "source_url": "http://e-arhiv.vko.gov.kz/ru/Page/Index/1695/zirian"
+  },
+  {
+   "id": "jarma",
+   "slug": "jarma",
+   "setgroup_id": null,
+   "type": "branch",
+   "name_ru": "Жарминский филиал (с. Калбатау)",
+   "address": "070600, Восточно-Казахстанская область, с. Калбатау, ул. Оспанова, 11/5",
+   "phones": [
+    "+7 (72347) 6-55-69 (тел./факс)",
+    "+7 (72347) 6-23-34"
+   ],
+   "emails": [
+    "arhiv-zharma.97@mail.ru"
+   ],
+   "hours": "приём граждан пн-пт 9:00-18:00",
+   "head_position": "Директор филиала",
+   "profile": "Создан 01.10.1997 на базе Чарского филиала и Жарминского райархива; на 01.01.2019: 301 фонд, 90008 ед.хр.",
+   "lat": null,
+   "lon": null,
+   "approx_city_center_lat": null,
+   "approx_city_center_lon": null,
+   "pages": {
+    "contacts": 1663,
+    "history": 1662,
+    "personal_fonds": 1661,
+    "fonds": 1660
+   },
+   "source_url": "http://e-arhiv.vko.gov.kz/ru/Page/Index/1663",
+   "note": "Нет в выпадающем списке филиалов на главной (там 4); доступен через group=jarma / слаг /jarma. В прежней разведке current-site.md не учтён — всего филиалов 5."
+  }
+ ],
+ "discrepancies": [
+  "Индекс главного здания 070000 vs 070004",
+  "Формат телефона '8(72-340)' нестандартен; в этом файле нормализован в +7 (72340)",
+  "На kk-версии контактов главного архива есть второй e-mail (ak.zhaparov@akimvko.gov.kz), на ru-версии нет",
+  "У Усть-Каменогорского филиала нет e-mail",
+  "Слаг 'jarma' — это Жарминский филиал (5-й, скрытый из выпадающего списка); 'vko' — головной архив"
+ ]
+}

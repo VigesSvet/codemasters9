@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Филиалы на карте. Каталог ГА ВКО</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-nav="filialy" data-mini="1">
+<a class="skip" href="#main">Перейти к содержимому</a>
+<header id="hd"></header>
+<div id="tb"></div>
+<main id="main">
+<div class="wrap">
+  <div class="pgh"><h1>Филиалы на карте</h1><p class="lede">Главное здание, читальный зал и филиалы Государственного архива ВКО. Выберите объект в списке или на карте.</p></div>
+  <div class="mp">
+    <div class="mp-side">
+      <form class="fx" role="search" onsubmit="return false"><label class="sr" for="bq">Поиск филиала</label><input class="in" id="bq" type="search" placeholder="Название или населённый пункт"></form>
+      <div class="kinds" id="kinds" role="group" aria-label="Тип подразделения"><button type="button" data-k="" aria-pressed="true">Все</button><button type="button" data-k="Главное здание" aria-pressed="false">Главное здание</button><button type="button" data-k="Читальный зал" aria-pressed="false">Читальный зал</button><button type="button" data-k="Филиал" aria-pressed="false">Филиалы</button></div>
+      <ul class="bl" id="bl"></ul>
+    </div>
+    <div class="mp-main">
+      <div id="map" role="application" aria-label="Карта филиалов"></div>
+      <p class="mp-note">Карта: © участники OpenStreetMap. Координаты филиалов получены геокодером Nominatim по адресу; координаты главного здания приблизительные, уточняются заказчиком.</p>
+      <article class="bcard" id="bcard" aria-live="polite"></article>
+    </div>
+  </div>
+</div>
+</main>
+<footer id="ft"></footer>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="data.js"></script>
+<script src="i18n.js"></script>
+<script>
+(function(){
+var D=window.VKO_DATA,I=function(n){return '<svg class="ic"><use href="#'+n+'"/></svg>'};
+var cur='main',kind='',qs='',user=null,map=null,mk={};
+function norm(s){return s.toLowerCase().replace(/ё/g,'е')}
+function vis(){return D.BR.filter(function(b){return (!kind||b.kind===kind)&&(!qs||norm(b.name+' '+b.city+' '+b.addr).indexOf(norm(qs))>-1)})}
+function drawList(){
+  var v=vis();
+  document.getElementById('bl').innerHTML=v.length?v.map(function(b){var i=D.BR.indexOf(b)+1;return '<li><button type="button" data-id="'+b.id+'"'+(b.id===cur?' aria-current="true"':'')+'><span class="num'+(b.id===cur?' on':'')+'" data-nt>'+i+'</span><span><span class="k">'+b.kind+'</span><b>'+b.name+'</b><small>'+b.addr.replace(/^\d+, /,'')+'</small><small>'+b.hours+'</small></span></button></li>'}).join(''):'<li style="padding:16px;font-size:15px">Ничего не найдено</li>';
+}
+function route(b,from){
+  var ll=b.ll;
+  var g='https://www.google.com/maps/dir/?api=1&destination='+ll[0]+','+ll[1]+(from?'&origin='+from[0]+','+from[1]:'')+'&travelmode=driving';
+  var d='https://2gis.kz/directions/points/'+(from?from[1]+'%2C'+from[0]+'%7C':'')+ll[1]+'%2C'+ll[0];
+  return {g:g,d:d};
+}
+function km(a,b){var R=6371,r=Math.PI/180,dl=(b[0]-a[0])*r,dn=(b[1]-a[1])*r,x=Math.sin(dl/2)*Math.sin(dl/2)+Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin(dn/2)*Math.sin(dn/2);return 2*R*Math.asin(Math.sqrt(x))}
+function drawCard(){
+  var b=D.BR.filter(function(z){return z.id===cur})[0],r=route(b,user);
+  var h='<h2>'+b.name+'</h2><p class="kind"><span class="bd mono">'+b.kind+'</span></p><p class="about">'+b.about+'</p>'+
+  '<dl class="dl"><dt>Адрес</dt><dd>'+b.addr+'</dd><dt>Телефон</dt><dd>'+b.phones.map(function(p){return '<a href="tel:'+p.replace(/[^\d+]/g,'')+'">'+p+'</a>'}).join(', ')+'</dd><dt>Электронная почта</dt><dd>'+(b.email?'<a href="mailto:'+b.email+'">'+b.email+'</a>':'не указана')+'</dd><dt>Режим работы</dt><dd>'+b.hours+'</dd>'+(b.lead?'<dt>Руководство</dt><dd>'+b.lead.replace(/^[^:]+: /,'')+'</dd>':'')+'<dt>Координаты</dt><dd><span style="font-family:var(--font-mono);font-size:15px">'+b.ll[0].toFixed(4)+', '+b.ll[1].toFixed(4)+'</span></dd></dl>'+
+  (b.funds.length?'<h3 style="margin:0 0 6px;font:700 16px var(--font-text);color:var(--text-2)">Основные фонды</h3><ul class="fn">'+b.funds.map(function(f){var n=(f.match(/Ф\. ([\dА-Я-]+)/)||[])[1];return '<li>'+(n?'<a href="fond.html?f='+encodeURIComponent(n)+'">'+f+'</a>':f)+'</li>'}).join('')+'</ul>':'')+
+  '<div class="route"><a class="btn" href="'+r.d+'" target="_blank" rel="noopener">Маршрут в 2GIS</a><a class="btn alt" href="'+r.g+'" target="_blank" rel="noopener">Google Maps</a>'+(user?'<span class="dist">'+km(user,b.ll).toFixed(1)+' км по прямой</span>':'')+'</div>'+
+  '<div class="rtf"><label class="lbl" for="from">Построить маршрут от адреса</label><div class="fx"><input class="in" id="from" type="text" placeholder="Например: Усть-Каменогорск, пр. Независимости, 1"><button class="btn" id="fgo" type="button">Показать</button></div><p class="hnt"><button class="lnk" id="geo" type="button">Использовать моё местоположение</button> · геолокация включается только с вашего разрешения</p></div>';
+  document.getElementById('bcard').innerHTML=h;if(window.VKO)window.VKO.apply(document.getElementById('bcard'));
+}
+function icon(i,on){return L.divIcon({className:'',html:'<div class="num'+(on?' on':'')+'">'+i+'</div>',iconSize:[28,28],iconAnchor:[14,14]})}
+function drawMap(){
+  if(!window.L){document.getElementById('map').innerHTML='<p style="padding:20px">Карта не загрузилась: нет доступа к unpkg.com / OpenStreetMap.</p>';return}
+  if(!map){
+    map=L.map('map',{scrollWheelZoom:false}).setView(D.BR[0].ll,7);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OpenStreetMap'}).addTo(map);
+  }
+  Object.keys(mk).forEach(function(k){map.removeLayer(mk[k])});mk={};
+  var v=vis();
+  v.forEach(function(b){var i=D.BR.indexOf(b)+1;mk[b.id]=L.marker(b.ll,{icon:icon(i,b.id===cur),title:b.name,keyboard:true}).addTo(map).on('click',function(){sel(b.id,true)})});
+  if(!map._fit){var bb=L.latLngBounds(D.BR.map(function(b){return b.ll}));map.fitBounds(bb,{padding:[30,30]});map._fit=1}
+  if(user){if(mk.u)map.removeLayer(mk.u);mk.u=L.circleMarker(user,{radius:7,color:'#162e51',fillColor:'#2491ff',fillOpacity:1}).addTo(map)}
+}
+function focusMap(){var b=D.BR.filter(function(z){return z.id===cur})[0];if(map)map.setView(b.ll,b.id==='main'||b.id==='read'||b.id==='uka'?13:11)}
+function sel(id,fromMap){cur=id;drawList();drawCard();drawMap();focusMap();if(fromMap)document.getElementById('bcard').scrollIntoView({block:'nearest'})}
+document.getElementById('bl').addEventListener('click',function(e){var b=e.target.closest('[data-id]');if(b)sel(b.dataset.id)});
+document.getElementById('kinds').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;kind=b.dataset.k;[].forEach.call(this.children,function(c){c.setAttribute('aria-pressed',c===b)});drawList();drawMap();window.VKO.apply(document.querySelector('.mp-side'))});
+document.getElementById('bq').addEventListener('input',function(){qs=this.value;drawList();drawMap()});
+document.getElementById('bcard').addEventListener('click',function(e){
+  if(e.target.id==='geo'){if(navigator.geolocation)navigator.geolocation.getCurrentPosition(function(p){user=[p.coords.latitude,p.coords.longitude];drawCard();drawMap()},function(){window.VKO.toast('Доступ к местоположению отклонён: укажите адрес вручную')})}
+  if(e.target.id==='fgo'){var v=document.getElementById('from').value.trim();if(!v){document.getElementById('from').classList.add('bad');return}
+    var b=D.BR.filter(function(z){return z.id===cur})[0];
+    window.open('https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(v)+'&destination='+b.ll[0]+','+b.ll[1],'_blank','noopener')}
+});
+drawList();drawCard();drawMap();
+var qq=new URLSearchParams(location.search).get('b');if(qq)sel(qq);
+document.addEventListener('vko:lang',function(){drawCard()});
+})();
+</script>
+<script src="app.js"></script>
+</body>
+</html>

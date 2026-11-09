@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Фонд — Госархив ВКО</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-page="fond" data-hdr="solid">
+<main id="main">
+  <nav class="crumbs" aria-label="Breadcrumb" id="crumbs"></nav>
+  <section class="ftop">
+    <div>
+      <div class="row" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="chip" data-i18n="lv.fond">Фонд</span><span class="badge badge--olive" id="fbadge"></span></div>
+      <h1 id="ftitle"></h1>
+      <p class="intro clamp" id="fintro"></p>
+      <button class="more" id="fmore" type="button" data-i18n="more">Читать далее</button>
+      <div class="dl"><span data-i18n="fo.dl">Опись в формате:</span><a href="#" data-i18n-ignore>PDF</a><a href="#">XML</a><a href="ob-arhive.html#help" data-i18n="fo.cipher">Как читать шифр</a></div>
+    </div>
+    <aside class="rail"><h2 data-i18n="fo.rail">Путеводители по фонду</h2><div id="rail"></div></aside>
+  </section>
+  <form class="fsearch" onsubmit="return false"><span class="btn btn--label" style="height:48px" data-i18n="fo.in">Поиск в фонде</span><input class="inp" id="fq" data-i18n-ph="fo.ph" aria-label="Search"><span class="sel"><select class="inp" id="fsel"><option data-i18n="fo.s1">Во всех описях</option></select><svg><use href="#i-d"/></svg></span><button class="btn" type="submit" data-i18n="cat.find">Найти</button></form>
+  <div class="fgrid">
+    <aside class="tree" aria-label="Fonds"><h2><span data-i18n="fo.struct">Состав фонда</span><span id="tcount"></span></h2><ul id="tree"></ul></aside>
+    <section>
+      <h2 class="sub" id="optitle"></h2>
+      <p class="hint" id="ophint"></p>
+      <ul class="ulist" id="ulist"></ul>
+    </section>
+  </div>
+</main>
+<script src="i18n-home.js"></script>
+<script src="i18n-more.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script>
+(function(){
+  const {L,t,esc}=APP,$=s=>document.querySelector(s);
+  const fk=new URLSearchParams(location.search).get("f")||"1-P";
+  let op=+new URLSearchParams(location.search).get("op")||1, expanded=false, q="";
+  const meta=FONDS.find(f=>f.k===fk)||FONDS[0], full=FOND_FULL[meta.k]||FOND_FULL["1-P"];
+  const fmt=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g," ");
+  function render(){
+    document.title=`Ф. ${meta.no} — ${t("site")}`;
+    $("#crumbs").innerHTML=`<a href="katalog.html">${t("nav.catalog")}</a>${APP.ic("r",10)}<span><span class="lv">${t("lv.fond").toUpperCase()}</span>Ф. ${meta.no}</span>`;
+    $("#fbadge").textContent=`${meta.y[0]}–${meta.y[1]} · ${meta.ops} ${t("k.ops").toLowerCase()} · ${fmt(meta.units)} ${t("k.units").toLowerCase()}`;
+    $("#ftitle").textContent=`Ф. ${meta.no}. ${L(meta.t)}`;
+    $("#fintro").textContent=L(full.intro);
+    $("#fintro").classList.toggle("clamp",!expanded);
+    $("#fmore").textContent=t(expanded?"less":"more");
+    $("#tcount").textContent=fmt(meta.units);
+    $("#rail").innerHTML=[["fo.r1","ob-arhive.html#help"],["fo.r2","istoriya.html"],["fo.r3","katalog.html?cat=photos"],["fo.r4","filialy.html"]].map(r=>`<a href="${r[1]}"><span>${t(r[0])}</span>${APP.ic("r",12)}</a>`).join("");
+    $("#fsel").innerHTML=`<option value="0">${t("fo.s1")}</option>`+full.ops.map(o=>`<option value="${o.n}">${t("k.op1")} ${o.n}</option>`).join("");
+    $("#fsel").value=0;
+    const tree=[`<li><span class="pm">−</span><span>Ф. ${meta.no} ${esc(L(meta.t))}<small>${meta.y[0]}–${meta.y[1]} · ${meta.ops} ${t("k.ops").toLowerCase()}</small></span></li>`];
+    full.ops.forEach(o=>tree.push(`<li class="l1${o.n===op?" cur":""}" data-op="${o.n}"><span class="pm">${o.n===op?"−":"+"}</span><span>${t("k.op1")} ${o.n} ${esc(L(o.t))}<small>${o.y} · ${fmt(o.c)} ${t("k.units").toLowerCase()}</small></span></li>`));
+    $("#tree").innerHTML=tree.join("");
+    const o=full.ops.find(x=>x.n===op)||full.ops[0];
+    $("#optitle").textContent=`${t("k.op1")} ${o.n}. ${L(o.t)}`;
+    $("#ophint").textContent=`${o.y} · ${fmt(o.c)} ${t("k.units").toLowerCase()} · ${t("fo.demo")}`;
+    let us=o.units; if(q) us=us.filter(u=>(L(u.t)+" д "+u.d).toLowerCase().includes(q));
+    $("#ulist").innerHTML=us.length?us.map(u=>`<li><span class="no">${t("k.d")} ${u.d}</span><span><a href="delo.html">${esc(L(u.t))}</a><small>${u.y} · ${u.s} ${t("k.sh")}</small></span><span class="st st--${u.a==="open"?"open":u.a==="limited"?"lim":"closed"}">${L(ACCESS[u.a])}</span></li>`).join(""):`<li style="display:block"><p class="empty" style="padding:20px 0">${t("cat.none")}</p></li>`;
+  }
+  document.addEventListener("click",e=>{
+    const li=e.target.closest("[data-op]"); if(li){ op=+li.dataset.op; render(); }
+    if(e.target.closest("#fmore")){ expanded=!expanded; render(); }
+  });
+  $("#fq").addEventListener("input",e=>{ q=e.target.value.trim().toLowerCase(); render(); });
+  $("#fsel").addEventListener("change",e=>{ if(+e.target.value){ op=+e.target.value; render(); $("#fsel").value=op; } });
+  window.addEventListener("langchange",render);
+  render();
+})();
+</script>
+</body>
+</html>

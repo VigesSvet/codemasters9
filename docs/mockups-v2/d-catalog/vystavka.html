@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Онлайн-выставки. Каталог ГА ВКО</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-nav="vystavka" data-mini="1">
+<a class="skip" href="#main">Перейти к содержимому</a>
+<header id="hd"></header>
+<div id="tb"></div>
+<main id="main">
+<div class="wrap" id="vy"></div>
+</main>
+<footer id="ft"></footer>
+<script src="data.js"></script>
+<script src="i18n.js"></script>
+<script>
+(function(){
+var D=window.VKO_DATA,q=new URLSearchParams(location.search),I=function(n){return '<svg class="ic"><use href="#'+n+'"/></svg>'};
+var root=document.getElementById('vy'),eid=+q.get('e')||0,idx=+q.get('i')||0,filt='all';
+function list(){
+  var ex=D.EXH.filter(function(e){return filt==='all'||e.theme===filt});
+  var themes=['all'].concat(D.EXH.map(function(e){return e.theme}).filter(function(v,i,a){return a.indexOf(v)===i}));
+  root.innerHTML='<div class="pgh"><h1>Онлайн-выставки</h1><p class="lede">Тематические экспозиции из фондов архива. У каждого экспоната указан шифр дела, из которого он взят.</p></div>'+
+  '<div class="fl2" role="group" aria-label="Тема">'+themes.map(function(t){return '<button type="button" data-t="'+t+'" aria-pressed="'+(filt===t)+'">'+(t==='all'?'Все выставки':t)+'</button>'}).join('')+'</div>'+
+  '<div class="exl">'+ex.map(function(e){return '<article class="st"><div class="im"><img src="img/'+e.cover+'.jpg" alt="" loading="lazy"></div><div class="b"><span class="k">'+e.period+' · '+e.items.length+' экспоната</span><h3><a href="vystavka.html?e='+e.id+'">'+e.t+'</a></h3><p>'+e.lede+'</p><span class="ref">'+e.items[0].ref+'</span></div></article>'}).join('')+'</div>'+
+  '<div class="soon"><h2>Готовятся к публикации</h2><ul><li>Восточный Казахстан в годы Великой Отечественной войны</li><li>Промышленное развитие Восточного Казахстана</li><li>История образования в регионе</li></ul></div><div style="height:64px"></div>';
+}
+function view(){
+  var e=D.EXH.filter(function(z){return z.id===eid})[0],n=e.items.length;idx=(idx+n)%n;var it=e.items[idx];
+  root.innerHTML='<div class="rec" style="width:auto;padding-bottom:0"><p class="crumbs"><a href="vystavka.html">Онлайн-выставки</a>'+I('dchev')+'<span>'+e.t+'</span></p></div>'+
+  '<div class="pgh"><h1>'+e.t+'</h1><p class="lede">'+e.lede+'</p></div><div style="height:16px"></div>'+
+  '<section class="exv" aria-label="Экспонаты"><div class="stage" id="stg"><div class="tl2"><button type="button" id="zi" aria-label="Увеличить">'+I('plus')+'</button><button type="button" id="zo" aria-label="Уменьшить">'+I('minus')+'</button></div><button class="nv p" type="button" id="pv" aria-label="Предыдущий экспонат">'+I('left')+'</button><img id="im" src="img/'+it.img+'.jpg" alt="'+it.t+'"><button class="nv n" type="button" id="nx" aria-label="Следующий экспонат">'+I('right')+'</button><span class="cnt">Экспонат '+(idx+1)+' из '+n+'</span></div>'+
+  '<div class="rl2">'+e.items.map(function(z,i){return '<button type="button" data-i="'+i+'"'+(i===idx?' aria-current="true"':'')+'><span>'+(i+1)+'</span><i style="background-image:url(img/'+z.img+'.jpg)"></i></button>'}).join('')+'</div></section>'+
+  '<div class="excap"><div><h2>'+it.t+'</h2><p>'+it.cap+'</p><p class="src">Источник изображения: '+it.src+'.</p></div><div class="box"><h3>Архивный шифр</h3><p class="c">'+it.ref+'</p><a class="btn" href="delo.html?id='+encodeURIComponent(it.id)+'">Открыть карточку дела</a><p style="margin:12px 0 0"><button class="lnk" type="button" data-act="share">Поделиться экспонатом</button></p></div></div><div style="height:56px"></div>';
+  var s=document.getElementById('stg'),zm=1,img=document.getElementById('im');
+  function z(v){zm=Math.max(1,Math.min(3,v));img.style.transform='scale('+zm+')'}
+  document.getElementById('zi').onclick=function(){z(zm+.5)};document.getElementById('zo').onclick=function(){z(zm-.5)};
+  document.getElementById('pv').onclick=function(){idx--;view()};document.getElementById('nx').onclick=function(){idx++;view()};
+}
+root.addEventListener('click',function(ev){
+  var t=ev.target.closest('[data-t]');if(t){filt=t.dataset.t;list();window.VKO.apply(root)}
+  var i=ev.target.closest('[data-i]');if(i){idx=+i.dataset.i;view();window.VKO.apply(root)}
+  if(ev.target.closest('#pv,#nx'))window.VKO.apply(root);
+});
+document.addEventListener('keydown',function(e){if(!eid)return;if(e.key==='ArrowRight'){idx++;view();window.VKO.apply(root)}if(e.key==='ArrowLeft'){idx--;view();window.VKO.apply(root)}});
+if(eid)view();else list();
+})();
+</script>
+<script src="app.js"></script>
+</body>
+</html>

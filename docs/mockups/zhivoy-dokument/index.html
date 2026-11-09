@@ -1,0 +1,953 @@
+<!doctype html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Государственный архив Восточно-Казахстанской области — Живой документ</title>
+<meta name="description" content="Государственный архив ВКО: электронный каталог, документ дня, онлайн-выставки, история региона в документах, филиалы на карте.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: { extend: {
+    colors: { bg:'var(--bg)', surface:'var(--surface)', ink:'var(--text)', muted:'var(--muted)', line:'var(--line)', amber:'var(--amber)', teal:'var(--teal)', danger:'var(--danger)' },
+    fontFamily: { serif:['Lora','Georgia','serif'], sans:['Inter','system-ui','sans-serif'], mono:['"IBM Plex Mono"','ui-monospace','monospace'] }
+  } }
+}
+</script>
+<style>
+:root, [data-theme="light"]{
+  --bg:#FAF8F4; --surface:#FFFFFF; --text:#15171A; --muted:#5A5A60; --line:#E4DFD6; --amber:#8A5A12; --teal:#0B6E69; --danger:#9E2B25;
+  --amber-soft:rgba(138,90,18,.10); --teal-soft:rgba(11,110,105,.10); --shadow:0 1px 2px rgba(21,23,26,.04),0 8px 30px rgba(21,23,26,.06);
+}
+[data-theme="dark"]{
+  --bg:#0E0E10; --surface:#17171A; --text:#F2EDE4; --muted:#A6A29A; --line:#2A2A2F; --amber:#D9A441; --teal:#5CC6C0; --danger:#E06A60;
+  --amber-soft:rgba(217,164,65,.12); --teal-soft:rgba(92,198,192,.12); --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 30px rgba(0,0,0,.35);
+}
+/* сцена «Музей» всегда тёмная */
+.stage{ --s-bg:#0E0E10; --s-surface:#17171A; --s-text:#F2EDE4; --s-muted:#A6A29A; --s-line:#2A2A2F; --s-amber:#D9A441; --s-teal:#5CC6C0; --s-danger:#E06A60; }
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+body.large-type{font-size:112%}
+.serif{font-family:Lora,Georgia,serif}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+.chip{display:inline-flex;align-items:center;gap:.35rem;border:1px solid var(--line);border-radius:999px;padding:.32rem .75rem;font-size:.8125rem;color:var(--text);background:var(--surface);transition:border-color .2s,background .2s}
+.chip:hover{border-color:var(--amber);background:var(--amber-soft)}
+.cipher{font-family:"IBM Plex Mono",monospace;font-size:.75rem;letter-spacing:.01em;border:1px dashed currentColor;border-radius:6px;padding:.12rem .45rem;white-space:nowrap}
+.badge-open{color:var(--teal);background:var(--teal-soft);border-radius:999px;padding:.15rem .55rem;font-size:.72rem;font-weight:600}
+.badge-closed{color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent);border-radius:999px;padding:.15rem .55rem;font-size:.72rem;font-weight:600}
+.btn{display:inline-flex;align-items:center;gap:.5rem;border-radius:999px;padding:.7rem 1.15rem;font-weight:600;font-size:.9rem;transition:transform .2s,background .2s,border-color .2s,color .2s}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--amber);color:#fff}
+[data-theme="dark"] .btn-primary{color:#0E0E10}
+.btn-primary:hover{filter:brightness(1.08)}
+.btn-ghost{border:1px solid var(--line);color:var(--text)}
+.btn-ghost:hover{border-color:var(--amber);color:var(--amber)}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--amber)}
+.h2{font-family:Lora,serif;font-weight:600;letter-spacing:-.01em;font-size:clamp(1.8rem,3.2vw,2.75rem);line-height:1.1}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+
+/* ===== Header ===== */
+#hdr{position:fixed;inset:0 0 auto 0;z-index:50;transition:background .35s,color .35s,box-shadow .35s,transform .35s;color:#F2EDE4}
+#hdr .strip{border-bottom:1px solid rgba(242,237,228,.12);font-size:.75rem;color:rgba(242,237,228,.72)}
+#hdr.solid{background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:var(--text);box-shadow:0 1px 0 var(--line)}
+#hdr.solid .strip{border-color:var(--line);color:var(--muted)}
+#hdr.solid .strip-wrap{display:none}
+.navlink{position:relative;font-size:.9rem;font-weight:500;opacity:.88;padding:.4rem 0}
+.navlink:hover{opacity:1}
+.navlink::after{content:"";position:absolute;left:0;right:100%;bottom:0;height:1.5px;background:currentColor;transition:right .25s}
+.navlink:hover::after{right:0}
+.seg{display:inline-flex;border:1px solid currentColor;border-color:color-mix(in srgb,currentColor 30%,transparent);border-radius:999px;padding:2px}
+.seg button{font-size:.72rem;font-weight:600;padding:.25rem .5rem;border-radius:999px;opacity:.75}
+.seg button[aria-pressed="true"]{background:currentColor;opacity:1}
+.seg button[aria-pressed="true"] span{color:#0E0E10;mix-blend-mode:normal}
+#hdr.solid .seg button[aria-pressed="true"] span{color:var(--surface)}
+.iconbtn{width:2.25rem;height:2.25rem;display:inline-grid;place-items:center;border-radius:999px;border:1px solid color-mix(in srgb,currentColor 30%,transparent)}
+.iconbtn:hover{border-color:currentColor}
+
+/* ===== Stage / hero ===== */
+.stage-bg{background:radial-gradient(60% 55% at 50% 45%,#1E1C19 0%,#121214 55%,#0E0E10 100%);color:var(--s-text)}
+.scan-wrap{position:relative;aspect-ratio:977/2003;height:calc(var(--vh,100vh) - 330px);min-height:480px;max-height:1000px}
+.hero-min{min-height:var(--vh,100vh)}
+.scan-wrap img{width:100%;height:100%;object-fit:contain;filter:sepia(.28) contrast(1.02) brightness(.97);border-radius:3px;box-shadow:0 0 0 1px rgba(255,255,255,.06),0 40px 120px rgba(0,0,0,.7),0 0 140px rgba(217,164,65,.08)}
+.spot{position:absolute;border-radius:3px;cursor:pointer;background:transparent;transition:background .2s,box-shadow .2s;outline:none}
+.scan-wrap.reveal .spot{background:rgba(92,198,192,.10);box-shadow:inset 0 0 0 1px rgba(92,198,192,.35)}
+.spot:hover,.spot:focus-visible{background:rgba(217,164,65,.22)!important;box-shadow:inset 0 0 0 1.5px #D9A441!important}
+.spot.active{background:rgba(217,164,65,.30)!important;box-shadow:inset 0 0 0 2px #D9A441,0 0 24px rgba(217,164,65,.45)!important}
+.spot.place::before{content:"";position:absolute;right:-7px;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:#5CC6C0;box-shadow:0 0 0 3px rgba(92,198,192,.25)}
+.sweep{position:absolute;left:-4%;right:-4%;height:2px;background:linear-gradient(90deg,transparent,#5CC6C0,transparent);box-shadow:0 0 18px #5CC6C0;top:0;opacity:0;pointer-events:none}
+.sweep.run{animation:sweep 2.4s cubic-bezier(.6,.05,.3,1) .5s 1 both}
+@keyframes sweep{0%{top:0;opacity:0}8%{opacity:1}92%{opacity:1}100%{top:100%;opacity:0}}
+.tip{position:absolute;z-index:5;pointer-events:none;background:#17171A;color:#F2EDE4;border:1px solid #2A2A2F;border-radius:10px;padding:.5rem .7rem;font-size:.8rem;max-width:260px;box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;transform:translateY(4px);transition:opacity .15s,transform .15s}
+.tip.show{opacity:1;transform:none}
+.panel{background:rgba(23,23,26,.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid #2A2A2F;border-radius:16px;color:#F2EDE4}
+.panel .muted{color:#A6A29A}
+.tab{font-size:.82rem;font-weight:600;padding:.45rem .8rem;border-radius:999px;color:#A6A29A;border:1px solid transparent}
+.tab[aria-selected="true"]{color:#0E0E10;background:#D9A441}
+.tab:not([aria-selected="true"]):hover{border-color:#2A2A2F;color:#F2EDE4}
+.ent{border-bottom:1.5px solid #5CC6C0;color:#BFEDEA;cursor:pointer}
+.ent.date{border-color:#D9A441;color:#F3D9A4}
+.ent.person{border-color:#E06A60;color:#F6C3BE}
+.fn{display:inline-grid;place-items:center;min-width:1.25rem;height:1.25rem;font-size:.66rem;font-family:"IBM Plex Mono",monospace;border-radius:4px;background:rgba(217,164,65,.18);color:#D9A441;margin-left:2px;vertical-align:1px;cursor:pointer}
+.fn:hover{background:#D9A441;color:#0E0E10}
+.pulse{width:8px;height:8px;border-radius:50%;background:#5CC6C0;box-shadow:0 0 0 0 rgba(92,198,192,.6);animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(92,198,192,.55)}70%{box-shadow:0 0 0 10px rgba(92,198,192,0)}100%{box-shadow:0 0 0 0 rgba(92,198,192,0)}}
+.stage .btn-ghost{border-color:#2A2A2F;color:#F2EDE4}
+.stage .btn-ghost:hover{border-color:#D9A441;color:#D9A441}
+.stage .btn-primary{background:#D9A441;color:#0E0E10}
+.fade-in{animation:fadein .35s ease both}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ===== Film strips ===== */
+.film{position:relative;background:#0E0E10;border-radius:18px;padding:30px 0;overflow:hidden}
+.film::before,.film::after{content:"";position:absolute;left:0;right:0;height:14px;background-image:radial-gradient(circle at 10px 7px,transparent 0 0),linear-gradient(90deg,#26262b 0 14px,transparent 14px 26px);background-size:26px 14px;opacity:.9}
+.film::before{top:8px}.film::after{bottom:8px}
+.reel{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 28px;scrollbar-width:none}
+.reel::-webkit-scrollbar{display:none}
+.frame{flex:0 0 auto;scroll-snap-align:start;height:300px;border-radius:6px;overflow:hidden;position:relative;background:#17171A;color:#F2EDE4}
+.frame img{height:100%;width:auto;display:block;filter:sepia(.15)}
+.frame figcaption{position:absolute;left:0;right:0;bottom:0;padding:2.2rem .9rem .75rem;font-size:.8rem;background:linear-gradient(transparent,rgba(0,0,0,.82))}
+.frame.text{width:300px;padding:1.4rem;display:flex;flex-direction:column;justify-content:space-between;background:#1B1A17}
+.paper{width:230px;background:#EDE6D6;color:#2b2722;padding:1.1rem 1.1rem;font-family:"IBM Plex Mono",monospace;font-size:.68rem;line-height:1.55;position:relative}
+.paper::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 21px,rgba(0,0,0,.035) 21px 22px);pointer-events:none}
+@media (max-width:640px){.frame{height:220px}.frame.text{width:240px}.paper{width:190px}}
+
+/* ===== Masonry ===== */
+.masonry{column-gap:18px}
+.masonry>*{break-inside:avoid;margin-bottom:18px}
+@media (max-width:640px){.masonry{column-gap:10px}.masonry>*{margin-bottom:10px}.mitem .p-4{padding:.7rem}.mitem h3{font-size:.85rem}.mitem .text-xs{font-size:.65rem}.mitem .cipher{font-size:.62rem;white-space:normal}}
+.mitem img{width:100%;height:auto;display:block;border-radius:10px 10px 0 0;filter:sepia(.12)}
+.mitem{transition:transform .3s,box-shadow .3s}
+.mitem:hover{transform:translateY(-3px)}
+
+/* ===== Timeline ===== */
+.tl{position:relative}
+.tl::before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:1px;background:var(--line)}
+.tl li{position:relative;padding-left:30px}
+.tl li::before{content:"";position:absolute;left:2px;top:.45rem;width:11px;height:11px;border-radius:50%;background:var(--bg);border:2px solid var(--amber)}
+.tl li.hl::before{background:var(--amber);box-shadow:0 0 0 5px var(--amber-soft)}
+
+/* ===== Map ===== */
+#map{height:520px;border-radius:14px;z-index:1}
+[data-theme="dark"] #map .leaflet-tile-pane{filter:invert(.92) hue-rotate(180deg) brightness(.9) contrast(.9) saturate(.6)}
+.leaflet-container{font-family:Inter,sans-serif;background:var(--bg)}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--surface);color:var(--text)}
+.pin{width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--teal);border:3px solid var(--surface);box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.pin.main{background:var(--amber)}
+.pin.hist{background:#9E2B25;border-style:dashed}
+.branch.active{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-soft)}
+@media (max-width:1023px){#map{height:380px}}
+
+/* ===== AI widget ===== */
+#aiBtn{position:fixed;right:20px;bottom:20px;z-index:60}
+#aiPanel{position:fixed;right:20px;bottom:88px;z-index:60;width:min(400px,calc(100vw - 24px));max-height:min(620px,calc(100vh - 120px));display:none;flex-direction:column}
+#aiPanel.open{display:flex;animation:fadein .25s ease both}
+@media (max-width:640px){#aiPanel{right:12px;bottom:80px}#aiBtn{right:12px;bottom:12px}}
+.msg{max-width:88%;padding:.6rem .8rem;border-radius:14px;font-size:.875rem;line-height:1.45}
+.msg.me{align-self:flex-end;background:var(--amber);color:#fff;border-bottom-right-radius:4px}
+[data-theme="dark"] .msg.me{color:#0E0E10}
+.msg.bot{align-self:flex-start;background:var(--bg);border:1px solid var(--line);border-bottom-left-radius:4px}
+
+/* modal */
+.modal{position:fixed;inset:0;z-index:70;display:none;place-items:center;background:rgba(14,14,16,.6);backdrop-filter:blur(4px);padding:16px}
+.modal.open{display:grid}
+.field{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:.7rem .85rem;color:var(--text);font-size:.92rem}
+.field:focus{border-color:var(--teal)}
+.reveal-up{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+.reveal-up.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal-up{opacity:1;transform:none}}
+
+/* mobile scan */
+@media (max-width:1023px){
+  .scan-wrap{height:auto;width:min(78vw,380px);min-height:0}
+}
+#drawer{display:none}
+#drawer.open{display:block}
+</style>
+</head>
+<body>
+<a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] btn btn-primary">Перейти к содержанию</a>
+
+<!-- ================= HEADER ================= -->
+<header id="hdr">
+  <div class="strip-wrap">
+    <div class="strip">
+      <div class="max-w-[1360px] mx-auto px-5 lg:px-8 h-8 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-5 min-w-0">
+          <a href="tel:+77232255976" class="hidden sm:inline hover:opacity-100">8 (7232) 25-59-76</a>
+          <a href="mailto:arhiv-ukg@yandex.kz" class="hidden md:inline">arhiv-ukg@yandex.kz</a>
+          <span class="hidden lg:inline" data-i18n="strip_hours">Пн–пт 9:00–18:00 · читальный зал 10:00–17:00</span>
+          <span class="sm:hidden truncate" data-i18n="strip_short">Усть-Каменогорск, ул. Головкова, 26/1</span>
+        </div>
+        <div class="flex items-center gap-4 shrink-0">
+          <button id="a11yBtn" class="hidden sm:inline underline-offset-2 hover:underline" data-i18n="a11y">Крупный шрифт</button>
+          <div class="flex items-center gap-3" aria-label="Социальные сети">
+            <a href="#social" aria-label="Instagram" class="opacity-80 hover:opacity-100"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+            <a href="#social" aria-label="Facebook" class="opacity-80 hover:opacity-100"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M14 8h3V4h-3a4 4 0 0 0-4 4v2H7v4h3v8h4v-8h3l1-4h-4V8z"/></svg></a>
+            <a href="#social" aria-label="Telegram" class="opacity-80 hover:opacity-100"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M21.5 3.5 2.8 10.7c-1 .4-1 1.6 0 1.9l4.7 1.5 1.8 5.6c.3.8 1.2 1 1.8.4l2.6-2.4 4.8 3.6c.7.5 1.7.1 1.9-.8l3-15.2c.2-1.1-.8-2-1.9-1.8zM9.8 14.3l-.4 3.6-1.3-4 9.2-6.1-7.5 6.5z"/></svg></a>
+            <a href="#social" aria-label="YouTube" class="opacity-80 hover:opacity-100"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M23 7.5a3 3 0 0 0-2.1-2.1C19 5 12 5 12 5s-7 0-8.9.4A3 3 0 0 0 1 7.5 31 31 0 0 0 .6 12 31 31 0 0 0 1 16.5a3 3 0 0 0 2.1 2.1C5 19 12 19 12 19s7 0 8.9-.4a3 3 0 0 0 2.1-2.1 31 31 0 0 0 .4-4.5 31 31 0 0 0-.4-4.5zM9.8 15.1V8.9L15.5 12l-5.7 3.1z"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="max-w-[1360px] mx-auto px-5 lg:px-8 h-[68px] flex items-center justify-between gap-4">
+    <a href="#top" class="flex items-center gap-3 min-w-0 xl:shrink-0" aria-label="Государственный архив ВКО — на главную">
+      <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" class="shrink-0"><rect x="1" y="1" width="38" height="38" rx="10" fill="none" stroke="currentColor" stroke-opacity=".35"/><path d="M10 13h20M10 13l2 16h16l2-16" fill="none" stroke="#D9A441" stroke-width="1.8"/><path d="M15 18h10M15 22h10M15 26h6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <span class="leading-tight min-w-0">
+        <span class="sm:hidden block serif font-semibold text-[16px]" data-i18n="brand_s">Госархив ВКО</span><span class="hidden sm:block serif font-semibold text-[17px] truncate" data-i18n="brand">Государственный архив ВКО</span>
+        <span class="hidden sm:block text-[11px] opacity-70 truncate" data-i18n="brand_sub">Восточно-Казахстанская область · с 1940 года</span>
+      </span>
+    </a>
+    <nav class="hidden xl:flex items-center gap-5 whitespace-nowrap" aria-label="Основное меню">
+      <a class="navlink" href="#about" data-i18n="nav_about">Об архиве</a>
+      <a class="navlink" href="#catalog" data-i18n="ns_fonds">Фонды</a>
+      <a class="navlink" href="#history" data-i18n="ns_hist">История</a>
+      <a class="navlink" href="#exhibitions" data-i18n="nav_exh">Выставки</a>
+      <a class="navlink" href="#news" data-i18n="nav_news">Новости</a>
+      <a class="navlink" href="#branches" data-i18n="ns_br">Филиалы</a>
+    </nav>
+    <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+      <a href="#catalog" class="iconbtn" aria-label="Поиск" data-focus-search><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></a>
+      <div class="seg hidden sm:inline-flex" role="group" aria-label="Язык">
+        <button data-lang="kz" aria-pressed="false"><span>KZ</span></button><button data-lang="ru" aria-pressed="true"><span>RU</span></button><button data-lang="en" aria-pressed="false"><span>EN</span></button>
+      </div>
+      <button id="themeBtn" class="iconbtn" aria-label="Переключить тему">
+        <svg class="i-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        <svg class="i-sun hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+      <a href="#catalog" class="btn btn-primary !py-2 !px-4 hidden md:inline-flex" data-i18n="btn_catalog">Электронный каталог</a>
+      <button id="burger" class="iconbtn xl:hidden" aria-label="Меню" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+  <div id="drawer" class="xl:hidden border-t border-line bg-surface text-ink">
+    <div class="px-5 py-4 grid gap-1">
+      <a class="py-2.5 border-b border-line" href="#about" data-i18n="nav_about">Об архиве</a>
+      <a class="py-2.5 border-b border-line" href="#catalog" data-i18n="nav_catalog">Фонды и каталог</a>
+      <a class="py-2.5 border-b border-line" href="#history" data-i18n="nav_history">Цифровая история</a>
+      <a class="py-2.5 border-b border-line" href="#exhibitions" data-i18n="nav_exh">Выставки</a>
+      <a class="py-2.5 border-b border-line" href="#news" data-i18n="nav_news">Новости</a>
+      <a class="py-2.5 border-b border-line" href="#branches" data-i18n="nav_branches">Филиалы и контакты</a>
+      <a class="py-2.5 border-b border-line" href="#useful" data-i18n="nav_faq">Частые вопросы</a>
+      <div class="flex items-center justify-between pt-3">
+        <div class="seg" role="group" aria-label="Язык"><button data-lang="kz" aria-pressed="false"><span>KZ</span></button><button data-lang="ru" aria-pressed="true"><span>RU</span></button><button data-lang="en" aria-pressed="false"><span>EN</span></button></div>
+        <a href="#catalog" class="btn btn-primary !py-2" data-i18n="btn_catalog">Электронный каталог</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<!-- ================= HERO: ДОКУМЕНТ ДНЯ ================= -->
+<section id="top" class="stage stage-bg hero-min relative pt-[112px] pb-6 overflow-hidden flex flex-col justify-center">
+  <div class="absolute inset-0 pointer-events-none opacity-[.06]" style="background-image:radial-gradient(#F2EDE4 1px,transparent 1px);background-size:22px 22px"></div>
+  <div class="relative w-full max-w-[1360px] mx-auto px-5 lg:px-8 grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,380px)] gap-8 lg:gap-12 items-center">
+    <!-- left: intro -->
+    <div class="order-1 lg:order-1 max-w-[460px]">
+      <div class="flex items-center gap-2 mb-5">
+        <span class="mono text-[11px] tracking-[.16em] uppercase text-[#D9A441]" data-i18n="dod">Документ дня</span>
+        <span class="text-[#A6A29A] text-xs">· 09.11.2026</span>
+      </div>
+      <h1 class="serif text-[clamp(2.1rem,4.2vw,3.75rem)] leading-[1.04] font-semibold tracking-[-.015em]" data-i18n="hero_title">Архив, который читается</h1>
+      <p class="mt-5 text-[#A6A29A] text-[15px] leading-relaxed" data-i18n="hero_lead">Государственный архив Восточно-Казахстанской области хранит историю региона с XVIII века. Каждый опубликованный скан здесь — живой текст: строки читаются, места ведут на карту, даты — в хронологию.</p>
+      <div class="mt-6 hidden lg:flex items-center gap-3 text-sm text-[#F2EDE4]">
+        <span class="pulse"></span><span data-i18n="hint_hover">Наведите на строку скана</span>
+      </div>
+      <dl class="mt-8 hidden lg:grid grid-cols-3 gap-4 border-t border-[#2A2A2F] pt-5">
+        <div><dt class="mono text-[10px] uppercase tracking-widest text-[#A6A29A]" data-i18n="st_fonds">Фондов</dt><dd class="serif text-2xl mt-1">2 300+</dd></div>
+        <div><dt class="mono text-[10px] uppercase tracking-widest text-[#A6A29A]" data-i18n="st_personal">Личных фондов</dt><dd class="serif text-2xl mt-1">60+</dd></div>
+        <div><dt class="mono text-[10px] uppercase tracking-widest text-[#A6A29A]" data-i18n="st_branches">Филиала</dt><dd class="serif text-2xl mt-1">4</dd></div>
+      </dl>
+      <p class="hidden lg:block mono text-[10px] text-[#A6A29A]/70 mt-2" data-i18n="st_note">Цифры — демо, уточняются по данным архива</p>
+    </div>
+
+    <!-- center: scan -->
+    <figure class="order-2 flex flex-col items-center">
+      <p class="lg:hidden mb-3 flex items-center gap-2 text-sm"><span class="pulse"></span><span data-i18n="hint_tap">Нажмите на строку скана</span></p>
+      <div id="scan" class="scan-wrap mx-auto">
+        <img id="scanImg" alt="Карта Колывано-Кузнецкой линии 1768 года, печатное воспроизведение" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/%D0%9A%D0%B0%D1%80%D1%82%D0%B0_%D0%9A%D0%BE%D0%BB%D1%8B%D0%B2%D0%B0%D0%BD%D0%BE-%D0%9A%D1%83%D0%B7%D0%BD%D0%B5%D1%86%D0%BA%D0%BE%D0%B9_%D0%BB%D0%B8%D0%BD%D0%B8%D0%B8_1768_%D0%B3%D0%BE%D0%B4%D0%B0.jpg/960px-%D0%9A%D0%B0%D1%80%D1%82%D0%B0_%D0%9A%D0%BE%D0%BB%D1%8B%D0%B2%D0%B0%D0%BD%D0%BE-%D0%9A%D1%83%D0%B7%D0%BD%D0%B5%D1%86%D0%BA%D0%BE%D0%B9_%D0%BB%D0%B8%D0%BD%D0%B8%D0%B8_1768_%D0%B3%D0%BE%D0%B4%D0%B0.jpg">
+        <div class="sweep" id="sweep"></div>
+        <div class="tip" id="tip"></div>
+        <button id="zoomBtn" class="absolute top-2 right-2 iconbtn bg-black/50 text-[#F2EDE4] border-white/20" aria-label="Открыть скан крупно"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
+      </div>
+      <figcaption class="mt-3 text-[11px] text-[#A6A29A] text-center max-w-[360px] leading-snug">
+        <span data-i18n="scan_src">Печатное воспроизведение карты 1768 г. · Скан: Wikimedia Commons, общественное достояние</span>
+      </figcaption>
+    </figure>
+
+    <!-- right: panel -->
+    <aside class="order-3 panel p-5 lg:p-6 w-full" aria-label="Карточка документа">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <h2 class="serif text-[1.35rem] leading-tight font-semibold" data-i18n="doc_title">Карта Колывано-Кузнецкой линии</h2>
+          <p class="text-sm muted mt-1"><span data-i18n="doc_date">1768 год</span> · <span data-i18n="doc_kind">картографический документ</span></p>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-2 mt-4">
+        <span class="cipher text-[#D9A441]">ф. 1, оп. 1, д. 7</span>
+        <span class="badge-open !text-[#5CC6C0] !bg-[rgba(92,198,192,.12)]" data-i18n="open">Открытый доступ</span>
+        <span class="mono text-[10px] text-[#A6A29A]" data-i18n="demo_cipher">демо-шифр</span>
+      </div>
+      <div class="flex gap-1.5 mt-5" role="tablist">
+        <button class="tab" role="tab" aria-selected="true" data-tab="tr" data-i18n="tab_tr">Расшифровка</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="ai" id="aiTab"><span data-i18n="tab_ai">ИИ: кратко</span></button>
+      </div>
+      <div id="panelBody" class="mt-4 min-h-[250px] text-[14px] leading-relaxed"></div>
+      <div class="mt-5 pt-4 border-t border-[#2A2A2F] flex flex-wrap gap-2">
+        <a href="#catalog" id="openInCatalog" class="btn btn-primary !py-2 !text-[13px]" data-i18n="open_cat">Открыть в каталоге</a>
+        <button id="copyCipher" class="btn btn-ghost !py-2 !text-[13px]" data-i18n="copy">Скопировать шифр</button>
+      </div>
+    </aside>
+  </div>
+
+  <div class="relative w-full max-w-[1360px] mx-auto px-5 lg:px-8 mt-8 lg:mt-5">
+    <div id="about" class="scroll-mt-28 flex flex-col md:flex-row md:items-center justify-between gap-4 border-t border-[#2A2A2F] pt-5">
+      <p class="text-[13.5px] text-[#A6A29A] max-w-[640px]" data-i18n="activity">Мы собираем, храним и открываем документы Восточного Казахстана: от крепостных линий XVIII века до личных фондов наших современников. Сайт информационный: здесь можно читать, искать и делиться.</p>
+      <div class="flex flex-wrap gap-2 lg:mr-48">
+        <a href="#catalog" class="btn btn-primary !py-2.5" data-i18n="q_catalog">Каталог</a>
+        <a href="#exhibitions" class="btn btn-ghost !py-2.5" data-i18n="q_exh">Выставки</a>
+        <a href="#branches" class="btn btn-ghost !py-2.5" data-i18n="q_br">Филиалы</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SEARCH / CATALOG ================= -->
+<section id="catalog" class="py-20 lg:py-28 scroll-mt-20">
+  <div class="max-w-[1100px] mx-auto px-5 lg:px-8 reveal-up">
+    <p class="eyebrow" data-i18n="cat_eyebrow">Электронный каталог</p>
+    <h2 class="h2 mt-3" data-i18n="cat_title">Спросите своими словами</h2>
+    <p class="text-muted mt-3 max-w-[640px]" data-i18n="cat_lead">Не нужно знать номер фонда. Опишите, что ищете, — поиск поймёт фамилию в любом написании, на казахском, русском или английском, и покажет шифр дела.</p>
+    <form id="searchForm" class="mt-8 card p-2 flex items-center gap-2" role="search">
+      <svg class="ml-3 shrink-0 text-muted" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" class="flex-1 min-w-0 bg-transparent py-3 text-[16px] sm:text-[17px] outline-none placeholder:text-muted" data-i18n-ph="cat_ph" placeholder="Например: письма с фронта из Зайсана">
+      <button class="btn btn-primary shrink-0" data-i18n="find">Найти</button>
+    </form>
+    <div class="mt-4 flex flex-wrap gap-2" id="examples">
+      <button class="chip" data-q="Усть-Каменогорская крепость 1768">Усть-Каменогорская крепость 1768</button>
+      <button class="chip" data-q="личный фонд Белослюдова">личный фонд Белослюдова</button>
+      <button class="chip" data-q="Зайсан 1942 мобилизация">Зайсан 1942 мобилизация</button>
+      <button class="chip" data-q="Өскемен тарихы">Өскемен тарихы</button>
+      <button class="chip" data-q="Ridder mines 1930s">Ridder mines 1930s</button>
+    </div>
+    <div id="results" class="mt-6 grid gap-3"></div>
+    <div class="mt-8 grid md:grid-cols-[1fr_auto] gap-5 items-center">
+      <nav aria-label="Структура каталога" class="flex flex-wrap items-center gap-2 text-sm">
+        <span class="text-muted" data-i18n="how_struct">Как устроен каталог:</span>
+        <span class="chip !bg-transparent"><b class="mono text-amber">ф.</b>&nbsp;<span data-i18n="fond">фонд</span></span><span class="text-muted">→</span>
+        <span class="chip !bg-transparent"><b class="mono text-amber">оп.</b>&nbsp;<span data-i18n="opis">опись</span></span><span class="text-muted">→</span>
+        <span class="chip !bg-transparent"><b class="mono text-amber">д.</b>&nbsp;<span data-i18n="delo">дело</span></span><span class="text-muted">→</span>
+        <span class="chip !bg-transparent"><b class="mono text-amber">л.</b>&nbsp;<span data-i18n="list">лист со сканом</span></span>
+      </nav>
+      <a href="#catalog" class="text-sm font-semibold text-teal underline underline-offset-4" data-i18n="adv">Расширенный поиск и дерево фондов →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= EXHIBITIONS ================= -->
+<section id="exhibitions" class="py-20 lg:py-24 border-t border-line scroll-mt-20">
+  <div class="max-w-[1360px] mx-auto px-5 lg:px-8">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 reveal-up">
+      <div><p class="eyebrow" data-i18n="exh_eyebrow">Онлайн-выставки</p><h2 class="h2 mt-3" data-i18n="exh_title">Выставки, которые листаются как плёнка</h2></div>
+      <p class="text-muted max-w-[420px] text-sm" data-i18n="exh_lead">Каждый кадр — документ с шифром. Откройте выставку на весь экран и листайте главы.</p>
+    </div>
+
+    <article class="mt-10 reveal-up">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <div>
+          <h3 class="serif text-xl sm:text-2xl font-semibold" data-i18n="exh1">Усть-Каменогорск: история города в архивных документах</h3>
+          <p class="text-sm text-muted mt-1"><span data-i18n="exh1_meta">7 глав · 1720–2026</span></p>
+        </div>
+        <div class="flex gap-2">
+          <button class="iconbtn" data-reel="r1" data-dir="-1" aria-label="Назад">←</button>
+          <button class="iconbtn" data-reel="r1" data-dir="1" aria-label="Вперёд">→</button>
+          <a href="#exhibitions" class="btn btn-ghost !py-2" data-i18n="exh_open">Смотреть выставку</a>
+        </div>
+      </div>
+      <div class="film"><div class="reel" id="r1"></div></div>
+    </article>
+
+    <article class="mt-12 reveal-up">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <div>
+          <h3 class="serif text-xl sm:text-2xl font-semibold" data-i18n="exh2">Восточный Казахстан в годы Великой Отечественной войны</h3>
+          <p class="text-sm text-muted mt-1"><span data-i18n="exh2_meta">5 глав · 1941–1945</span></p>
+        </div>
+        <div class="flex gap-2">
+          <button class="iconbtn" data-reel="r2" data-dir="-1" aria-label="Назад">←</button>
+          <button class="iconbtn" data-reel="r2" data-dir="1" aria-label="Вперёд">→</button>
+          <a href="#exhibitions" class="btn btn-ghost !py-2" data-i18n="exh_open">Смотреть выставку</a>
+        </div>
+      </div>
+      <div class="film"><div class="reel" id="r2"></div></div>
+    </article>
+  </div>
+</section>
+
+<!-- ================= HISTORY IN DOCUMENTS ================= -->
+<section id="history" class="py-20 lg:py-24 border-t border-line scroll-mt-20">
+  <div class="max-w-[1360px] mx-auto px-5 lg:px-8">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 reveal-up">
+      <div><p class="eyebrow" data-i18n="hist_eyebrow">История в документах</p><h2 class="h2 mt-3" data-i18n="hist_title">Восемь находок из фондов</h2></div>
+      <div class="flex flex-wrap gap-2 text-sm" id="histFilter">
+        <button class="chip" aria-pressed="true" data-f="all" data-i18n="f_all">Все</button>
+        <button class="chip" data-f="photo" data-i18n="f_photo">Фото</button>
+        <button class="chip" data-f="map" data-i18n="f_map">Карты</button>
+        <button class="chip" data-f="doc" data-i18n="f_doc">Документы</button>
+      </div>
+    </div>
+    <div id="masonry" class="masonry columns-2 lg:columns-4 mt-10"></div>
+  </div>
+</section>
+
+<!-- ================= PEOPLE & EVENTS ================= -->
+<section id="people" class="py-20 lg:py-24 border-t border-line scroll-mt-20">
+  <div class="max-w-[1360px] mx-auto px-5 lg:px-8 grid lg:grid-cols-[1.45fr_1fr] gap-12">
+    <div class="reveal-up">
+      <p class="eyebrow" data-i18n="ppl_eyebrow">Люди и события</p>
+      <h2 class="h2 mt-3" data-i18n="ppl_title">Личные фонды: голоса края</h2>
+      <div id="people-grid" class="grid sm:grid-cols-2 gap-4 mt-8"></div>
+    </div>
+    <div class="reveal-up">
+      <p class="eyebrow" data-i18n="tl_eyebrow">Хронология</p>
+      <h3 class="serif text-2xl font-semibold mt-3" data-i18n="tl_title">Шесть дат региона</h3>
+      <ol class="tl mt-6 grid gap-5" id="timeline"></ol>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BRANCHES ================= -->
+<section id="branches" class="py-20 lg:py-24 border-t border-line scroll-mt-20">
+  <div class="max-w-[1360px] mx-auto px-5 lg:px-8">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 reveal-up">
+      <div><p class="eyebrow" data-i18n="br_eyebrow">Наши филиалы</p><h2 class="h2 mt-3" data-i18n="br_title">Архив рядом: Усть-Каменогорск, Риддер, Алтай, Зайсан</h2></div>
+      <button id="locBtn" class="btn btn-ghost !py-2 whitespace-nowrap shrink-0 self-start md:self-auto" data-i18n="near">Ближайший ко мне</button>
+    </div>
+    <div class="grid lg:grid-cols-[400px_1fr] gap-6 mt-10">
+      <ul id="branchList" class="grid gap-3 order-2 lg:order-1 lg:max-h-[520px] lg:overflow-y-auto pr-1"></ul>
+      <div class="order-1 lg:order-2"><div id="map" class="border border-line" aria-label="Карта архива и филиалов"></div>
+        <p class="text-xs text-muted mt-2" data-i18n="map_note">Координаты примерные. Красный пунктир — места из документа дня.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= NEWS ================= -->
+<section id="news" class="py-20 lg:py-24 border-t border-line scroll-mt-20">
+  <div class="max-w-[1360px] mx-auto px-5 lg:px-8">
+    <div class="flex items-end justify-between gap-4 reveal-up">
+      <div><p class="eyebrow" data-i18n="news_eyebrow">Новости и события</p><h2 class="h2 mt-3" data-i18n="news_title">Что происходит в архиве</h2></div>
+      <a href="#news" class="text-sm font-semibold text-teal underline underline-offset-4 shrink-0" data-i18n="all_news">Все новости →</a>
+    </div>
+    <div id="newsGrid" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-10"></div>
+  </div>
+</section>
+
+<!-- ================= USEFUL ================= -->
+<section id="useful" class="py-20 lg:py-24 border-t border-line scroll-mt-20">
+  <div class="max-w-[1360px] mx-auto px-5 lg:px-8">
+    <div class="reveal-up">
+      <p class="eyebrow" data-i18n="use_eyebrow">Полезная информация</p>
+      <h2 class="h2 mt-3" data-i18n="use_title">Как документ попадает из хранилища на сайт</h2>
+      <p class="text-muted mt-3 max-w-[680px]" data-i18n="use_lead">Честно показываем путь каждого листа. ИИ помогает читать, но публикует только человек — а документы ограниченного доступа ИИ не обрабатывает вовсе.</p>
+    </div>
+    <ol class="grid sm:grid-cols-2 lg:grid-cols-5 gap-3 mt-10 reveal-up" id="pipeline"></ol>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-12 reveal-up items-start" id="faq"></div>
+  </div>
+</section>
+
+<!-- ================= SOCIAL + FEEDBACK ================= -->
+<section id="social" class="py-20 lg:py-24 border-t border-line scroll-mt-20">
+  <div class="max-w-[1360px] mx-auto px-5 lg:px-8 grid lg:grid-cols-2 gap-6">
+    <div class="card p-7 sm:p-9 reveal-up">
+      <p class="eyebrow" data-i18n="soc_eyebrow">Мы в соцсетях</p>
+      <h2 class="serif text-2xl sm:text-3xl font-semibold mt-3" data-i18n="soc_title">Документ дня — каждое утро в ленте</h2>
+      <div class="grid grid-cols-2 gap-3 mt-7">
+        <a href="#social" class="chip !rounded-xl !py-3 !justify-start">Instagram <span class="text-muted text-xs ml-auto">@gavko.archive</span></a>
+        <a href="#social" class="chip !rounded-xl !py-3 !justify-start">Telegram <span class="text-muted text-xs ml-auto">t.me/gavko</span></a>
+        <a href="#social" class="chip !rounded-xl !py-3 !justify-start">Facebook <span class="text-muted text-xs ml-auto">/gavko</span></a>
+        <a href="#social" class="chip !rounded-xl !py-3 !justify-start">YouTube <span class="text-muted text-xs ml-auto">@gavko</span></a>
+      </div>
+      <p class="text-xs text-muted mt-4" data-i18n="soc_note">Адреса аккаунтов — демо: у архива пока нет официальных соцсетей.</p>
+    </div>
+    <div class="card p-7 sm:p-9 reveal-up relative overflow-hidden">
+      <p class="eyebrow" data-i18n="fb_eyebrow">Отзывы и предложения</p>
+      <h2 class="serif text-2xl sm:text-3xl font-semibold mt-3" data-i18n="fb_title">Каким должен быть сайт архива? Скажите нам</h2>
+      <p class="text-muted mt-3 text-sm" data-i18n="fb_lead">Отзыв, предложение или пожелание читают сотрудники архива. Это не обращение и не заявка на услугу.</p>
+      <button class="btn btn-primary mt-7" data-open-feedback data-i18n="fb_btn">Оставить отзыв</button>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="border-t border-line bg-surface">
+  <div class="max-w-[1360px] mx-auto px-5 lg:px-8 py-14 grid md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr] gap-10 text-sm">
+    <div>
+      <p class="serif text-lg font-semibold leading-snug" data-i18n="full_name">КГУ «Государственный архив» управления цифровизации и архивов Восточно-Казахстанской области</p>
+      <p class="text-muted mt-3">070004, <span data-i18n="addr">РК, г. Усть-Каменогорск, ул. Головкова, 26/1</span></p>
+      <p class="mt-3"><a href="tel:+77232255976" class="hover:text-amber">8 (7232) 25-59-76</a> · <span class="text-muted" data-i18n="reception">приёмная, факс</span></p>
+      <p><a href="mailto:arhiv-ukg@yandex.kz" class="hover:text-amber">arhiv-ukg@yandex.kz</a></p>
+    </div>
+    <div>
+      <p class="font-semibold" data-i18n="hours_t">Режим работы</p>
+      <p class="text-muted mt-3" data-i18n="hours1">Пн–пт 9:00–18:00</p>
+      <p class="text-muted" data-i18n="hours2">Читальный зал: пн–пт 10:00–17:00</p>
+      <p class="text-muted mt-2" data-i18n="hours3">Читальный зал № 2: ул. Крылова, 39 · 8 (7232) 25-13-47</p>
+    </div>
+    <div>
+      <p class="font-semibold" data-i18n="gov_t">Государственные ресурсы</p>
+      <ul class="mt-3 grid gap-1.5 text-muted">
+        <li><a class="hover:text-amber" href="https://www.gov.kz/memleket/entities/vko-uca" target="_blank" rel="noopener">gov.kz — управление цифровизации и архивов ВКО</a></li>
+        <li><a class="hover:text-amber" href="https://egov.kz" target="_blank" rel="noopener">egov.kz — электронное правительство</a></li>
+        <li><a class="hover:text-amber" href="https://akorda.kz" target="_blank" rel="noopener">akorda.kz — Президент РК</a></li>
+        <li><a class="hover:text-amber" href="https://e-history.kz" target="_blank" rel="noopener">e-history.kz — история Казахстана</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="font-semibold" data-i18n="soc_t">Соцсети и обратная связь</p>
+      <div class="flex gap-2 mt-3"><a href="#social" class="iconbtn" aria-label="Instagram">IG</a><a href="#social" class="iconbtn" aria-label="Telegram">TG</a><a href="#social" class="iconbtn" aria-label="Facebook">FB</a><a href="#social" class="iconbtn" aria-label="YouTube">YT</a></div>
+      <button class="mt-4 text-teal font-semibold underline underline-offset-4" data-open-feedback data-i18n="fb_link">Отзыв или предложение</button>
+    </div>
+  </div>
+  <div class="border-t border-line">
+    <div class="max-w-[1360px] mx-auto px-5 lg:px-8 py-5 flex flex-col sm:flex-row justify-between gap-2 text-xs text-muted">
+      <span>© 1940–2026 <span data-i18n="copy_r">Государственный архив ВКО. Материалы доступны для некоммерческого использования со ссылкой на шифр.</span></span>
+      <span class="flex gap-4"><a href="#" class="hover:text-amber" data-i18n="privacy">Политика конфиденциальности</a><a href="#" class="hover:text-amber" data-i18n="a11y_v">Версия для слабовидящих</a></span>
+    </div>
+  </div>
+</footer>
+
+<!-- ================= AI ASSISTANT ================= -->
+<button id="aiBtn" class="btn btn-primary !py-3 !px-5 shadow-xl" aria-expanded="false" aria-controls="aiPanel">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>
+  <span data-i18n="ai_btn">ИИ-помощник</span>
+</button>
+<div id="aiPanel" class="card overflow-hidden" role="dialog" aria-label="ИИ-помощник">
+  <div class="px-4 py-3 border-b border-line flex items-center justify-between">
+    <div><p class="font-semibold text-sm" data-i18n="ai_title">ИИ-помощник архива</p><p class="text-[11px] text-muted" data-i18n="ai_sub">Отвечает только по опубликованным материалам, всегда со ссылкой на шифр</p></div>
+    <button id="aiClose" class="iconbtn" aria-label="Закрыть">✕</button>
+  </div>
+  <div id="aiLog" class="flex-1 overflow-y-auto p-4 flex flex-col gap-2.5"></div>
+  <div class="px-4 pb-2 flex flex-wrap gap-1.5" id="aiChips"></div>
+  <form id="aiForm" class="p-3 border-t border-line flex gap-2">
+    <input id="aiInput" class="field !py-2" data-i18n-ph="ai_ph" placeholder="Спросите об истории или фондах…">
+    <button class="btn btn-primary !py-2 !px-3" aria-label="Отправить">→</button>
+  </form>
+</div>
+
+<!-- feedback modal -->
+<div id="fbModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="fbT">
+  <form id="fbForm" class="card w-full max-w-[520px] p-6 sm:p-8">
+    <div class="flex items-start justify-between gap-4"><h3 id="fbT" class="serif text-2xl font-semibold" data-i18n="fb_btn">Оставить отзыв</h3><button type="button" class="iconbtn" data-close aria-label="Закрыть">✕</button></div>
+    <div class="flex gap-2 mt-5" role="radiogroup">
+      <label class="chip cursor-pointer"><input type="radio" name="t" value="review" checked class="accent-[var(--amber)]"> <span data-i18n="t_review">Отзыв</span></label>
+      <label class="chip cursor-pointer"><input type="radio" name="t" value="idea" class="accent-[var(--amber)]"> <span data-i18n="t_idea">Предложение</span></label>
+      <label class="chip cursor-pointer"><input type="radio" name="t" value="wish" class="accent-[var(--amber)]"> <span data-i18n="t_wish">Пожелание</span></label>
+    </div>
+    <textarea required rows="5" class="field mt-4" data-i18n-ph="fb_ph" placeholder="Что было удобно, чего не хватило?"></textarea>
+    <input type="email" class="field mt-3" data-i18n-ph="fb_mail" placeholder="E-mail для ответа (необязательно)">
+    <label class="flex gap-2 items-start text-xs text-muted mt-3"><input type="checkbox" required class="mt-0.5 accent-[var(--amber)]"> <span data-i18n="fb_consent">Согласен на обработку данных в соответствии с политикой конфиденциальности</span></label>
+    <button class="btn btn-primary mt-5 w-full justify-center" data-i18n="send">Отправить</button>
+    <p id="fbOk" class="hidden mt-4 text-teal text-sm font-semibold" data-i18n="fb_ok">Спасибо! Ваш отзыв передан сотрудникам архива.</p>
+  </form>
+</div>
+
+<!-- lightbox -->
+<div id="lightbox" class="modal !bg-black/90" role="dialog" aria-modal="true">
+  <button class="absolute top-4 right-4 iconbtn text-white" data-close aria-label="Закрыть">✕</button>
+  <div class="w-full h-full overflow-auto grid place-items-center"><img alt="" class="max-w-none w-[min(1200px,180vw)]" src="https://upload.wikimedia.org/wikipedia/commons/2/2c/%D0%9A%D0%B0%D1%80%D1%82%D0%B0_%D0%9A%D0%BE%D0%BB%D1%8B%D0%B2%D0%B0%D0%BD%D0%BE-%D0%9A%D1%83%D0%B7%D0%BD%D0%B5%D1%86%D0%BA%D0%BE%D0%B9_%D0%BB%D0%B8%D0%BD%D0%B8%D0%B8_1768_%D0%B3%D0%BE%D0%B4%D0%B0.jpg" loading="lazy"></div>
+</div>
+
+<!-- restricted doc modal -->
+<div id="closedModal" class="modal" role="dialog" aria-modal="true">
+  <div class="card w-full max-w-[480px] p-6 sm:p-8">
+    <div class="flex justify-between items-start gap-4"><span class="badge-closed" data-i18n="closed">Ограниченный доступ</span><button class="iconbtn" data-close aria-label="Закрыть">✕</button></div>
+    <h3 class="serif text-2xl font-semibold mt-4" data-i18n="closed_t">Личное дело, 1952 г.</h3>
+    <p class="mt-2"><span class="cipher text-danger">ф. 1466, оп. 2, д. 31</span></p>
+    <p class="text-muted text-sm mt-4" data-i18n="closed_txt">Документ содержит персональные данные. Скан не публикуется, а функции ИИ (расшифровка, краткое содержание, перевод) отключены на уровне кода: такие дела не передаются в модель.</p>
+    <button class="btn btn-ghost mt-5 opacity-50 cursor-not-allowed" disabled aria-disabled="true">✦ <span data-i18n="tab_ai">ИИ: кратко</span> — <span data-i18n="off">отключено</span></button>
+    <pre class="mono text-[11px] mt-5 p-3 rounded-lg bg-bg border border-line overflow-x-auto">if (doc.access !== "open") return aiDisabled(doc);</pre>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* ================= DATA ================= */
+const WM = (h, n, w) => `https://upload.wikimedia.org/wikipedia/commons/${w ? 'thumb/' : ''}${h}/${encodeURIComponent(n)}${w ? `/${w}px-${encodeURIComponent(n)}` : ''}`;
+const IMG = {
+  map: WM('2/2c','Карта_Колывано-Кузнецкой_линии_1768_года.jpg',500),
+  skalon: WM('b/b8','Скалонъ.png',500),
+  semi: WM('6/68','Semipalatinsk_1850.jpg'),
+  bazar: WM('1/11','Bazar_(i.e,_bazaar)_at_Semipalatinsk_(i.e,_Seme_i)_LCCN99615488.jpg',500),
+  k1: WM('2/29','Kazakhs_19th_Century_1.jpg',500),
+  k7: WM('8/86','Kazakhs_19th_Century_7.jpg',500),
+  k11: WM('d/d8','Kazakhs_19th_Century_11.jpg',500),
+  route: WM('7/7f','EXV1_D211_Map_of_route_from_Semipalatinsk_to_Altai.jpg',500),
+  kennan: WM('d/d6','Siberia_and_the_exile_system_(1891)_(14759868956).jpg',960),
+  pano: WM('a/ab','Панорама_города_Усть-Каменогорск.jpg',960),
+  irtysh: WM('0/08','На_Иртыше_Усть-Каменогорск_(4).jpg',500),
+  zyr: WM('c/c1','Zyryanovsk,_East_Kazakhstan_-_panoramio.jpg',500),
+};
+
+/* OCR-слой (демо hOCR): координаты строк в % от размера скана */
+const LINES = [
+  {id:'L1', box:[4,3,38,10.6], conf:.97,
+    ocr:'КАРТА КОЛЫВАНО—КУЗНЕЦКОЙ ЛИНІИ 1768 г.',
+    ru:'Карта Колывано-Кузнецкой линии, {d:1768} год',
+    kz:'Колыван-Кузнецк шебінің картасы, {d:1768} жыл',
+    en:'Map of the Kolyvan–Kuznetsk Line, {d:1768}', ents:[{t:'date',v:'1768'}]},
+  {id:'L2', box:[51.5,13.4,29,1.9], conf:.91,
+    ocr:'Укр. гор. Кузнецкъ', ru:'Укреплённый город {p:Кузнецк}', kz:'{p:Кузнецк} бекіністі қаласы', en:'Fortified town of {p:Kuznetsk}', ents:[]},
+  {id:'L3', box:[8.2,45,15,1.9], conf:.94,
+    ocr:'Барнаулъ', ru:'{p:Барнаул}', kz:'{p:Барнауыл}', en:'{p:Barnaul}', ents:[]},
+  {id:'L4', box:[51.5,42.7,19,1.7], conf:.89,
+    ocr:'Кр. Бійская', ru:'Крепость {p:Бийская}', kz:'{p:Бийск} бекінісі', en:'{p:Biysk} Fortress', ents:[]},
+  {id:'L5', box:[4.3,81.1,33,1.8], conf:.82,
+    ocr:'Рудн. Змѣиногорскій', ru:'{p:Змеиногорский} рудник', kz:'{p:Змеиногорск} кеніші', en:'{p:Zmeinogorsk} Mine', ents:[]},
+  {id:'L6', box:[7.8,77.9,31,1.8], conf:.86,
+    ocr:'Зав. Колыванской', ru:'{p:Колыванский} завод', kz:'{p:Колыван} зауыты', en:'{p:Kolyvan} Works', ents:[]},
+  {id:'L7', box:[66.8,87.6,26,1.8], conf:.88,
+    ocr:'Ред. Секисовскій', ru:'Редут {p:Секисовский}', kz:'{p:Секісовка} редуты', en:'{p:Sekisovka} Redoubt', place:{lat:50.37,lng:82.60,name:'Ред. Секисовский (1768)'}, ents:[]},
+  {id:'L8', box:[54.6,91.1,40,1.9], conf:.93,
+    ocr:'Кр. Усть-Каменогорская', ru:'Крепость {p:Усть-Каменогорская} (осн. {d:1720})', kz:'{p:Өскемен} бекінісі ({d:1720} ж. негізі қаланған)', en:'{p:Ust-Kamenogorsk} Fortress (founded {d:1720})', place:{lat:49.948,lng:82.628,name:'Кр. Усть-Каменогорская (1720)'}, person:true, ents:[]},
+  {id:'L9', box:[80.5,94.1,17,1.7], conf:.84,
+    ocr:'Р. Иртышъ', ru:'Река {p:Иртыш}', kz:'{p:Ертіс} өзені', en:'{p:Irtysh} River', place:{lat:49.98,lng:82.55,name:'р. Иртыш'}, ents:[]},
+  {id:'L10', box:[53.8,96.6,44,1.8], conf:.9,
+    ocr:'БУХТАРМИНСКАЯ ЛИНІЯ', ru:'{p:Бухтарминская} линия', kz:'{p:Бұқтырма} шебі', en:'{p:Bukhtarma} Line', place:{lat:49.62,lng:83.52,name:'Бухтарминская линия'}, ents:[]},
+];
+const AI_SUM = {
+  ru:[ ['Карта показывает систему укреплений 1768 года: крепости, форпосты, редуты и сигнальные маяки от Кузнецка до Иртыша.',['L1','L2']],
+       ['Южный узел линии — Усть-Каменогорская крепость; от неё на юго-восток уходит Бухтарминская линия.',['L8','L10']],
+       ['Рядом отмечены Колыванский завод и Змеиногорский рудник: линия охраняла горное производство Алтая.',['L6','L5']] ],
+  kz:[ ['Карта 1768 жылғы бекіністер жүйесін көрсетеді: Кузнецктен Ертіске дейінгі бекіністер, форпосттар, редуттар мен белгі маяктары.',['L1','L2']],
+       ['Шептің оңтүстік түйіні — Өскемен бекінісі; одан оңтүстік-шығысқа қарай Бұқтырма шебі басталады.',['L8','L10']],
+       ['Жанында Колыван зауыты мен Змеиногорск кеніші белгіленген: шеп Алтайдың тау-кен өндірісін қорғаған.',['L6','L5']] ],
+  en:[ ['The map shows the 1768 fortification system: fortresses, outposts, redoubts and signal beacons from Kuznetsk to the Irtysh.',['L1','L2']],
+       ['The southern node is the Ust-Kamenogorsk Fortress; the Bukhtarma Line runs south-east from it.',['L8','L10']],
+       ['The Kolyvan Works and Zmeinogorsk Mine are marked nearby: the line protected Altai mining.',['L6','L5']] ],
+};
+
+const BRANCHES = [
+  {id:'main', main:true, name:{ru:'Государственный архив ВКО (головной)',kz:'ШҚО Мемлекеттік архиві (бас ғимарат)',en:'State Archive of East Kazakhstan (HQ)'}, city:'Усть-Каменогорск', addr:'070004, ул. Головкова, 26/1', phones:['8 (7232) 25-59-76'], email:'arhiv-ukg@yandex.kz', hours:'пн–пт 9:00–18:00 · читальный зал 10:00–17:00', lat:49.9615, lng:82.6050},
+  {id:'uka', name:{ru:'Усть-Каменогорский филиал по личному составу',kz:'Өскемен филиалы (жеке құрам бойынша)',en:'Ust-Kamenogorsk Branch (personnel records)'}, city:'Усть-Каменогорск', addr:'070003, ул. Потанина, 12/2', phones:['8 (7232) 76-65-60','8 (7232) 76-81-64'], email:null, hours:'пн–пт 9:00–18:00, обед 13:00–14:00', lat:49.9505, lng:82.6450},
+  {id:'ridder', name:{ru:'Риддерский филиал',kz:'Риддер филиалы',en:'Ridder Branch'}, city:'Риддер', addr:'071300, ул. Ч. Валиханова, 44', phones:['8 (72336) 42-264','8 (72336) 45-786','8 (72336) 42-645'], email:'priem.arhiv-ridder44@yandex.kz', hours:'пн–пт 9:00–18:00', lat:50.3446, lng:83.5128},
+  {id:'altai', name:{ru:'Филиал Алтай (бывш. Зыряновский)',kz:'Алтай филиалы (бұрынғы Зырян)',en:'Altai Branch (former Zyryanovsk)'}, city:'Алтай', addr:'070804, ул. М. Горького, 33', phones:['8 (72335) 31-260','8 (72335) 62-888','8 (72335) 63-016'], email:'arhiv.altai@yandex.kz', hours:'приём директора: среда 9:00–18:00', lat:49.7280, lng:84.2730},
+  {id:'zaisan', name:{ru:'Зайсанский филиал',kz:'Зайсан филиалы',en:'Zaisan Branch'}, city:'Зайсан', addr:'070700, ул. Жангельдина, 52', phones:['8 (72340) 21-476','8 (72340) 21-221'], email:'qosarhivzaysan_1@mail.ru', hours:'пн–пт 9:00–18:00', lat:47.4700, lng:84.8700},
+];
+
+const NEWS = [
+  {d:'01.10.2026', t:'День пожилого человека', tag:'Мероприятие'},
+  {d:'21.09.2026', t:'«День открытых дверей»', tag:'Событие'},
+  {d:'18.09.2026', t:'«Архив и будущее поколение»', tag:'Образование'},
+  {d:'04.09.2026', t:'Экспозиционно-тематическая выставка', tag:'Выставка'},
+];
+
+const MASONRY = [
+  {k:'photo', img:IMG.kennan, t:'Вид города Усть-Каменогорска', y:'1885–1891', c:'ф. 3, оп. 1, д. 12', src:'Гравюра из книги Дж. Кеннана «Siberia and the Exile System», 1891'},
+  {k:'doc', img:IMG.skalon, t:'Аул в предгорьях: юрты, кочевье, быт', y:'XIX в.', c:'ф. 19, оп. 1, д. 4', src:'Рисунок тушью, альбом Скалона'},
+  {k:'photo', img:IMG.bazar, t:'Базар в Семипалатинске', y:'кон. XIX в.', c:'ф. 3, оп. 2, д. 41', src:'Library of Congress'},
+  {k:'closed'},
+  {k:'map', img:IMG.route, t:'Маршрут Семипалатинск — Алтай', y:'XIX в.', c:'ф. 5, оп. 1, д. 2', src:'Карта экспедиционного отчёта'},
+  {k:'photo', img:IMG.k1, t:'Казахи в праздничной одежде', y:'XIX в.', c:'ф. 3, оп. 3, д. 7', src:'Фотография, XIX в.'},
+  {k:'photo', img:IMG.semi, t:'Семипалатинск, панорама города', y:'XIX в.', c:'ф. 3, оп. 2, д. 3', src:'Фотография'},
+  {k:'photo', img:IMG.k11, t:'Портрет пастуха', y:'XIX в.', c:'ф. 3, оп. 3, д. 15', src:'Фотография, XIX в.'},
+];
+
+const PEOPLE = [
+  {n:'Белослюдов Андрей Фёдорович', r:'Краевед, собиратель истории Усть-Каменогорска', c:'Личный фонд семьи Белослюдовых', ini:'АБ', y:'XIX–XX вв.'},
+  {n:'Коншин Николай Яковлевич', r:'Исследователь Прииртышья, автор краеведческих работ', c:'Личный фонд Н. Я. Коншина', ini:'НК', y:'XIX–XX вв.'},
+  {n:'Алексеенко Николай Васильевич', r:'Историк, исследователь Восточного Казахстана', c:'ф. 1466', ini:'НА', y:'XX в.'},
+  {n:'Аксенов В. С.', r:'Фондообразователь: 67 единиц хранения', c:'ф. 1514, оп. 1 · 1956–2004', ini:'ВА', y:'1956–2004'},
+];
+const TIMELINE = [
+  {y:'1720', t:'Основана Усть-Каменогорская крепость', s:'Карта 1768 г., ф. 1, оп. 1, д. 7', hl:true},
+  {y:'1768', t:'Колывано-Кузнецкая линия укреплений', s:'ф. 1, оп. 1, д. 7'},
+  {y:'1868', t:'Усть-Каменогорск — уездный город Семипалатинской области', s:'ф. 2, оп. 1, д. 18'},
+  {y:'1932', t:'Образована Восточно-Казахстанская область', s:'ф. 6, оп. 1, д. 1'},
+  {y:'1940', t:'Создан Государственный архив области', s:'История архива, ф. 1, оп. 1, д. 1'},
+  {y:'1941', t:'Эвакуированные предприятия и мобилизация', s:'Выставка «ВКО в годы ВОВ»'},
+];
+
+const FILM1 = [
+  {img:IMG.map, cap:'1720 · Крепость на Иртыше', c:'ф. 1, оп. 1, д. 7'},
+  {text:true, q:'Крепость поставили там, где Ульба впадает в Иртыш, а Иртыш выходит из «каменных гор» — отсюда и название города.', cap:'Глава 1 · Основание'},
+  {img:IMG.kennan, cap:'1891 · Город глазами путешественника', c:'ф. 3, оп. 1, д. 12'},
+  {img:IMG.route, cap:'XIX в. · Дорога на Алтай', c:'ф. 5, оп. 1, д. 2'},
+  {img:IMG.irtysh, cap:'Сегодня · Набережная Иртыша', c:'фото: Wikimedia Commons'},
+  {img:IMG.pano, cap:'Сегодня · Панорама города', c:'фото: Wikimedia Commons'},
+];
+const FILM2 = [
+  {paper:true, h:'ПРИКАЗ № 214', b:'по Усть-Каменогорскому горвоенкомату\n\n23 июня 1941 г.\n\nО призыве военнообязанных\n1905–1918 гг. рождения…', cap:'1941 · Мобилизация', c:'ф. 1129, оп. 1, д. 3'},
+  {paper:true, h:'ПИСЬМО С ФРОНТА', b:'Здравствуйте, мама и сестрёнка!\nПишу вам из-под Москвы.\nУ нас всё хорошо, бьём врага…\n\n— Зайсан, 1942', cap:'1942 · Письма домой', c:'ф. 207, оп. 3, д. 88'},
+  {text:true, q:'В область эвакуированы предприятия и тысячи людей. Город работал для фронта круглосуточно.', cap:'Глава 3 · Тыл'},
+  {paper:true, h:'КНИГА ПАМЯТИ', b:'ФИО: ________\nГод и место рождения: ____\nВоенкомат: Зайсанский\nДата гибели: ____\nМесто захоронения: ____', cap:'Книга памяти ВКО', c:'база данных архива'},
+  {paper:true, h:'НАГРАДНОЙ ЛИСТ', b:'Фамилия, имя, отчество\n_______________________\nГод рождения _______\nКраткое изложение подвига…', cap:'1944 · Награды земляков', c:'ф. 1129, оп. 2, д. 15'},
+];
+const PIPE = [
+  ['01','Хранилище','Дело выдаётся из картонажа по шифру, проверяется физическое состояние.'],
+  ['02','Сканирование','600 dpi, цветной мастер-файл TIFF + веб-копия для сайта.'],
+  ['03','OCR-слой','Tesseract (kaz+rus) создаёт hOCR: каждая строка получает координаты на скане.'],
+  ['04','Проверка архивистом','Сотрудник сверяет расшифровку, имена и даты; ИИ-перевод помечается как машинный.'],
+  ['05','Публикация','Лист выходит на сайт с шифром и статусом доступа. Закрытые дела ИИ не видит.'],
+];
+const FAQ = [
+  ['Как пользоваться электронным каталогом','Ищите словами или по шифру. Фильтры по годам, фондам и филиалам — после первого поиска.'],
+  ['Фонд, опись, дело: как читать шифр','«ф. 1514, оп. 1, д. 7» — фонд 1514, опись 1, дело 7. Шифр однозначно указывает документ.'],
+  ['Какие материалы открыты на сайте','Опубликованные сканы, описи фондов, онлайн-выставки, личные фонды и Книга памяти.'],
+  ['Где найти сведения о филиалах','В разделе «Филиалы и контакты»: адрес, телефоны, часы и маршрут на карте.'],
+];
+
+/* ================= I18N ================= */
+const I18N = {
+  ru:{},
+  kz:{brand_s:'ШҚО архиві',brand:'ШҚО Мемлекеттік архиві',brand_sub:'Шығыс Қазақстан облысы · 1940 жылдан',nav_about:'Архив туралы',nav_catalog:'Қорлар мен каталог',nav_history:'Цифрлық тарих',nav_exh:'Көрмелер',nav_news:'Жаңалықтар',nav_branches:'Филиалдар мен байланыс',nav_faq:'Жиі қойылатын сұрақтар',ns_fonds:'Қорлар',ns_hist:'Тарих',ns_br:'Филиалдар',btn_catalog:'Электрондық каталог',a11y:'Ірі қаріп',strip_hours:'Дс–жм 9:00–18:00 · оқу залы 10:00–17:00',strip_short:'Өскемен, Головков к-сі, 26/1',
+    dod:'Күн құжаты',hero_title:'Оқылатын архив',hero_lead:'Шығыс Қазақстан облысының Мемлекеттік архиві өңірдің XVIII ғасырдан бергі тарихын сақтайды. Жарияланған әр скан — тірі мәтін: жолдар оқылады, жерлер картаға, күндер хронологияға апарады.',hint_hover:'Сканның жолына меңзерді апарыңыз',hint_tap:'Сканның жолын басыңыз',st_fonds:'Қор',st_personal:'Жеке қор',st_branches:'Филиал',st_note:'Сандар — демо, архив деректерімен нақтыланады',
+    scan_src:'1768 ж. картаның баспа көшірмесі · Скан: Wikimedia Commons, қоғамдық игілік',doc_title:'Колыван-Кузнецк шебінің картасы',doc_date:'1768 жыл',doc_kind:'картографиялық құжат',open:'Ашық қолжетімділік',demo_cipher:'демо-шифр',tab_tr:'Транскрипция',tab_ai:'ЖИ: қысқаша',open_cat:'Каталогта ашу',copy:'Шифрды көшіру',
+    activity:'Біз Шығыс Қазақстанның құжаттарын жинаймыз, сақтаймыз және ашамыз: XVIII ғасырдағы бекініс шептерінен замандастарымыздың жеке қорларына дейін. Сайт ақпараттық: мұнда оқуға, іздеуге және бөлісуге болады.',q_catalog:'Каталог',q_exh:'Көрмелер',q_br:'Филиалдар',
+    cat_eyebrow:'Электрондық каталог',cat_title:'Өз сөзіңізбен сұраңыз',cat_lead:'Қор нөмірін білу міндетті емес. Не іздейтініңізді жазыңыз — іздеу тегін кез келген жазылуда, қазақ, орыс немесе ағылшын тілінде түсініп, іс шифрын көрсетеді.',cat_ph:'Мысалы: Зайсаннан майдан хаттары',find:'Іздеу',how_struct:'Каталог құрылымы:',fond:'қор',opis:'тізімдеме',delo:'іс',list:'сканы бар парақ',adv:'Кеңейтілген іздеу және қорлар ағашы →',
+    exh_eyebrow:'Онлайн-көрмелер',exh_title:'Таспа сияқты парақталатын көрмелер',exh_lead:'Әр кадр — шифры бар құжат. Көрмені толық экранда ашып, тараулар бойынша парақтаңыз.',exh1:'Өскемен: архив құжаттарындағы қала тарихы',exh1_meta:'7 тарау · 1720–2026',exh2:'Ұлы Отан соғысы жылдарындағы Шығыс Қазақстан',exh2_meta:'5 тарау · 1941–1945',exh_open:'Көрмені көру',
+    hist_eyebrow:'Құжаттардағы тарих',hist_title:'Қорлардан сегіз олжа',f_all:'Барлығы',f_photo:'Фото',f_map:'Карталар',f_doc:'Құжаттар',ppl_eyebrow:'Адамдар мен оқиғалар',ppl_title:'Жеке қорлар: өлке үні',tl_eyebrow:'Хронология',tl_title:'Өңірдің алты күні',
+    br_eyebrow:'Біздің филиалдар',br_title:'Архив жақын: Өскемен, Риддер, Алтай, Зайсан',near:'Маған ең жақыны',map_note:'Координаттар шамамен. Қызыл пунктир — күн құжатындағы жерлер.',
+    news_eyebrow:'Жаңалықтар мен оқиғалар',news_title:'Архивте не болып жатыр',all_news:'Барлық жаңалықтар →',use_eyebrow:'Пайдалы ақпарат',use_title:'Құжат қоймадан сайтқа қалай жетеді',use_lead:'Әр парақтың жолын ашық көрсетеміз. ЖИ оқуға көмектеседі, бірақ тек адам жариялайды, ал шектеулі құжаттарды ЖИ мүлдем өңдемейді.',
+    soc_eyebrow:'Әлеуметтік желілер',soc_title:'Күн құжаты — күн сайын таңертең',soc_note:'Аккаунт мекенжайлары — демо: архивтің әзірге ресми әлеуметтік желілері жоқ.',fb_eyebrow:'Пікірлер мен ұсыныстар',fb_title:'Архив сайты қандай болуы керек? Бізге айтыңыз',fb_lead:'Пікірді, ұсынысты немесе тілекті архив қызметкерлері оқиды. Бұл өтініш те, қызметке тапсырыс та емес.',fb_btn:'Пікір қалдыру',fb_link:'Пікір немесе ұсыныс',
+    full_name:'ШҚО цифрландыру және архивтер басқармасының «Мемлекеттік архиві» КММ',addr:'ҚР, Өскемен қ., Головков к-сі, 26/1',reception:'қабылдау бөлмесі, факс',hours_t:'Жұмыс уақыты',hours1:'Дс–жм 9:00–18:00',hours2:'Оқу залы: дс–жм 10:00–17:00',hours3:'№ 2 оқу залы: Крылов к-сі, 39 · 8 (7232) 25-13-47',gov_t:'Мемлекеттік ресурстар',soc_t:'Әлеуметтік желілер мен кері байланыс',copy_r:'ШҚО Мемлекеттік архиві. Материалдарды шифрға сілтеме жасай отырып коммерциялық емес мақсатта пайдалануға болады.',privacy:'Құпиялылық саясаты',a11y_v:'Нашар көретіндерге арналған нұсқа',
+    ai_btn:'ЖИ-көмекші',ai_title:'Архивтің ЖИ-көмекшісі',ai_sub:'Тек жарияланған материалдар бойынша, әрдайым шифрға сілтемемен жауап береді',ai_ph:'Тарих немесе қорлар туралы сұраңыз…',t_review:'Пікір',t_idea:'Ұсыныс',t_wish:'Тілек',fb_ph:'Не ыңғайлы болды, не жетпеді?',fb_mail:'Жауап үшін e-mail (міндетті емес)',fb_consent:'Құпиялылық саясатына сәйкес деректерді өңдеуге келісемін',send:'Жіберу',fb_ok:'Рақмет! Пікіріңіз архив қызметкерлеріне жіберілді.',closed:'Шектеулі қолжетімділік',closed_t:'Жеке іс, 1952 ж.',closed_txt:'Құжатта дербес деректер бар. Скан жарияланбайды, ал ЖИ функциялары код деңгейінде өшірілген.',off:'өшірілген',
+    tr_pick:'Сканнан жолды таңдаңыз — OCR-қабатынан транскрипция және аударма шығады.',tr_ocr:'OCR-қабат (Tesseract hOCR)',tr_modern:'Қазіргі оқылуы',tr_mt:'Машиналық аударма, қызметкер тексеруде',tr_conf:'сенімділік',ai_head:'Негізгі үш тезис. Сілтемені бассаңыз — сканда жол жанады.',ai_warn:'ЖИ жасаған қорытынды. Түпнұсқа — скан.',related:'Құжатпен байланысты'},
+  en:{brand_s:'EKR State Archive',brand:'State Archive of East Kazakhstan',brand_sub:'East Kazakhstan Region · since 1940',nav_about:'About',nav_catalog:'Fonds & Catalogue',nav_history:'Digital History',nav_exh:'Exhibitions',nav_news:'News',nav_branches:'Branches & Contacts',nav_faq:'FAQ',ns_fonds:'Fonds',ns_hist:'History',ns_br:'Branches',btn_catalog:'Online Catalogue',a11y:'Large text',strip_hours:'Mon–Fri 9:00–18:00 · reading room 10:00–17:00',strip_short:'Ust-Kamenogorsk, 26/1 Golovkov St',
+    dod:'Document of the day',hero_title:'An archive you can read',hero_lead:'The State Archive of East Kazakhstan Region keeps the region’s history from the 18th century on. Every published scan is living text: lines are readable, places lead to the map, dates to the timeline.',hint_hover:'Hover over a line of the scan',hint_tap:'Tap a line of the scan',st_fonds:'Fonds',st_personal:'Personal fonds',st_branches:'Branches',st_note:'Figures are demo values, to be confirmed by the archive',
+    scan_src:'Printed reproduction of the 1768 map · Scan: Wikimedia Commons, public domain',doc_title:'Map of the Kolyvan–Kuznetsk Line',doc_date:'1768',doc_kind:'cartographic document',open:'Open access',demo_cipher:'demo reference',tab_tr:'Transcript',tab_ai:'AI: summary',open_cat:'Open in catalogue',copy:'Copy reference',
+    activity:'We collect, preserve and open the documents of East Kazakhstan, from 18th-century fortress lines to the personal papers of our contemporaries. This site is informational: read, search and share.',q_catalog:'Catalogue',q_exh:'Exhibitions',q_br:'Branches',
+    cat_eyebrow:'Online catalogue',cat_title:'Ask in your own words',cat_lead:'No need to know a fond number. Describe what you are looking for — search understands surnames in any spelling, in Kazakh, Russian or English, and shows the file reference.',cat_ph:'e.g. front-line letters from Zaisan',find:'Search',how_struct:'How the catalogue works:',fond:'fond',opis:'inventory',delo:'file',list:'page with scan',adv:'Advanced search and fond tree →',
+    exh_eyebrow:'Online exhibitions',exh_title:'Exhibitions that scroll like film',exh_lead:'Every frame is a document with a reference. Open full screen and move through the chapters.',exh1:'Ust-Kamenogorsk: the city’s history in archival documents',exh1_meta:'7 chapters · 1720–2026',exh2:'East Kazakhstan in the Great Patriotic War',exh2_meta:'5 chapters · 1941–1945',exh_open:'View exhibition',
+    hist_eyebrow:'History in documents',hist_title:'Eight finds from the fonds',f_all:'All',f_photo:'Photos',f_map:'Maps',f_doc:'Documents',ppl_eyebrow:'People & events',ppl_title:'Personal fonds: voices of the region',tl_eyebrow:'Timeline',tl_title:'Six dates of the region',
+    br_eyebrow:'Our branches',br_title:'The archive near you: Ust-Kamenogorsk, Ridder, Altai, Zaisan',near:'Nearest to me',map_note:'Coordinates are approximate. Red dashed pins are places from the document of the day.',
+    news_eyebrow:'News & events',news_title:'What’s on at the archive',all_news:'All news →',use_eyebrow:'Useful information',use_title:'How a document travels from storage to the website',use_lead:'We show each page’s path openly. AI helps you read, but only people publish — and restricted files are never processed by AI.',
+    soc_eyebrow:'Social media',soc_title:'Document of the day, every morning in your feed',soc_note:'Account handles are demo: the archive has no official social accounts yet.',fb_eyebrow:'Feedback & suggestions',fb_title:'What should the archive’s website be? Tell us',fb_lead:'Reviews, suggestions and wishes are read by archive staff. This is not an application for a service.',fb_btn:'Leave feedback',fb_link:'Feedback or suggestion',
+    full_name:'State Institution “State Archive” of the Department of Digitalization and Archives of East Kazakhstan Region',addr:'Kazakhstan, Ust-Kamenogorsk, 26/1 Golovkov St',reception:'reception, fax',hours_t:'Opening hours',hours1:'Mon–Fri 9:00–18:00',hours2:'Reading room: Mon–Fri 10:00–17:00',hours3:'Reading room 2: 39 Krylov St · 8 (7232) 25-13-47',gov_t:'Government resources',soc_t:'Social media & feedback',copy_r:'State Archive of East Kazakhstan. Materials may be used non-commercially with a reference to the file.',privacy:'Privacy policy',a11y_v:'Low-vision version',
+    ai_btn:'AI assistant',ai_title:'Archive AI assistant',ai_sub:'Answers only from published materials, always with a file reference',ai_ph:'Ask about history or the fonds…',t_review:'Review',t_idea:'Suggestion',t_wish:'Wish',fb_ph:'What worked, what was missing?',fb_mail:'E-mail for a reply (optional)',fb_consent:'I agree to data processing under the privacy policy',send:'Send',fb_ok:'Thank you! Your feedback has been passed to the archive staff.',closed:'Restricted access',closed_t:'Personnel file, 1952',closed_txt:'Contains personal data. The scan is not published and AI features are disabled at code level.',off:'disabled',
+    tr_pick:'Pick a line on the scan to see the OCR transcript and translation.',tr_ocr:'OCR layer (Tesseract hOCR)',tr_modern:'Modern reading',tr_mt:'Machine translation, being checked by staff',tr_conf:'confidence',ai_head:'Three key points. Click a footnote to light up the line on the scan.',ai_warn:'AI-generated summary. The scan is the original.',related:'Related to this document'},
+};
+let LANG = 'ru';
+const RU_EXTRA = {tr_pick:'Выберите строку на скане — появится расшифровка из OCR-слоя и перевод.',tr_ocr:'OCR-слой (Tesseract hOCR)',tr_modern:'Современное чтение',tr_mt:'Машинный перевод, проверяется сотрудником',tr_conf:'уверенность',ai_head:'Три главных тезиса. Нажмите на сноску — строка подсветится на скане.',ai_warn:'Краткое содержание создано ИИ. Первоисточник — скан.',related:'Связано с документом',closed_txt:'Документ содержит персональные данные. Скан не публикуется, а функции ИИ (расшифровка, краткое содержание, перевод) отключены на уровне кода: такие дела не передаются в модель.'};
+document.querySelectorAll('[data-i18n]').forEach(el => { I18N.ru[el.dataset.i18n] ??= el.textContent.trim(); });
+document.querySelectorAll('[data-i18n-ph]').forEach(el => { I18N.ru[el.dataset.i18nPh] ??= el.placeholder; });
+Object.assign(I18N.ru, RU_EXTRA, {});
+const t = k => (I18N[LANG][k] ?? I18N.ru[k] ?? k);
+function applyLang(l){
+  LANG = l; document.documentElement.lang = l === 'kz' ? 'kk' : l;
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+  document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === l));
+  renderPanel(); renderBranches(); renderAIChips();
+}
+document.querySelectorAll('[data-lang]').forEach(b => b.addEventListener('click', () => applyLang(b.dataset.lang)));
+
+/* ================= THEME ================= */
+{ const vh = new URLSearchParams(location.search).get('vh'); if (vh) document.documentElement.style.setProperty('--vh', vh + 'px'); }
+const root = document.documentElement;
+function setTheme(th){ root.dataset.theme = th; document.querySelector('.i-moon').classList.toggle('hidden', th==='dark'); document.querySelector('.i-sun').classList.toggle('hidden', th!=='dark'); try{localStorage.setItem('gavko-theme',th)}catch(e){} }
+const QS = new URLSearchParams(location.search);
+setTheme(QS.get('theme') || (()=>{try{return localStorage.getItem('gavko-theme')}catch(e){}})() || 'light');
+document.getElementById('themeBtn').onclick = () => setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+document.getElementById('a11yBtn').onclick = () => document.body.classList.toggle('large-type');
+
+/* ================= HEADER ================= */
+const hdr = document.getElementById('hdr');
+const onScroll = () => hdr.classList.toggle('solid', window.scrollY > window.innerHeight * .82 || document.getElementById('drawer').classList.contains('open'));
+window.addEventListener('scroll', onScroll, {passive:true}); onScroll();
+const burger = document.getElementById('burger');
+burger.onclick = () => { const d = document.getElementById('drawer'); d.classList.toggle('open'); burger.setAttribute('aria-expanded', d.classList.contains('open')); onScroll(); };
+document.querySelectorAll('#drawer a').forEach(a => a.addEventListener('click', () => { document.getElementById('drawer').classList.remove('open'); onScroll(); }));
+document.querySelectorAll('[data-focus-search]').forEach(a => a.addEventListener('click', () => setTimeout(() => document.getElementById('q').focus({preventScroll:true}), 500)));
+
+/* ================= LIVING DOCUMENT ================= */
+const scan = document.getElementById('scan'), tip = document.getElementById('tip');
+let active = null, tab = 'tr', userPick = false;
+const esc = s => s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function markup(str, line){
+  return esc(str).replace(/\{p:([^}]+)\}/g, (_, v) => `<span class="ent" data-place="${line.id}" title="На карте">${v}</span>`)
+                 .replace(/\{d:([^}]+)\}/g, (_, v) => `<span class="ent date" data-date="${v}" title="В хронологии">${v}</span>`);
+}
+const plain = s => s.replace(/\{[pd]:([^}]+)\}/g, '$1');
+LINES.forEach((L, i) => {
+  const b = document.createElement('button');
+  b.className = 'spot' + (L.place ? ' place' : ''); b.dataset.id = L.id;
+  const [l, tp, w, h] = L.box; Object.assign(b.style, {left:l+'%', top:tp+'%', width:w+'%', height:h+'%'});
+  b.setAttribute('aria-label', 'Строка: ' + plain(L.ru));
+  b.addEventListener('mouseenter', () => { tip.innerHTML = `<div class="mono text-[10px] text-[#A6A29A]">OCR · ${Math.round(L.conf*100)}%</div><div class="serif">${esc(L.ocr)}</div><div class="text-[#5CC6C0] text-[12px] mt-0.5">${esc(plain(L[LANG]))}</div>`;
+    const sr = scan.getBoundingClientRect(), br = b.getBoundingClientRect();
+    let x = br.left - sr.left, y = br.bottom - sr.top + 8; tip.style.left = Math.max(-40, Math.min(x, sr.width - 200)) + 'px'; tip.style.top = (br.top - sr.top > sr.height*.8 ? br.top - sr.top - 70 : y) + 'px'; tip.classList.add('show'); });
+  b.addEventListener('mouseleave', () => tip.classList.remove('show'));
+  b.addEventListener('click', () => { userPick = true; selectLine(L.id, true); });
+  scan.appendChild(b);
+});
+function selectLine(id, switchTab){
+  active = id; if (switchTab) tab = 'tr';
+  scan.querySelectorAll('.spot').forEach(s => s.classList.toggle('active', s.dataset.id === id));
+  renderPanel();
+}
+function renderPanel(){
+  const body = document.getElementById('panelBody');
+  document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === tab));
+  if (tab === 'ai'){
+    body.innerHTML = `<p class="muted text-[12.5px]">${t('ai_head')}</p><ol class="mt-3 grid gap-3">` + AI_SUM[LANG].map((p, i) => `<li class="flex gap-3"><span class="serif text-[#D9A441] text-lg leading-none">${i+1}</span><span>${esc(p[0])}${p[1].map(r => `<button class="fn" data-fn="${r}">${r.slice(1)}</button>`).join('')}</span></li>`).join('') + `</ol><p class="mt-4 text-[11px] muted flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-[#D9A441]"></span>${t('ai_warn')} · <span class="mono">Claude · ${LANG.toUpperCase()}</span></p>`;
+  } else if (!active){
+    body.innerHTML = `<p class="muted">${t('tr_pick')}</p><ul class="mt-3 grid gap-1">` + LINES.slice(0,6).map(L => `<li><button class="w-full text-left px-2 py-1.5 rounded-lg hover:bg-white/5 flex justify-between gap-3" data-pick="${L.id}"><span class="serif">${esc(L.ocr)}</span><span class="mono text-[10px] muted">${L.id}</span></button></li>`).join('') + `</ul>`;
+  } else {
+    const L = LINES.find(x => x.id === active);
+    const order = [LANG, ...['kz','ru','en'].filter(x => x !== LANG)];
+    body.innerHTML = `<div class="${userPick ? 'fade-in' : ''}"><p class="mono text-[10px] uppercase tracking-widest muted">${t('tr_ocr')} · ${L.id} · ${t('tr_conf')} ${Math.round(L.conf*100)}%</p>
+      <p class="serif text-[1.15rem] mt-1.5">${esc(L.ocr)}</p>
+      <p class="mono text-[10px] uppercase tracking-widest muted mt-4">${t('tr_modern')}</p>
+      <div class="mt-1.5 grid gap-1.5">${order.map((lg, i) => `<p class="${i ? 'muted text-[13px]' : 'text-[15px]'}"><span class="mono text-[10px] mr-2 ${i ? '' : 'text-[#D9A441]'}">${lg.toUpperCase()}</span>${markup(L[lg], L)}</p>`).join('')}</div>
+      <p class="mt-3 inline-flex items-center gap-1.5 text-[11px] text-[#E06A60]/90 border border-[#E06A60]/30 rounded-full px-2 py-0.5">⚠ ${t('tr_mt')}</p>
+      ${L.person ? `<p class="mt-3 text-[12px] muted">${t('related')}: <a href="#people" class="ent person">Белослюдов А. Ф.</a>, <a href="#people" class="ent person">Алексеенко Н. В.</a></p>` : ''}</div>`;
+  }
+  body.querySelectorAll('[data-pick]').forEach(b => b.onclick = () => selectLine(b.dataset.pick));
+  body.querySelectorAll('[data-fn]').forEach(b => b.onclick = () => { scan.querySelectorAll('.spot').forEach(s => s.classList.toggle('active', s.dataset.id === b.dataset.fn)); const sp = scan.querySelector(`[data-id="${b.dataset.fn}"]`); if (window.innerWidth < 1024) sp.scrollIntoView({behavior:'smooth', block:'center'}); });
+  body.querySelectorAll('[data-place]').forEach(e => e.onclick = () => { const L = LINES.find(x => x.id === e.dataset.place); goToPlace(L); });
+  body.querySelectorAll('[data-date]').forEach(e => e.onclick = () => { document.getElementById('people').scrollIntoView({behavior:'smooth'}); const li = document.querySelector(`#timeline [data-y="${e.dataset.date}"]`); if (li){ li.classList.add('hl'); li.animate([{transform:'translateX(8px)'},{transform:'none'}],{duration:600, delay:700}); } });
+}
+document.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { tab = b.dataset.tab; renderPanel(); });
+document.getElementById('copyCipher').onclick = e => { navigator.clipboard?.writeText('ГАВКО, ф. 1, оп. 1, д. 7'); const el = e.currentTarget; const o = el.textContent; el.textContent = '✓ ГАВКО, ф. 1, оп. 1, д. 7'; setTimeout(() => el.textContent = o, 1600); };
+document.getElementById('openInCatalog').onclick = () => { document.getElementById('q').value = 'ф. 1, оп. 1, д. 7'; setTimeout(runSearch, 400); };
+document.getElementById('zoomBtn').onclick = () => document.getElementById('lightbox').classList.add('open');
+// intro: OCR sweep + reveal of line boxes
+window.addEventListener('load', () => { const sw = document.getElementById('sweep'); sw.classList.add('run'); setTimeout(() => { scan.classList.add('reveal'); setTimeout(() => scan.classList.remove('reveal'), 2600); }, 2700); });
+
+/* ================= SEARCH ================= */
+const SEARCH_DB = [
+  {t:'Карта Колывано-Кузнецкой линии', y:'1768', c:'ф. 1, оп. 1, д. 7', k:'крепост 1768 карта усть-каменогорск өскемен линия ф. 1', a:'open'},
+  {t:'План Усть-Каменогорской крепости и форштадта', y:'1803', c:'ф. 1, оп. 1, д. 22', k:'крепост усть-каменогорск өскемен план', a:'open'},
+  {t:'Фотографии старого Усть-Каменогорска (семья Белослюдовых)', y:'1900–1930', c:'ф. 1287, оп. 1, д. 3', k:'белослюдов фото усть-каменогорск өскемен тарихы', a:'open'},
+  {t:'Списки мобилизованных, Зайсанский райвоенкомат', y:'1942', c:'ф. 1129, оп. 1, д. 41', k:'зайсан 1942 мобилизация письма фронт', a:'closed'},
+  {t:'Письма с фронта (личный фонд)', y:'1942–1944', c:'ф. 207, оп. 3, д. 88', k:'письма фронт зайсан 1942', a:'open'},
+  {t:'Отчёт Риддерского рудоуправления', y:'1934', c:'ф. 408, оп. 2, д. 17', k:'ridder риддер рудник mines 1930', a:'open'},
+];
+function runSearch(){
+  const q = document.getElementById('q').value.toLowerCase().trim(); const box = document.getElementById('results');
+  if (!q){ box.innerHTML = ''; return; }
+  const words = q.replace(/[«»"]/g,'').split(/\s+/).map(w => w.slice(0, Math.max(4, w.length - 2)));
+  let res = SEARCH_DB.map(r => ({r, s: words.filter(w => (r.t + ' ' + r.k + ' ' + r.c).toLowerCase().includes(w)).length})).filter(x => x.s).sort((a, b) => b.s - a.s).map(x => x.r);
+  if (!res.length) res = SEARCH_DB.slice(0, 2);
+  box.innerHTML = `<p class="text-sm text-muted">${res.length} · <span class="mono text-xs">демо-результаты</span></p>` + res.slice(0, 4).map(r => `<a href="#catalog" class="card p-4 flex flex-wrap items-center justify-between gap-3 hover:border-amber fade-in">
+      <span><span class="serif font-semibold">${r.t}</span> <span class="text-muted text-sm">· ${r.y}</span></span>
+      <span class="flex items-center gap-2"><span class="cipher text-amber">${r.c}</span>${r.a === 'open' ? `<span class="badge-open">${t('open')}</span>` : `<span class="badge-closed">${t('closed')}</span>`}</span></a>`).join('');
+}
+document.getElementById('searchForm').onsubmit = e => { e.preventDefault(); runSearch(); };
+document.querySelectorAll('#examples [data-q]').forEach(b => b.onclick = () => { document.getElementById('q').value = b.dataset.q; runSearch(); });
+
+/* ================= FILMS ================= */
+function frameHTML(f){
+  if (f.img) return `<figure class="frame"><img src="${f.img}" alt="${f.cap}" loading="lazy"><figcaption><span class="block">${f.cap}</span><span class="mono text-[10px] text-[#D9A441]">${f.c}</span></figcaption></figure>`;
+  if (f.paper) return `<figure class="frame grid place-items-center px-6" style="background:#1B1A17"><div class="paper"><div class="text-center font-medium tracking-widest text-[.72rem] mb-2">${f.h}</div><div style="white-space:pre-line">${f.b}</div><div class="absolute right-3 bottom-3 w-14 h-14 rounded-full border-2 border-[#8A1E1E]/50 rotate-[-12deg] grid place-items-center text-[8px] text-[#8A1E1E]/70 text-center leading-tight">ДЕМО<br>КОПИЯ</div></div><figcaption><span class="block">${f.cap}</span><span class="mono text-[10px] text-[#D9A441]">${f.c}</span></figcaption></figure>`;
+  return `<figure class="frame text"><p class="serif text-[1.15rem] leading-snug italic">${f.q}</p><span class="mono text-[10px] text-[#D9A441] uppercase tracking-widest">${f.cap}</span></figure>`;
+}
+document.getElementById('r1').innerHTML = FILM1.map(frameHTML).join('');
+document.getElementById('r2').innerHTML = FILM2.map(frameHTML).join('');
+document.querySelectorAll('[data-reel]').forEach(b => b.onclick = () => document.getElementById(b.dataset.reel).scrollBy({left: +b.dataset.dir * 340, behavior:'smooth'}));
+
+/* ================= MASONRY ================= */
+function renderMasonry(f = 'all'){
+  document.getElementById('masonry').innerHTML = MASONRY.filter(m => f === 'all' || m.k === f || (f === 'doc' && m.k === 'closed')).map(m => m.k === 'closed' ?
+    `<article class="mitem card overflow-hidden cursor-pointer" data-closed tabindex="0"><div class="aspect-[3/4] grid place-items-center relative" style="background:repeating-linear-gradient(45deg,var(--bg) 0 10px,var(--line) 10px 11px)"><div class="text-center px-6"><svg class="mx-auto text-danger" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><p class="text-sm mt-3 text-muted">Скан не публикуется: персональные данные</p></div></div>
+      <div class="p-4"><div class="flex items-center justify-between gap-2"><span class="badge-closed">${t('closed')}</span><span class="text-xs text-muted">1952</span></div><h3 class="serif font-semibold mt-2 leading-snug">Личное дело работника Риддерского комбината</h3><p class="mt-2 flex flex-wrap gap-2 items-center"><span class="cipher text-danger">ф. 1466, оп. 2, д. 31</span><span class="text-[11px] text-muted">ИИ отключён</span></p></div></article>` :
+    `<article class="mitem card overflow-hidden"><img src="${m.img}" alt="${m.t}" loading="lazy"><div class="p-4"><div class="flex items-center justify-between gap-2"><span class="badge-open">${t('open')}</span><span class="text-xs text-muted">${m.y}</span></div><h3 class="serif font-semibold mt-2 leading-snug">${m.t}</h3><p class="text-xs text-muted mt-1">${m.src}</p><p class="mt-2"><span class="cipher text-amber">${m.c}</span></p></div></article>`).join('');
+  document.querySelectorAll('[data-closed]').forEach(el => el.onclick = () => document.getElementById('closedModal').classList.add('open'));
+}
+renderMasonry();
+document.querySelectorAll('#histFilter [data-f]').forEach(b => b.onclick = () => { document.querySelectorAll('#histFilter [data-f]').forEach(x => x.setAttribute('aria-pressed', x === b)); renderMasonry(b.dataset.f); });
+
+/* ================= PEOPLE / TIMELINE ================= */
+document.getElementById('people-grid').innerHTML = PEOPLE.map((p, i) => `<article class="card p-5 flex gap-4 items-start hover:border-amber transition">
+  <div class="shrink-0 w-14 h-[72px] rounded-md grid place-items-center serif text-lg" style="background:linear-gradient(160deg,var(--amber-soft),var(--teal-soft));border:1px solid var(--line)">${p.ini}</div>
+  <div class="min-w-0"><h3 class="serif font-semibold leading-snug">${p.n}</h3><p class="text-sm text-muted mt-1">${p.r}</p><p class="mt-2 flex flex-wrap items-center gap-2"><span class="cipher text-amber">${p.c}</span><span class="text-xs text-muted">${p.y}</span></p></div></article>`).join('');
+document.getElementById('timeline').innerHTML = TIMELINE.map(e => `<li data-y="${e.y}" class="${e.hl ? 'hl' : ''}"><p class="serif text-2xl font-semibold text-amber leading-none">${e.y}</p><p class="mt-1.5 font-medium">${e.t}</p><p class="text-xs text-muted mt-1">Источник: <span class="mono">${e.s}</span></p></li>`).join('');
+
+/* ================= NEWS / PIPE / FAQ ================= */
+document.getElementById('newsGrid').innerHTML = NEWS.map((n, i) => `<a href="#news" class="card p-5 flex flex-col min-h-[210px] hover:border-amber transition group">
+  <div class="flex justify-between items-center text-xs"><span class="mono text-muted">${n.d}</span><span class="text-teal font-semibold">${n.tag}</span></div>
+  <h3 class="serif text-lg font-semibold mt-auto pt-10 leading-snug group-hover:text-amber transition">${n.t}</h3>
+  <span class="text-sm text-muted mt-3">Читать →</span></a>`).join('');
+document.getElementById('pipeline').innerHTML = PIPE.map((p, i) => `<li class="card p-5 relative"><span class="mono text-xs text-amber">${p[0]}</span><h3 class="serif font-semibold text-lg mt-2">${p[1]}</h3><p class="text-sm text-muted mt-2 leading-relaxed">${p[2]}</p>${i < 4 ? '<span class="hidden lg:block absolute -right-3 top-1/2 -translate-y-1/2 z-10 w-6 h-6 rounded-full bg-bg border border-line text-center text-xs leading-6 text-muted">→</span>' : ''}</li>`).join('');
+document.getElementById('faq').innerHTML = FAQ.map((f, i) => `<details class="card p-5 group" ${i === 0 ? 'open' : ''}><summary class="cursor-pointer list-none flex justify-between gap-3 font-semibold"><span>${f[0]}</span><span class="text-amber group-open:rotate-45 transition">+</span></summary><p class="text-sm text-muted mt-3 leading-relaxed">${f[1]}</p></details>`).join('');
+
+/* ================= MAP ================= */
+const map = L.map('map', {scrollWheelZoom:false, zoomControl:true}).setView([49.0, 83.7], 6);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:18, attribution:'© OpenStreetMap'}).addTo(map);
+const markers = {};
+const icon = cls => L.divIcon({className:'', html:`<div class="pin ${cls}"></div>`, iconSize:[30,30], iconAnchor:[15,30], popupAnchor:[0,-28]});
+BRANCHES.forEach(b => { markers[b.id] = L.marker([b.lat, b.lng], {icon:icon(b.main ? 'main' : '')}).addTo(map); });
+map.fitBounds(BRANCHES.map(b => [b.lat, b.lng]), {padding:[50,50]});
+function routeLinks(b){ return `<a class="chip !py-1 !text-xs" target="_blank" rel="noopener" href="https://2gis.kz/ust-kamenogorsk/routeSearch/rsType/car/to/${b.lng},${b.lat}">2GIS</a><a class="chip !py-1 !text-xs" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${b.lat},${b.lng}">Google Maps</a><a class="chip !py-1 !text-xs" target="_blank" rel="noopener" href="https://yandex.kz/maps/?rtext=~${b.lat},${b.lng}">Яндекс</a>`; }
+function renderBranches(){
+  document.getElementById('branchList').innerHTML = BRANCHES.map(b => `<li class="branch card p-4 cursor-pointer transition" data-b="${b.id}" tabindex="0">
+    <div class="flex justify-between gap-3"><h3 class="font-semibold leading-snug">${b.name[LANG]}</h3><span class="text-xs text-muted shrink-0">${b.city}</span></div>
+    <p class="text-sm text-muted mt-1">${b.addr}</p>
+    <p class="text-sm mt-2">${b.phones.map(p => `<a class="hover:text-amber whitespace-nowrap" href="tel:${p.replace(/\D/g,'').replace(/^8/,'+7')}">${p}</a>`).join(' · ')}</p>
+    ${b.email ? `<p class="text-sm"><a class="text-teal" href="mailto:${b.email}">${b.email}</a></p>` : ''}
+    <p class="text-xs text-muted mt-1">${b.hours}</p>
+    <div class="flex flex-wrap gap-1.5 mt-3">${routeLinks(b)}</div></li>`).join('');
+  document.querySelectorAll('[data-b]').forEach(li => li.onclick = e => { if (e.target.closest('a')) return; focusBranch(li.dataset.b); });
+  BRANCHES.forEach(b => markers[b.id].bindPopup(`<b>${b.name[LANG]}</b><br>${b.addr}<br>${b.phones[0]}`));
+}
+function focusBranch(id){ const b = BRANCHES.find(x => x.id === id); map.flyTo([b.lat, b.lng], 13, {duration:.8}); markers[id].openPopup(); document.querySelectorAll('[data-b]').forEach(li => li.classList.toggle('active', li.dataset.b === id)); }
+let histLayer = L.layerGroup().addTo(map);
+function goToPlace(L0){
+  document.getElementById('branches').scrollIntoView({behavior:'smooth'});
+  if (!L0.place) return;
+  setTimeout(() => { histLayer.clearLayers(); const m = L.marker([L0.place.lat, L0.place.lng], {icon:icon('hist')}).addTo(histLayer).bindPopup(`<b>${L0.place.name}</b><br><span class="mono" style="font-size:11px">по карте 1768 г., ф. 1, оп. 1, д. 7</span>`); map.flyTo([L0.place.lat, L0.place.lng], 10, {duration:1}); setTimeout(() => m.openPopup(), 1100); }, 700);
+}
+document.getElementById('locBtn').onclick = () => {
+  const pick = (lat, lng) => { const b = BRANCHES.slice().sort((a, c) => Math.hypot(a.lat-lat, a.lng-lng) - Math.hypot(c.lat-lat, c.lng-lng))[0]; focusBranch(b.id); };
+  if (navigator.geolocation) navigator.geolocation.getCurrentPosition(p => pick(p.coords.latitude, p.coords.longitude), () => pick(49.95, 82.62), {timeout:4000}); else pick(49.95, 82.62);
+};
+
+/* ================= AI ASSISTANT ================= */
+const AI_QA = [
+  {q:{ru:'Когда основан Усть-Каменогорск?',kz:'Өскемен қашан негізі қаланды?',en:'When was Ust-Kamenogorsk founded?'}, k:['основ','1720','өскемен','founded','крепост'],
+   a:'Усть-Каменогорская крепость основана в 1720 году при впадении Ульбы в Иртыш. На карте Колывано-Кузнецкой линии 1768 г. она — южный узел системы укреплений.', refs:['ф. 1, оп. 1, д. 7','ф. 1, оп. 1, д. 22']},
+  {q:{ru:'Где искать сведения о воинах ВОВ?',kz:'ҰОС жауынгерлері туралы мәліметтер қайда?',en:'Where to find WWII soldiers’ records?'}, k:['вов','войн','фронт','1941','1942','soldier','war','соғыс'],
+   a:'Начните с Книги памяти ВКО и выставки «ВКО в годы ВОВ». Списки мобилизованных хранятся в фондах райвоенкоматов; часть дел с персональными данными имеет ограниченный доступ.', refs:['ф. 1129, оп. 1, д. 41','ф. 207, оп. 3, д. 88']},
+  {q:{ru:'Как читать шифр «ф. / оп. / д.»?',kz:'«қ. / т. / і.» шифрын қалай оқу керек?',en:'How to read a reference “f. / op. / d.”?'}, k:['шифр','фонд','опис','reference','ф.'],
+   a:'Шифр — адрес документа: фонд (организация или человек) → опись (перечень дел) → дело (папка) → лист. Например, ф. 1514, оп. 1 — личный фонд Аксенова В. С., 67 единиц хранения за 1956–2004 гг.', refs:['ф. 1514, оп. 1']},
+  {q:{ru:'Как добраться до Риддерского филиала?',kz:'Риддер филиалына қалай жетуге болады?',en:'How do I get to the Ridder branch?'}, k:['риддер','ridder','филиал','адрес','дорог','branch'],
+   a:'Риддерский филиал: г. Риддер, ул. Ч. Валиханова, 44, пн–пт 9:00–18:00, тел. 8 (72336) 42-264. Маршрут откроется в 2GIS или Google Maps в разделе «Филиалы».', refs:['раздел «Филиалы»']},
+];
+const aiLog = document.getElementById('aiLog');
+function say(text, me, refs){ const d = document.createElement('div'); d.className = 'msg ' + (me ? 'me' : 'bot'); d.innerHTML = esc(text) + (refs ? `<div class="mt-2 flex flex-wrap gap-1.5">${refs.map(r => `<a href="#catalog" class="cipher text-amber !text-[11px]">${r}</a>`).join('')}</div>` : ''); aiLog.appendChild(d); aiLog.scrollTop = aiLog.scrollHeight; }
+function typing(cb){ const d = document.createElement('div'); d.className = 'msg bot text-muted'; d.textContent = '…'; aiLog.appendChild(d); setTimeout(() => { d.remove(); cb(); }, 700); }
+function ask(text){
+  say(text, true);
+  const s = text.toLowerCase();
+  typing(() => {
+    if (/справк|заказ|заявк|оплат|услуг|order|certificate|анықтама|өтініш/.test(s)) return say('Этот сайт информационный: здесь не оформляются заявки и не выдаются справки. Могу подсказать, в каком фонде искать сведения, или где находится ближайший филиал.', false, ['раздел «Полезная информация»']);
+    const hit = AI_QA.find(x => x.k.some(k => s.includes(k)));
+    if (hit) say(hit.a, false, hit.refs); else say('Пока не нашёл опубликованных материалов по этому вопросу. Попробуйте уточнить фамилию, место или год — я отвечаю только со ссылкой на шифр.', false);
+  });
+}
+function renderAIChips(){ document.getElementById('aiChips').innerHTML = AI_QA.map((x, i) => `<button class="chip !text-[12px] !py-1" data-ai="${i}">${x.q[LANG]}</button>`).join(''); document.querySelectorAll('[data-ai]').forEach(b => b.onclick = () => ask(b.textContent)); }
+say('Здравствуйте! Я помогаю ориентироваться в фондах архива ВКО. Каждый ответ — со ссылкой на шифр документа.', false);
+document.getElementById('aiForm').onsubmit = e => { e.preventDefault(); const v = document.getElementById('aiInput').value.trim(); if (v){ ask(v); document.getElementById('aiInput').value = ''; } };
+const aiBtn = document.getElementById('aiBtn'), aiPanel = document.getElementById('aiPanel');
+aiBtn.onclick = () => { aiPanel.classList.toggle('open'); aiBtn.setAttribute('aria-expanded', aiPanel.classList.contains('open')); };
+document.getElementById('aiClose').onclick = () => { aiPanel.classList.remove('open'); aiBtn.setAttribute('aria-expanded', 'false'); };
+
+/* ================= MODALS ================= */
+document.querySelectorAll('[data-open-feedback]').forEach(b => b.onclick = () => document.getElementById('fbModal').classList.add('open'));
+document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', e => { if (e.target === m || e.target.closest('[data-close]')) m.classList.remove('open'); }));
+document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.modal.open').forEach(m => m.classList.remove('open')); });
+document.getElementById('fbForm').onsubmit = e => { e.preventDefault(); document.getElementById('fbOk').classList.remove('hidden'); setTimeout(() => { document.getElementById('fbModal').classList.remove('open'); document.getElementById('fbOk').classList.add('hidden'); e.target.reset(); }, 1800); };
+
+/* ================= REVEAL ================= */
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }), {threshold:.12});
+document.querySelectorAll('.reveal-up').forEach(el => io.observe(el));
+
+applyLang(['kz','ru','en'].includes(QS.get('lang')) ? QS.get('lang') : 'ru');
+setTimeout(() => { if (!active) selectLine('L8'); }, 3400);
+</script>
+</body>
+</html>

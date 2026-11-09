@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Филиалы на карте — ГАВКО</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="extra.css">
+</head>
+<body data-page="branches" data-title="b.title">
+<div id="hdr"></div>
+<main>
+<div class="wrap">
+  <nav class="crumbs plainc"><a href="index.html"><u data-i="x.home">Главная</u></a><span class="s">|</span><span data-i="n.br">Филиалы</span></nav>
+  <h1 class="h1 story" data-i="b.h1">Филиалы на карте</h1>
+  <p class="lead" data-i="b.lead">Главное здание архива в Усть-Каменогорске, второй адрес читального зала и три филиала области. Выберите объект в списке или на карте.</p>
+
+  <div class="bwrap">
+    <div class="blist">
+      <div class="bsearch"><label class="vh" for="bq" data-i="b.search">Поиск по названию или населённому пункту</label><input id="bq" type="text" data-i-ph="b.search"></div>
+      <div class="bfilters" id="bf"><button class="chip on" data-t="all" type="button" data-i="b.t.all">Все</button><button class="chip" data-t="main" type="button" data-i="b.t.main">Архив</button><button class="chip" data-t="branch" type="button" data-i="b.t.branch">Филиалы</button></div>
+      <div id="bl"></div>
+    </div>
+    <div id="map" role="application" aria-label="Карта"></div>
+    <div class="bcard" id="bc"></div>
+  </div>
+  <p class="meta" style="margin-top:12px" data-i="b.geo.note">Координаты получены геокодированием в Nominatim (OpenStreetMap), 09.11.2026. Для зданий без адресной точки в OSM координата приблизительная. Тайлы: OpenStreetMap.</p>
+</div>
+<div style="height:64px"></div>
+</main>
+<div id="ftr"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="app.js"></script>
+<script>
+var B=[
+ {id:'hq',t:'main',lat:49.9448809,lon:82.6158830,ap:1,
+  n:['Государственный архив ВКО (главное здание, приёмная)','Шығыс Қазақстан облысының мемлекеттік архиві (бас ғимарат, қабылдау)','State Archive of East Kazakhstan Region (main building, reception)'],
+  a:['070004, г. Усть-Каменогорск, ул. Головкова, 26/1','070004, Өскемен қ., Головков к-сі, 26/1','26/1 Golovkov St., Ust-Kamenogorsk 070004'],
+  p:'8 (7232) 25-59-76',e:'arhiv-ukg@yandex.kz',
+  h:['пн–пт 9:00–18:00; читальный зал 10:00–17:00 (ул. Крылова, 39, тел. 8 (7232) 25-13-47)','дс–жм 9:00–18:00; оқу залы 10:00–17:00 (Крылов к-сі, 39, тел. 8 (7232) 25-13-47)','Mon–Fri 9:00–18:00; reading room 10:00–17:00 (39 Krylov St., tel. 8 (7232) 25-13-47)'],
+  d:['Хранение и использование документов области с 1940 года. Читальный зал, электронный фондовый каталог, выставки.','1940 жылдан бері облыс құжаттарын сақтау және пайдалану. Оқу залы, электрондық қор каталогы, көрмелер.','Keeps and makes available the documents of the region since 1940. Reading room, electronic fond catalogue, exhibitions.'],
+  f:['Ф. 1-П, Ф. 12-И, Ф. 98-ФД, личные фонды','1-П, 12-И, 98-ФД қорлары, жеке қорлар','Fonds 1-P, 12-I, 98-FD, personal fonds'],
+  g:['Точка поставлена по читальному залу на ул. Крылова, 39: адрес ул. Головкова, 26/1 в OSM не найден.','Нүкте Крылов к-сі, 39 оқу залы бойынша қойылған: Головков к-сі, 26/1 мекенжайы OSM-де табылмады.','The pin is set at the reading room, 39 Krylov St.: 26/1 Golovkov St. was not found in OSM.']},
+ {id:'uka',t:'branch',lat:49.9588961,lon:82.5982159,
+  n:['Усть-Каменогорский филиал по личному составу','Өскемен филиалы (жеке құрам бойынша)','Ust-Kamenogorsk branch (personnel records)'],
+  a:['070003, г. Усть-Каменогорск, ул. Потанина, 12/2','070003, Өскемен қ., Потанин к-сі, 12/2','12/2 Potanin St., Ust-Kamenogorsk 070003'],
+  p:'8 (7232) 76-65-60, 76-81-64',e:'—',
+  h:['пн–пт 9:00–18:00, обед 13:00–14:00','дс–жм 9:00–18:00, түскі үзіліс 13:00–14:00','Mon–Fri 9:00–18:00, lunch 13:00–14:00'],
+  d:['Документы по личному составу организаций города и области.','Қала мен облыс ұйымдарының жеке құрамы бойынша құжаттар.','Personnel records of organisations of the town and the region.'],
+  f:['Документы по личному составу','Жеке құрам бойынша құжаттар','Personnel records']},
+ {id:'altai',t:'branch',lat:49.7277861,lon:84.2619670,
+  n:['Филиал Алтай ГАВКО (бывш. Зыряновский)','ШҚО МА Алтай филиалы (бұрынғы Зырян)','Altai branch (formerly Zyryanovsk)'],
+  a:['070804, г. Алтай, ул. М. Горького, 33','070804, Алтай қ., М. Горький к-сі, 33','33 M. Gorky St., Altai 070804'],
+  p:'8 (72335) 31-260, 62-888, 63-016',e:'arhiv.altai@yandex.kz',
+  h:['приём директора: среда 9:00–18:00','директордың қабылдауы: сәрсенбі 9:00–18:00','Director’s reception: Wednesday 9:00–18:00'],
+  d:['Документы Зыряновского и Алтайского районов, рудников и предприятий Рудного Алтая.','Зырян және Алтай аудандарының, Кенді Алтай кеніштері мен кәсіпорындарының құжаттары.','Records of the Zyryanovsk and Altai districts, and of the mines and enterprises of the Ore Altai.'],
+  f:['Фонды районных органов и предприятий','Аудандық органдар мен кәсіпорындар қорлары','Fonds of district bodies and enterprises']},
+ {id:'ridder',t:'branch',lat:50.3366507,lon:83.4946810,
+  n:['Риддерский филиал ГАВКО','ШҚО МА Риддер филиалы','Ridder branch'],
+  a:['071300, г. Риддер, ул. Ч. Валиханова, 44','071300, Риддер қ., Ш. Уәлиханов к-сі, 44','44 Ch. Valikhanov St., Ridder 071300'],
+  p:'8 (72336) 42-264, 45-786, 42-645',e:'priem.arhiv-ridder44@yandex.kz',
+  h:['пн–пт 9:00–18:00','дс–жм 9:00–18:00','Mon–Fri 9:00–18:00'],
+  d:['Документы города Риддера и Лениногорского рудника.','Риддер қаласы мен Лениногор кенішінің құжаттары.','Records of the town of Ridder and the Leninogorsk mine.'],
+  f:['Фонды горисполкома и предприятий','Қалалық атқарушы комитет және кәсіпорындар қорлары','Fonds of the town council and enterprises'],
+  g:['Координата приблизительная: по улице Уәлиханов, номер дома в OSM не найден.','Координата шамамен: Уәлиханов көшесі бойынша, үй нөмірі OSM-де табылмады.','Approximate: along Uәlikhanov street; the house number was not found in OSM.']},
+ {id:'zaisan',t:'branch',lat:47.4681575,lon:84.8752510,
+  n:['Зайсанский филиал ГАВКО','ШҚО МА Зайсан филиалы','Zaisan branch'],
+  a:['070700, г. Зайсан, ул. Жангельдина, 52','070700, Зайсан қ., Жәңгелдин к-сі, 52','52 Zhangeldin St., Zaisan 070700'],
+  p:'8 (72340) 21-476, 21-221',e:'qosarhivzaysan_1@mail.ru',
+  h:['по графику филиала (уточняйте по телефону)','филиал кестесі бойынша (телефон арқылы нақтылаңыз)','per the branch schedule (check by phone)'],
+  d:['Документы Зайсанского уезда и района, приграничной торговли.','Зайсан уезі мен ауданының, шекара саудасының құжаттары.','Records of Zaisan district, including border trade.'],
+  f:['Фонды Зайсанского уезда и района','Зайсан уезі мен ауданы қорлары','Fonds of Zaisan district'],
+  g:['Точка по дому 52 на соседнем названии улицы в OSM (Қонаев көшесі); возможна переименованная ул. Жангельдина.','Нүкте OSM-дегі көрші көше атауындағы 52 үй бойынша (Қонаев көшесі); Жәңгелдин к-сі қайта аталған болуы мүмкін.','Pin is at no. 52 under the OSM street name (Konayev St.); Zhangeldin St. may have been renamed.']}
+];
+T({
+ 'b.title':['Филиалы на карте — ГАВКО','Картадағы филиалдар — ШҚО МА','Branches on the map — State Archive of EKR'],
+ 'b.h1':['Филиалы на карте','Картадағы филиалдар','Branches on the map'],
+ 'b.lead':['Главное здание архива в Усть-Каменогорске и три филиала области. Выберите объект в списке или на карте.','Өскемендегі архивтің бас ғимараты және облыстың үш филиалы. Тізімнен немесе картадан нысанды таңдаңыз.','The main archive building in Ust-Kamenogorsk and three branches of the region. Pick a site from the list or on the map.'],
+ 'b.search':['Поиск по названию или населённому пункту','Атауы немесе елді мекені бойынша іздеу','Search by name or locality'],
+ 'b.t.all':['Все','Барлығы','All'],'b.t.main':['Архив','Архив','Archive'],'b.t.branch':['Филиалы','Филиалдар','Branches'],
+ 'b.addr':['Адрес','Мекенжай','Address'],'b.ph':['Телефон','Телефон','Phone'],'b.em':['Эл. почта','Эл. пошта','E-mail'],'b.hr':['Режим работы','Жұмыс тәртібі','Opening hours'],'b.co':['Координаты','Координаттар','Coordinates'],'b.fonds':['Основные фонды','Негізгі қорлар','Main fonds'],'b.about':['О деятельности','Қызметі туралы','About'],
+ 'b.route':['Маршрут','Бағыт','Directions'],'b.2gis':['Маршрут в 2GIS','2GIS-те бағыт','Route in 2GIS'],'b.gm':['Маршрут в Google Maps','Google Maps-те бағыт','Route in Google Maps'],
+ 'b.geo':['Расстояние от моего местоположения','Менің орналасқан жерімнен қашықтық','Distance from my location'],
+ 'b.geo.deny':['Доступ к геолокации не дан: маршрут начнётся с точки, которую вы укажете в 2GIS или Google Maps.','Геолокацияға рұқсат берілмеді: бағыт 2GIS немесе Google Maps-те өзіңіз көрсеткен нүктеден басталады.','Location access was not granted: the route will start from the point you enter in 2GIS or Google Maps.'],
+ 'b.km':['км по прямой','км түзу сызықпен','km as the crow flies'],
+ 'b.geo.note':['Координаты получены геокодированием в Nominatim (OpenStreetMap), 09.11.2026. Для зданий без адресной точки в OSM координата приблизительная. Тайлы: OpenStreetMap.','Координаттар Nominatim (OpenStreetMap) геокодтауымен алынды, 09.11.2026. OSM-де мекенжай нүктесі жоқ ғимараттар үшін координат шамамен. Тайлдар: OpenStreetMap.','Coordinates obtained by geocoding with Nominatim (OpenStreetMap), 09.11.2026. Where OSM has no address point the coordinate is approximate. Tiles: OpenStreetMap.']
+});
+(function(){
+  var map,markers={},cur='hq',type='all',q='';
+  function L(o){return o[['ru','kk','en'].indexOf(getLang())]}
+  function lst(){
+    var h='';B.forEach(function(b){var vis=(type==='all'||b.t===type)&&(!q||(L(b.n)+' '+L(b.a)).toLowerCase().indexOf(q)>-1);
+      h+='<button class="bitem" type="button" data-id="'+b.id+'" aria-current="'+(b.id===cur)+'"'+(vis?'':' hidden')+'><h3>'+L(b.n)+'</h3><p>'+L(b.a)+'</p></button>';
+      if(markers[b.id]){if(vis)markers[b.id].addTo(map);else map.removeLayer(markers[b.id])}});
+    document.getElementById('bl').innerHTML=h;
+    document.querySelectorAll('.bitem').forEach(function(e){e.onclick=function(){sel(e.dataset.id,true)}});
+  }
+  function dist(a,b,c,d){var R=6371,r=Math.PI/180,x=(c-a)*r,y=(d-b)*r,s=Math.sin(x/2)*Math.sin(x/2)+Math.cos(a*r)*Math.cos(c*r)*Math.sin(y/2)*Math.sin(y/2);return R*2*Math.atan2(Math.sqrt(s),Math.sqrt(1-s))}
+  var me=null;
+  function card(){
+    var b=B.filter(function(x){return x.id===cur})[0];
+    var g2='https://2gis.kz/routeSearch/rsType/car/to/'+b.lon+','+b.lat, gm='https://www.google.com/maps/dir/?api=1&destination='+b.lat+','+b.lon;
+    document.getElementById('bc').innerHTML='<h2>'+L(b.n)+'</h2>'+
+     '<dl><dt>'+tr('b.addr')+'</dt><dd>'+L(b.a)+'</dd><dt>'+tr('b.ph')+'</dt><dd>'+b.p+'</dd><dt>'+tr('b.em')+'</dt><dd>'+(b.e==='—'?'—':'<a href="mailto:'+b.e+'">'+b.e+'</a>')+'</dd><dt>'+tr('b.hr')+'</dt><dd>'+L(b.h)+'</dd></dl>'+
+     '<dl><dt>'+tr('b.about')+'</dt><dd>'+L(b.d)+'</dd><dt>'+tr('b.fonds')+'</dt><dd>'+L(b.f)+'</dd><dt>'+tr('b.co')+'</dt><dd class="mono">'+b.lat.toFixed(5)+', '+b.lon.toFixed(5)+'</dd>'+(b.g?'<dt>*</dt><dd class="meta">'+L(b.g)+'</dd>':'')+'</dl>'+
+     '<div class="route"><b>'+tr('b.route')+'</b><a class="btn p sm" href="'+g2+'" target="_blank" rel="noopener">'+tr('b.2gis')+'</a><a class="btn sm" href="'+gm+'" target="_blank" rel="noopener">'+tr('b.gm')+'</a><button class="btn sm" type="button" id="geo">'+tr('b.geo')+'</button><span class="dist" id="dist"></span></div>';
+    document.getElementById('geo').onclick=function(){
+      if(!navigator.geolocation){document.getElementById('dist').textContent=tr('b.geo.deny');return}
+      navigator.geolocation.getCurrentPosition(function(p){me=p.coords;var d=dist(me.latitude,me.longitude,b.lat,b.lon);document.getElementById('dist').textContent=d.toFixed(1)+' '+tr('b.km')},function(){document.getElementById('dist').textContent=tr('b.geo.deny')})};
+  }
+  function sel(id,pan){cur=id;var b=B.filter(function(x){return x.id===id})[0];if(pan)map.setView([b.lat,b.lon],id==='zaisan'||id==='altai'?11:14);lst();card();Object.keys(markers).forEach(function(k){markers[k].setZIndexOffset(k===id?1000:0)})}
+  function init(){
+    map=L_=window.L.map('map',{scrollWheelZoom:false}).setView([49.9449,82.6159],8);
+    window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OpenStreetMap contributors'}).addTo(map);
+    B.forEach(function(b){markers[b.id]=window.L.marker([b.lat,b.lon]).on('click',function(){sel(b.id,false)});markers[b.id].addTo(map)});
+    var pts=B.map(function(b){return[b.lat,b.lon]});map.fitBounds(pts,{padding:[40,40]});
+    var h=location.hash.slice(1);if(B.some(function(x){return x.id===h}))cur=h;
+    lst();card();
+    document.getElementById('bq').oninput=function(){q=this.value.trim().toLowerCase();lst()};
+    document.querySelectorAll('#bf .chip').forEach(function(c){c.onclick=function(){type=c.dataset.t;document.querySelectorAll('#bf .chip').forEach(function(x){x.classList.toggle('on',x===c)});lst()}});
+    document.addEventListener('langchange',function(){lst();card()});
+    window.addEventListener('hashchange',function(){var h=location.hash.slice(1);if(B.some(function(x){return x.id===h}))sel(h,true)});
+  }
+  document.addEventListener('chromeready',init);
+})();
+</script>
+</body>
+</html>

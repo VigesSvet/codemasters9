@@ -1,0 +1,12 @@
+docs/research/current-site/raw/
+# тяжёлые/производные артефакты (скрины, бэкапы, сырые выгрузки)
+docs/research/current-site/content/news.json
+docs/research/current-site/raw/
+docs/research/reverse/*/raw/
+docs/research/reverse/*/shots/
+docs/mockups-v2/_a-gos-*-backup/
+docs/mockups-v2/final/
+docs/mockups-v2/*/compare/
+docs/mockups-v2/*/shots/
+docs/mockups-v2/*/*-full.png
+.DS_Store

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Онлайн-выставки — Госархив ВКО</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-page="expo" data-hdr="over">
+<main id="main">
+  <section class="xhero">
+    <img src="img/aul-1885.jpg" alt="" style="transform:scale(1.5);object-position:50% 55%">
+    <div class="in"><span class="badge" data-i18n="x.badge">Онлайн-выставка</span><h1 data-i18n="x.title">Города, дороги и люди Прииртышья</h1></div>
+  </section>
+  <section class="xintro">
+    <p data-i18n="x.intro">Семь фотографий и документов XIX века из фондов архива: Семипалатинск и Усть-Каменогорск, переправа через Иртыш, базар и аул. Листайте экспонаты, увеличивайте изображения, переходите к делам каталога.</p>
+    <dl>
+      <div class="p"><dt data-i18n="x.k1">Период</dt><dd>1851–1893</dd></div>
+      <div class="p"><dt data-i18n="x.k2">Экспонатов</dt><dd>7</dd></div>
+      <div class="p"><dt data-i18n="x.k3">Источники</dt><dd data-i18n="x.v3">Фонды 1-П, 14-Ф; Wikimedia Commons</dd></div>
+    </dl>
+  </section>
+  <div id="items"></div>
+  <section class="xlist">
+    <h2 data-i18n="x.more">Другие выставки</h2>
+    <div class="masonry" id="others" style="grid-template-columns:repeat(3,1fr)"></div>
+  </section>
+  <div style="height:80px"></div>
+</main>
+<div class="lbx" id="lbx" role="dialog" aria-label="Zoom"><button class="x" id="lbx-x" aria-label="Close"><svg><use href="#i-close"/></svg></button><div class="vp"><img id="lbx-i" alt=""></div><div class="bar"><span id="lbx-c"></span><button class="btn btn--sec" id="lbx-z" type="button"><svg><use href="#i-zin"/></svg><span data-i18n="x.zoom">Увеличить</span></button></div></div>
+<script src="i18n-home.js"></script>
+<script src="i18n-more.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script>
+(function(){
+  const {L,t,esc}=APP,$=s=>document.querySelector(s);
+  function render(){
+    $("#items").innerHTML=EXPO.map((x,i)=>`<article class="xi${x.por?" por":""}" id="e${i+1}"><div class="img"><img src="img/${x.img}" alt="${esc(L(x.t))}" loading="lazy"><button class="btn btn--black zoom" data-zoom="${i}" type="button" aria-label="Zoom"><svg><use href="#i-zin"/></svg></button></div>
+<div class="xcap"><div><span class="no">${t("x.ex")} ${i+1} / ${EXPO.length} · Ф. ${esc(x.no)}</span><h2>${esc(L(x.t))}</h2><p>${esc(L(x.d))}</p><p class="src">${t("x.src")}: ${esc(L(x.s))} <a class="lnk" href="delo.html">${t("x.todelo")}</a></p></div>
+<div class="nav"><a class="btn" href="#e${Math.max(1,i)}" aria-label="Prev">${APP.ic("l")}</a><span>${i+1}/${EXPO.length}</span><a class="btn" href="#e${Math.min(EXPO.length,i+2)}" aria-label="Next">${APP.ic("r")}</a></div></div></article>`).join("");
+    $("#others").innerHTML=EXPOS.filter(x=>!x.cur).concat(EXPOS.filter(x=>x.cur)).map(x=>`<a class="tile" href="vystavka.html" style="aspect-ratio:4/3"><img src="img/${x.img}" alt="" style="object-position:${x.pos}"><span class="cap" style="opacity:1;color:#fff"><b>${esc(L(x.d))}</b>${esc(L(x.t))}</span></a>`).join("");
+  }
+  let zi=0;
+  document.addEventListener("click",e=>{
+    const z=e.target.closest("[data-zoom]"); if(z){ zi=+z.dataset.zoom; $("#lbx-i").src="img/"+EXPO[zi].img; $("#lbx-c").textContent=L(EXPO[zi].t); $("#lbx").classList.add("open"); $("#lbx").classList.remove("z2"); }
+    if(e.target.closest("#lbx-x")) $("#lbx").classList.remove("open");
+    if(e.target.closest("#lbx-z")) $("#lbx").classList.toggle("z2");
+  });
+  document.addEventListener("keydown",e=>{ if(e.key==="Escape") $("#lbx").classList.remove("open"); });
+  window.addEventListener("langchange",render); render();
+})();
+</script>
+</body>
+</html>

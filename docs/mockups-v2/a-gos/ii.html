@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ИИ-помощник — Госархив ВКО</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-nav="ii" data-noai>
+<div id="top"></div>
+<main id="main">
+<div class="crumbs"><div class="wrap">
+ <ol aria-label="Вы здесь"><li><a href="index.html" data-kk="Басты бет" data-en="Home">Главная</a></li><li aria-current="page" data-kk="ЖИ көмекшісі" data-en="AI assistant">ИИ-помощник</li></ol>
+</div></div>
+<div class="wrap aifull">
+ <aside>
+  <h1 style="font-size:clamp(2rem,1.6rem + 1.6vw,3rem);margin-bottom:12px" data-kk="Архив көмекшісі" data-en="Archive assistant">Архивный помощник</h1>
+  <p data-kk="Көмекші сайт бойынша бағыт береді, қорларды, тізімдемелерді, істерді және филиалдарды табуға көмектеседі. Ол өтініштер қабылдамайды." data-en="The assistant guides you around the site and helps you find fonds, inventories, files and branches. It does not accept applications.">Помощник подсказывает, как ориентироваться на сайте, и помогает найти фонды, описи, дела и филиалы. Заявок он не принимает.</p>
+  <div class="sbox" style="margin:16px 0"><h2 style="font:700 19px var(--font-text);margin:0 0 8px" data-kk="Үлгі сұрақтар" data-en="Example questions">Примеры вопросов</h2>
+   <div class="sug" style="flex-direction:column;align-items:stretch" id="ex"></div></div>
+  <div class="sbox"><h2 style="font:700 19px var(--font-text);margin:0 0 8px" data-kk="Деректер және құпиялылық" data-en="Data and privacy">Данные и конфиденциальность</h2>
+   <p style="font-size:15px;margin:0" data-kk="Сұрауларда жеке деректерді көрсетпеңіз. Жабық құжаттар мен келушілердің жеке мәліметтері ЖИ-ға берілмейді. Жауаптар ашық тізімдемелер мен ашық цифрлық көшірмелерге сілтеме жасайды." data-en="Do not enter personal data. Closed documents and visitors' personal data are never passed to the AI. Answers link to open inventories and open digital copies.">Не указывайте в запросах персональные данные. Закрытые документы и сведения о посетителях ИИ не передаются. Ответы ссылаются на открытые описи и открытые цифровые копии.</p></div>
+  <ul style="margin:16px 0 0;padding-left:20px;font-size:16px"><li data-kk="Қазақша, орысша, ағылшынша" data-en="Kazakh, Russian, English">Казахский, русский, английский</li><li data-kk="Мағыналық іздеу: «1960-жылдардағы Өскемен суреттері»" data-en="Semantic search: “photographs of Ust-Kamenogorsk in the 1960s”">Поиск по смыслу: «фотографии Усть-Каменогорска 1960-х»</li><li data-kk="Ақпарат пен сілтемелер беру" data-en="Gives references and links">Выдаёт шифры и ссылки на материалы</li></ul>
+ </aside>
+ <div class="chat" id="chat"></div>
+</div>
+</main>
+<div id="bottom"></div>
+<script src="app.js"></script>
+<script>
+var Q=[["Где найти метрические книги Семипалатинска 1900-х?","1900 жылдардағы Семей метрикалық кітаптарын қайдан табуға болады?","Where can I find parish registers of Semipalatinsk from the 1900s?"],["Хочу найти фотографии Усть-Каменогорска 1960-х","1960-жылдардағы Өскемен суреттерін тапқым келеді","I want to find photographs of Ust-Kamenogorsk in the 1960s"],["Как читать архивный шифр?","Архивтік шифрды қалай оқуға болады?","How do I read an archive reference?"],["Адрес и часы работы Риддерского филиала","Риддер филиалының мекенжайы мен жұмыс уақыты","Address and hours of the Ridder branch"]];
+function lg(a){var l=getLang();return a[l==="kk"?1:l==="en"?2:0]}
+function build(){mountChat(chat,true);ex.innerHTML="";Q.forEach(function(q){var b=document.createElement("button");b.type="button";b.textContent=lg(q);b.onclick=function(){chat._ask(lg(q))};ex.appendChild(b)});
+ if(!build.done){build.done=1;if(new URLSearchParams(location.search).get("run"))chat._ask(lg(Q[0]))}}
+window.onLang=build;build();
+</script>
+</body></html>

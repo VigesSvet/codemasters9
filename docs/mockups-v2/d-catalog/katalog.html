@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Поиск по каталогу. Каталог ГА ВКО</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-nav="katalog" data-mini="1" data-act="1">
+<a class="skip" href="#main">Перейти к содержимому</a>
+<header id="hd"></header>
+<div id="tb"></div>
+
+<main id="main">
+<div class="kbody"><div class="wrap">
+  <div class="khd"><h1>Поиск по каталогу</h1><a href="ob-arhive.html#help">Как искать: справка по шифрам и фильтрам</a></div>
+  <button class="fbtn" id="fbtn" type="button"><svg class="ic"><use href="#filter"/></svg><span>Фильтры</span><span class="bd mono" id="fcount" data-nt>0</span></button>
+  <div class="kat">
+    <aside class="fac" id="fac" aria-label="Фильтры поиска">
+      <div class="fac-hd"><h2>Фильтры</h2><button class="lnk" id="reset" type="button">Сбросить все</button><button class="fac-x" id="fclose" type="button" aria-label="Закрыть фильтры"><svg class="ic"><use href="#close"/></svg></button></div>
+      <details class="fg" open data-g="text"><summary>Название и ключевые слова</summary><div class="fb">
+        <label class="lbl" for="f-title">Название документа</label><input class="in" id="f-title" data-k="title" type="search" placeholder="Например: обзор области">
+        <label class="lbl" for="f-kw" style="margin-top:10px">Ключевые слова</label><input class="in" id="f-kw" data-k="kw" type="search" placeholder="паром, переселение, метрические книги">
+      </div></details>
+      <details class="fg" open data-g="cipher"><summary>Шифр дела</summary><div class="fb">
+        <div class="g3" style="gap:8px">
+          <div><label class="lbl" for="f-fond">Фонд</label><input class="in" id="f-fond" data-k="fond" type="text" placeholder="1-П" inputmode="text"></div>
+          <div><label class="lbl" for="f-opis">Опись</label><input class="in" id="f-opis" data-k="opis" type="text" placeholder="1" inputmode="numeric"></div>
+          <div><label class="lbl" for="f-delo">Дело</label><input class="in" id="f-delo" data-k="delo" type="text" placeholder="245" inputmode="numeric"></div>
+        </div>
+      </div></details>
+      <details class="fg" open data-g="per"><summary>Исторический период</summary><div class="fb" id="fg-per"></div></details>
+      <details class="fg" open data-g="year"><summary>Год создания</summary><div class="fb">
+        <div class="rng"><div><label class="lbl" for="f-y1">С</label><input class="in" id="f-y1" data-k="y1" type="number" min="1700" max="2026" placeholder="1850"></div><div><label class="lbl" for="f-y2">По</label><input class="in" id="f-y2" data-k="y2" type="number" min="1700" max="2026" placeholder="1991"></div></div>
+      </div></details>
+      <details class="fg" data-g="org"><summary>Автор или организация</summary><div class="fb"><label class="sr" for="f-org">Автор или организация</label><input class="in" id="f-org" data-k="org" type="search" placeholder="Городская управа, комбинат, фамилия"></div></details>
+      <details class="fg" data-g="theme"><summary>Тематика</summary><div class="fb" id="fg-theme"></div></details>
+      <details class="fg" open data-g="place"><summary>Населённый пункт</summary><div class="fb" id="fg-place"></div></details>
+      <details class="fg" open data-g="type"><summary>Тип документа</summary><div class="fb" id="fg-type"></div></details>
+      <details class="fg" data-g="br"><summary>Филиал архива</summary><div class="fb" id="fg-br"></div></details>
+      <details class="fg" data-g="acc"><summary>Доступность</summary><div class="fb" id="fg-acc"></div></details>
+      <details class="fg" data-g="lang"><summary>Язык документа</summary><div class="fb" id="fg-lang"></div></details>
+      <details class="fg" data-g="dig"><summary>Цифровая копия</summary><div class="fb"><label class="ck"><input type="checkbox" id="f-dig"><span>Только оцифрованные</span></label></div></details>
+      <div class="fac-ap"><button class="btn" id="apply" type="button">Показать результаты</button></div>
+    </aside>
+
+    <section aria-label="Результаты поиска" aria-live="polite">
+      <div class="lt" role="tablist" id="lt"></div>
+      <div class="pills" id="pills"></div>
+      <div class="rh">
+        <p class="cnt" id="cnt"></p>
+        <div class="tools">
+          <label for="sort">Сортировка</label>
+          <select class="in" id="sort"><option value="rel">По релевантности</option><option value="cipher">По шифру</option><option value="ya">Год: сначала старые</option><option value="yd">Год: сначала новые</option><option value="t">Название А–Я</option></select>
+          <div class="vt" role="group" aria-label="Вид"><button type="button" data-v="list" aria-pressed="true" aria-label="Список"><svg class="ic"><use href="#list"/></svg></button><button type="button" data-v="grid" aria-pressed="false" aria-label="Плитка"><svg class="ic"><use href="#grid"/></svg></button></div>
+        </div>
+      </div>
+      <div class="res" id="res"></div>
+      <nav class="pgn" id="pgn" aria-label="Страницы"></nav>
+      <p class="rate">Каталог информационный: наличие записи не означает, что документ можно скачать. Доступ к цифровым копиям определяется законодательством РК и режимом доступа.</p>
+    </section>
+  </div>
+</div></div>
+</main>
+
+<footer id="ft"></footer>
+<script src="data.js"></script>
+<script src="i18n.js"></script>
+<script src="katalog.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

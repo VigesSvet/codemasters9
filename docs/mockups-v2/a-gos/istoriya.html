@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Цифровая история региона — Госархив ВКО</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-nav="istoriya" data-map>
+<div id="top"></div>
+<main id="main">
+<div class="crumbs"><div class="wrap">
+ <ol aria-label="Вы здесь"><li><a href="index.html" data-kk="Басты бет" data-en="Home">Главная</a></li><li aria-current="page" data-kk="Өңірдің цифрлық тарихы" data-en="Digital history of the region">Цифровая история региона</li></ol>
+ <div class="tabs"><span data-kk="Хронология" data-en="Timeline">Хронология</span><a href="#places" data-kk="Тарихи орындар" data-en="Historical places">Исторические места</a><a href="vystavka.html" data-kk="Көрмелер" data-en="Exhibitions">Выставки</a></div>
+</div></div>
+<section class="hero sm"><div class="wrap">
+ <h1 data-kk="Өңірдің цифрлық тарихы" data-en="Digital history of the region">Цифровая история региона</h1>
+ <p class="sub" data-kk="Хронологиялық лента мен тарихи орындар картасы. Әр оқиға мен орын іс шифрымен байланысты." data-en="A timeline and a map of historical places. Every event and place is linked to file references.">Хронологическая лента и карта исторических мест. Каждое событие и место связано с шифрами дел.</p>
+</div></section>
+<div class="wrap" style="padding-top:32px;padding-bottom:64px">
+ <div class="themes" id="th" role="group" aria-label="Тематика"></div>
+ <div class="hist">
+  <section><h2 class="h2l" data-kk="Хронологиялық лента" data-en="Timeline">Хронологическая лента</h2><ol class="tl" id="tl"></ol></section>
+  <section id="places" style="position:sticky;top:16px"><h2 class="h2l" data-kk="Тарихи орындар" data-en="Historical places">Исторические места</h2>
+   <div class="hplaces"><div id="hmap" style="height:440px;min-height:440px"></div>
+    <div class="bcard" id="pc"></div></div>
+   <p class="src" data-kk="Координаттар шамамен, редакторлар тексереді. Карта: © OpenStreetMap contributors." data-en="Coordinates are approximate and subject to editorial check. Map: © OpenStreetMap contributors.">Координаты приблизительные, подлежат проверке редакторами. Карта: © участники OpenStreetMap.</p></section>
+ </div>
+</div>
+</main>
+<div id="bottom"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="app.js"></script>
+<script>
+var TH=[["all","Все","Барлығы","All"],["city","История городов","Қала тарихы","Towns"],["industry","Промышленность","Өнеркәсіп","Industry"],["war","Война","Соғыс","War"],["state","Управление и архив","Басқару және архив","Administration"]];
+var EV=[
+{y:"1720",th:"city",t:["Основание Усть-Каменогорской крепости","Өскемен бекінісінің негізі қалануы","Founding of the Ust-Kamenogorsk fortress"],p:["Крепость на слиянии Ульбы и Иртыша стала основой будущего города.","Ульба мен Ертіс қосылған жердегі бекініс болашақ қаланың негізі болды.","The fortress at the confluence of the Ulba and the Irtysh became the nucleus of the future city."],q:"крепость"},
+{y:"1786",th:"industry",t:["Риддерский рудник","Риддер кеніші","The Ridder mine"],p:["Начало разработки полиметаллических руд на Рудном Алтае.","Кен Алтайындағы полиметалл кендерін өндірудің басталуы.","Start of polymetallic ore mining in the Ore Altai."],q:"рудник"},
+{y:"1868",th:"state",t:["Образование Семипалатинской области","Семей облысының құрылуы","Creation of Semipalatinsk region"],p:["Начало дореволюционного областного делопроизводства: обзоры, памятные книжки, списки мест.","Революцияға дейінгі облыстық іс жүргізудің басы: шолулар, естелік кітапшалар.","The start of regional record-keeping: surveys, handbooks, lists of settlements."],q:"обзор",d:"delo.html"},
+{y:"1885",th:"city",t:["Путешествие Джорджа Кеннана по Иртышу","Джордж Кеннанның Ертіс бойымен саяхаты","George Kennan's journey along the Irtysh"],p:["Гравюры и снимки городов региона, ставшие основой онлайн-выставки.","Өңір қалаларының гравюралары мен суреттері онлайн көрменің негізі болды.","Engravings and photographs of regional towns that form the online exhibition."],q:"",d:"vystavka.html"},
+{y:"1932",th:"state",t:["Образование Восточно-Казахстанской области","Шығыс Қазақстан облысының құрылуы","Creation of East Kazakhstan region"],p:["Административное деление, от которого ведётся учёт фондов советского периода.","Кеңестік кезең қорларының есебі жүргізілетін әкімшілік бөліну.","Administrative division from which Soviet-period fonds are accounted."],q:"область"},
+{y:"1940",th:"state",t:["Основание государственного архива","Мемлекеттік архивтің құрылуы","Founding of the state archive"],p:["С этого года формируются фонды, хранящиеся в Усть-Каменогорске.","Осы жылдан бастап Өскеменде сақталатын қорлар қалыптасады.","From this year the fonds held in Ust-Kamenogorsk were formed."],q:"",d:"ob-arhive.html#history"},
+{y:"1941-1945",th:"war",t:["Восточный Казахстан в годы войны","Шығыс Қазақстан соғыс жылдарында","East Kazakhstan in the war years"],p:["Приказы по личному составу рудников, документы эвакуированных предприятий.","Кеніштердің жеке құрамы бойынша бұйрықтар, эвакуацияланған кәсіпорындар құжаттары.","Personnel orders of the mines and documents of evacuated enterprises."],q:"война рудник"},
+{y:"1950-1960",th:"industry",t:["Свинцово-цинковый комбинат Усть-Каменогорска","Өскемен қорғасын-мырыш комбинаты","Ust-Kamenogorsk lead-zinc plant"],p:["Годовые отчёты комбината, строительство и рост города.","Комбинаттың жылдық есептері, қаланың құрылысы мен өсуі.","Annual reports of the plant, construction and growth of the city."],q:"комбинат"}
+];
+var PL=[
+{id:"fort",n:["Место Усть-Каменогорской крепости","Өскемен бекінісінің орны","Site of the Ust-Kamenogorsk fortress"],ll:[49.9588,82.5982],d:["Слияние Ульбы и Иртыша.","Ульба мен Ертістің қосылған жері.","Confluence of the Ulba and the Irtysh."],q:"крепость",y:"1720"},
+{id:"ferry",n:["Иртышская переправа","Ертіс өтпесі","Irtysh crossing"],ll:[49.9515,82.6120],d:["Паромная переправа на снимках 1885 года.","1885 жылғы суреттердегі паром өтпесі.","The ferry crossing in 1885 photographs."],q:"паром",y:"1885"},
+{id:"ridder",n:["Риддерский рудник","Риддер кеніші","Ridder mine"],ll:[50.3459,83.5140],d:["Полиметаллические руды Рудного Алтая.","Кен Алтайының полиметалл кендері.","Polymetallic ores of the Ore Altai."],q:"Риддерский рудник",y:"1786"},
+{id:"zyr",n:["Зыряновский рудник","Зырян кеніші","Zyryanovsk mine"],ll:[49.7278,84.2620],d:["Рудник, ныне в черте города Алтай.","Кеніш қазір Алтай қаласының шегінде.","The mine, now within the town of Altai."],q:"Зыряновский",y:"1791"},
+{id:"zais",n:["Зайсанский уезд","Зайсан уезі","Zaisan district"],ll:[47.4667,84.8761],d:["Списки населённых мест уезда, 1901.","Уездің елді мекендер тізімі, 1901.","Lists of settlements of the district, 1901."],q:"Зайсанского",y:"1901"}
+];
+var F="all",map,mk={},sel="fort";
+function lg(a){var l=getLang();return a[l==="kk"?1:l==="en"?2:0]}
+function build(){
+ th.innerHTML=TH.map(function(t){return '<button type="button" data-t="'+t[0]+'" aria-pressed="'+(F===t[0])+'">'+tr(t[1],t[2],t[3])+"</button>"}).join("");
+ tl.innerHTML=EV.filter(function(e){return F==="all"||e.th===F}).map(function(e){return '<li><span class="y">'+e.y+"</span><h3>"+lg(e.t)+"</h3><p>"+lg(e.p)+'</p><a class="lk" href="'+(e.d||("katalog.html?q="+encodeURIComponent(e.q)))+'">'+tr("Документы по теме","Тақырып бойынша құжаттар","Related documents")+'<span class="chev"></span></a></li>'}).join("");
+ card();
+}
+function card(){var p=PL.filter(function(x){return x.id===sel})[0];pc.innerHTML='<span class="chip">'+p.y+"</span><h2>"+lg(p.n)+"</h2><p>"+lg(p.d)+'</p><p><a href="katalog.html?q='+encodeURIComponent(p.q)+'">'+tr("Связанные дела в каталоге","Каталогтағы байланысты істер","Related files in the catalogue")+'<span class="chev"></span></a></p><div class="dist">'+p.ll[0].toFixed(4)+", "+p.ll[1].toFixed(4)+"</div>";
+ for(var k in mk){var el=mk[k].getElement();if(el&&el.firstChild)el.firstChild.classList.toggle("sel",k===sel)}}
+map=L.map("hmap",{scrollWheelZoom:false}).setView([49.6,83.6],6);
+L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:"&copy; OpenStreetMap contributors"}).addTo(map);
+PL.forEach(function(p,i){var m=L.marker(p.ll,{icon:L.divIcon({className:"",html:'<div class="mk'+(p.id===sel?" sel":"")+'">'+(i+1)+"</div>",iconSize:[30,30],iconAnchor:[15,15]}),keyboard:true,title:p.n[0]}).addTo(map);m.on("click",function(){sel=p.id;card()});mk[p.id]=m});
+map.fitBounds(PL.map(function(p){return p.ll}),{padding:[30,30]});
+th.onclick=function(e){var b=e.target.closest("[data-t]");if(b){F=b.dataset.t;build()}};
+window.onLang=build;build();
+</script>
+</body></html>

@@ -1,0 +1,138 @@
+[
+ {
+  "id": 42429,
+  "section": "digital_chronicle",
+  "branch": null,
+  "langs": [
+   "kk",
+   "ru"
+  ],
+  "ru": {
+   "id": 42429,
+   "lang": "ru",
+   "title": "Архивы",
+   "date": null,
+   "markdown": "### Архивы",
+   "files": [],
+   "external_links": [],
+   "source_url": "http://e-arhiv.vko.gov.kz/ru/Page/Index/42429",
+   "raw": "main/ru/Page/Index/42429.html",
+   "chars": 10
+  },
+  "kk": {
+   "id": 42429,
+   "lang": "kk",
+   "title": "Архивтер",
+   "date": null,
+   "markdown": "### Архивтер",
+   "files": [],
+   "external_links": [],
+   "source_url": "http://e-arhiv.vko.gov.kz/kk/Page/Index/42429",
+   "raw": "main/kk/Page/Index/42429.html",
+   "chars": 12
+  },
+  "en": null
+ },
+ {
+  "id": 42428,
+  "section": "digital_chronicle",
+  "branch": null,
+  "langs": [
+   "kk",
+   "ru"
+  ],
+  "ru": {
+   "id": 42428,
+   "lang": "ru",
+   "title": "Музеи",
+   "date": null,
+   "markdown": "### Музеи",
+   "files": [],
+   "external_links": [],
+   "source_url": "http://e-arhiv.vko.gov.kz/ru/Page/Index/42428",
+   "raw": "main/ru/Page/Index/42428.html",
+   "chars": 9
+  },
+  "kk": {
+   "id": 42428,
+   "lang": "kk",
+   "title": "Мұражайлар",
+   "date": null,
+   "markdown": "### Мұражайлар",
+   "files": [],
+   "external_links": [],
+   "source_url": "http://e-arhiv.vko.gov.kz/kk/Page/Index/42428",
+   "raw": "main/kk/Page/Index/42428.html",
+   "chars": 14
+  },
+  "en": null
+ },
+ {
+  "id": 42427,
+  "section": "digital_chronicle",
+  "branch": null,
+  "langs": [
+   "kk",
+   "ru"
+  ],
+  "ru": {
+   "id": 42427,
+   "lang": "ru",
+   "title": "Библиотеки",
+   "date": null,
+   "markdown": "### Библиотеки",
+   "files": [],
+   "external_links": [],
+   "source_url": "http://e-arhiv.vko.gov.kz/ru/Page/Index/42427",
+   "raw": "main/ru/Page/Index/42427.html",
+   "chars": 14
+  },
+  "kk": {
+   "id": 42427,
+   "lang": "kk",
+   "title": "Кітапханалар",
+   "date": null,
+   "markdown": "### Кітапханалар",
+   "files": [],
+   "external_links": [],
+   "source_url": "http://e-arhiv.vko.gov.kz/kk/Page/Index/42427",
+   "raw": "main/kk/Page/Index/42427.html",
+   "chars": 16
+  },
+  "en": null
+ },
+ {
+  "id": 42426,
+  "section": "digital_chronicle",
+  "branch": null,
+  "langs": [
+   "kk",
+   "ru"
+  ],
+  "ru": {
+   "id": 42426,
+   "lang": "ru",
+   "title": "Платные услуги",
+   "date": null,
+   "markdown": "[Архивы](http://e-arhiv.vko.gov.kz/ru/Page/Index/42429)\n\n[Библиотеки](http://e-arhiv.vko.gov.kz/ru/Page/Index/42427)\n\n[Музеи](http://e-arhiv.vko.gov.kz/ru/Page/Index/42428)",
+   "files": [],
+   "external_links": [],
+   "source_url": "http://e-arhiv.vko.gov.kz/ru/Page/Index/42426",
+   "raw": "main/ru/Page/Index/42426.html",
+   "chars": 172
+  },
+  "kk": {
+   "id": 42426,
+   "lang": "kk",
+   "title": "ШҚО цифрлық шежіресі",
+   "date": null,
+   "markdown": "[Архивтер](http://e-arhiv.vko.gov.kz/kk/Page/Index/42429)\n\n[Кітапханалар](http://e-arhiv.vko.gov.kz/kk/Page/Index/42427)\n\n[Мұражайлар](http://e-arhiv.vko.gov.kz/kk/Page/Index/42428)",
+   "files": [],
+   "external_links": [],
+   "source_url": "http://e-arhiv.vko.gov.kz/kk/Page/Index/42426",
+   "raw": "main/kk/Page/Index/42426.html",
+   "chars": 181
+  },
+  "en": null
+ }
+]

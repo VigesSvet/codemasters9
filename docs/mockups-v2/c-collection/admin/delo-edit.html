@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Редактор дела — Госархив ВКО</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body data-page="admin-edit" data-base="../">
+<main id="main" class="adm">
+  <nav class="asb" aria-label="Admin">
+    <h2 data-i18n="adm.sec">Разделы</h2>
+    <a href="index.html"><span data-i18n="adm.dash">Дашборд</span></a>
+    <a href="index.html#materials"><span data-i18n="adm.mat">Материалы</span></a>
+    <a href="index.html#exh"><span data-i18n="nav.exhib">Выставки</span></a>
+    <a href="index.html#rev"><span data-i18n="adm.rev">Отзывы</span><span class="num">3</span></a>
+    <a href="index.html#ai"><span data-i18n="adm.ai">Запросы к ИИ</span></a>
+    <a href="delo-edit.html" aria-current="page"><span data-i18n="adm.edit">Редактор дела</span></a>
+  </nav>
+  <div class="acon">
+    <h1 data-i18n="adm.edit">Редактор дела</h1><p class="sub"><a class="lnk" href="index.html#materials" data-i18n="adm.back">К списку материалов</a> · Ф. 1-П, оп. 1, д. 245</p>
+    <div class="afrm">
+      <div>
+        <section class="card"><h2 data-i18n="adm.ident">Идентификация</h2>
+          <div class="g3"><div class="fld"><label class="lbl" data-i18n="k.fondno">Номер фонда</label><input class="inp" value="1-П"></div><div class="fld"><label class="lbl" data-i18n="k.opno">Номер описи</label><input class="inp" value="1"></div><div class="fld"><label class="lbl" data-i18n="k.dno">Номер дела</label><input class="inp" value="245"></div></div>
+          <div class="g3"><div class="fld"><label class="lbl" data-i18n="k.dates">Даты</label><input class="inp" value="1893–1894"></div><div class="fld"><label class="lbl" data-i18n="k.sheets">Листов</label><input class="inp" value="48"></div><div class="fld"><label class="lbl" data-i18n="k.type">Тип документа</label><span class="sel"><select class="inp"><option data-i18n="ty.print">Печатное издание</option><option data-i18n="ty.file">Архивное дело</option><option data-i18n="ty.photo">Фотография</option></select><svg><use href="#i-d"/></svg></span></div></div>
+          <div class="g2"><div class="fld"><label class="lbl" data-i18n="k.lang">Язык</label><span class="sel"><select class="inp"><option data-i18n="ln.ru">Русский</option><option data-i18n="ln.kk">Казахский</option><option data-i18n="ln.mix">Русский, казахский</option></select><svg><use href="#i-d"/></svg></span></div><div class="fld"><label class="lbl" data-i18n="k.store">Место хранения</label><input class="inp" value="Филиал в Семее" data-i18n-ignore></div></div>
+        </section>
+        <section class="card"><h2 data-i18n="adm.text">Тексты карточки</h2>
+          <div class="ltabs" role="tablist"><button role="tab" aria-selected="true" data-lt="ru">RU</button><button role="tab" aria-selected="false" data-lt="kk">KZ</button><button role="tab" aria-selected="false" data-lt="en">EN</button></div>
+          <div class="lpan" data-lp="ru"><div class="fld"><label class="lbl" data-i18n="k.title">Название</label><input class="inp" value="Обзор Семипалатинской области за 1893 год"></div><div class="fld"><label class="lbl" data-i18n="d.desc">Описание</label><textarea class="inp">Печатный обзор состояния области за год: пространство и народонаселение, земледелие, торговля, школы, состав пяти уездов.</textarea></div><div class="fld"><label class="lbl" data-i18n="d.hist">Историческая справка</label><textarea class="inp">Канцелярия военного губернатора возникла при образовании Семипалатинской области в 1854 году.</textarea></div></div>
+          <div class="lpan" data-lp="kk" hidden><div class="fld"><label class="lbl" data-i18n="k.title">Название</label><input class="inp" value="1893 жылғы Семей облысына шолу"></div><div class="fld"><label class="lbl" data-i18n="d.desc">Описание</label><textarea class="inp">Облыстың жылдық жай-күйіне баспа шолу: аумақ және халық, егіншілік, сауда, мектептер, бес уездің құрамы.</textarea></div><div class="fld"><label class="lbl" data-i18n="d.hist">Историческая справка</label><textarea class="inp">Әскери губернатор кеңсесі 1854 жылы Семей облысы құрылған кезде пайда болды.</textarea></div></div>
+          <div class="lpan" data-lp="en" hidden><div class="fld"><label class="lbl" data-i18n="k.title">Название</label><input class="inp" value="Survey of Semipalatinsk Region for 1893"></div><div class="fld"><label class="lbl" data-i18n="d.desc">Описание</label><textarea class="inp">A printed survey of the region for the year: territory and population, farming, trade, schools and the five districts.</textarea></div><div class="fld"><label class="lbl" data-i18n="d.hist">Историческая справка</label><textarea class="inp">The chancellery of the military governor was created with Semipalatinsk Region in 1854.</textarea></div></div>
+        </section>
+        <section class="card"><h2 data-i18n="adm.scans">Сканы</h2>
+          <div class="drop"><b data-i18n="adm.drop">Перетащите файлы сюда</b> <span data-i18n="adm.drop2">или выберите на диске. JPG, TIFF, PDF; до 50 МБ.</span></div>
+          <div class="scans"><figure><img src="../img/scan-1893.jpg" alt=""><figcaption>Л. 1</figcaption></figure><figure><img src="../img/scan-1905.jpg" alt="" style="opacity:.55"><figcaption>Л. 2</figcaption></figure><div class="add">+</div></div>
+        </section>
+      </div>
+      <aside class="side"><section class="card"><h2 data-i18n="adm.status">Публикация</h2>
+        <div class="fld"><label class="lbl" for="acc" data-i18n="k.access">Статус доступности</label><span class="sel"><select class="inp" id="acc"><option value="open" data-i18n="acc.open">Открытый</option><option value="limited" data-i18n="acc.limited">Ограниченный</option><option value="closed" data-i18n="acc.closed">Закрытый</option></select><svg><use href="#i-d"/></svg></span></div>
+        <label class="ck"><input type="checkbox" checked><span data-i18n="adm.pubdig">Опубликовать цифровую копию</span></label>
+        <p class="rnote" style="font-size:13px;color:var(--text2)" data-i18n="adm.accnote">При ограниченном и закрытом статусе сайт показывает только описание и условия доступа.</p>
+        <div class="row"><span data-i18n="adm.state">Состояние</span><span class="st st--open" data-i18n="adm.pub">Опубликовано</span></div>
+        <div class="row"><span data-i18n="adm.upd">Обновлено</span><span>09.11.2026</span></div>
+        <div class="btns"><button class="btn" id="save" type="button" data-i18n="adm.save">Сохранить</button><a class="btn btn--sec" href="../delo.html" data-i18n="adm.view">Открыть на сайте</a></div></section>
+        <section class="card"><h2 data-i18n="adm.log">История изменений</h2><ul class="hist"><li>09.11.2026 · Бекниязқызы Ж. · <span data-i18n="adm.l1">загружены сканы 1–48</span></li><li>06.11.2026 · Бекниязқызы Ж. · <span data-i18n="adm.l2">исправлено название</span></li></ul></section></aside>
+    </div>
+  </div>
+</main>
+<div class="toast" id="toast"></div>
+<script src="../i18n-home.js"></script>
+<script src="../i18n-more.js"></script>
+<script src="../data.js"></script>
+<script src="../app.js"></script>
+<script>
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-lt]"); if(b){ document.querySelectorAll("[data-lt]").forEach(x=>x.setAttribute("aria-selected",x===b)); document.querySelectorAll("[data-lp]").forEach(p=>p.hidden=p.dataset.lp!==b.dataset.lt); }
+  if(e.target.closest("#save")){ const t=document.getElementById("toast"); t.textContent=APP.t("adm.saved"); t.classList.add("on"); setTimeout(()=>t.classList.remove("on"),1800); }
+});
+</script>
+</body>
+</html>

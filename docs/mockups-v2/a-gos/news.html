@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Новости и события — Госархив ВКО</title>
+<meta name="description" content="Архив новостей: 638 записей, 2012-2026. Фильтр по году и заголовку.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-nav="">
+<div id="top"></div>
+<main id="main">
+<div class="crumbs"><div class="wrap">
+ <ol aria-label="Вы здесь"><li><a href="index.html" data-kk="Басты бет" data-en="Home">Главная</a></li><li><span data-kk="Жаңалықтар" data-en="News">Новости</span></li><li aria-current="page" data-kk="Жаңалықтар мен іс-шаралар" data-en="News and events">Новости и события</li></ol>
+</div></div>
+<section class="hero sm"><div class="wrap">
+ <h1 data-kk="Жаңалықтар мен іс-шаралар" data-en="News and events">Новости и события</h1>
+ <p class="sub" data-kk="Жаңалықтар мұрағаты: 638 жазба, 2012-2026." data-en="News archive: 638 items, 2012-2026.">Архив новостей: 638 записей, 2012-2026. Фильтр по году и заголовку.</p>
+</div></section>
+<div class="wrap doc">
+ <nav class="sidenav" aria-label="Разделы"><h2><span data-kk="Жаңалықтар" data-en="News">Новости</span></h2><a href="news.html"><span data-kk="Жаңалықтар" data-en="News">Новости</span></a><a href="news.html?all=1"><span data-kk="Жаңалықтар мұрағаты" data-en="News archive">Архив новостей</span></a><a href="obyavleniya.html"><span data-kk="Хабарландырулар" data-en="Announcements">Объявления</span></a><a href="oprosy.html"><span data-kk="Сауалнамалар мұрағаты" data-en="Polls archive">Архив опросов</span></a><a href="gostevaya.html"><span data-kk="Қонақтар кітабы" data-en="Guestbook">Гостевая книга</span></a></nav>
+ <div>
+<section>
+ <form class="nf" id="nf" role="search" aria-label="Фильтр новостей">
+  <div class="fld"><label for="ny" data-kk="Жыл" data-en="Year">Год</label><select class="inp" id="ny"><option value="" data-kk="Барлық жылдар" data-en="All years">Все годы</option><option value="2026">2026 (30)</option><option value="2025">2025 (35)</option><option value="2024">2024 (34)</option><option value="2023">2023 (35)</option><option value="2022">2022 (48)</option><option value="2021">2021 (53)</option><option value="2020">2020 (46)</option><option value="2019">2019 (97)</option><option value="2018">2018 (71)</option><option value="2017">2017 (78)</option><option value="2016">2016 (24)</option><option value="2015">2015 (17)</option><option value="2014">2014 (69)</option><option value="2012">2012 (1)</option></select></div>
+  <div class="fld"><label for="nq" data-kk="Іздеу" data-en="Search">Поиск по заголовку</label><input class="inp" id="nq" type="search" data-phkk="Тақырып бойынша" data-phen="By title" placeholder="По заголовку"></div>
+ </form>
+ <p class="src" id="ncount" aria-live="polite"></p>
+ <div id="nlist" class="nlist"></div>
+ <nav class="pager" id="npager" aria-label="Страницы"></nav>
+</section>
+ </div>
+</div>
+</main>
+<div id="bottom"></div>
+<script src="app.js"></script>
+<script src="news-data.js"></script>
+<script>
+(function(){
+var N=window.NEWS,PER=20,pg=1,y=new URLSearchParams(location.search).get("year")||"";
+var sel=document.getElementById("ny"),q=document.getElementById("nq"),L=document.getElementById("nlist"),P=document.getElementById("npager"),C=document.getElementById("ncount");
+sel.value=y;
+function lg(){return getLang()==="kk"?1:0}
+function pick(a){var i=lg();return a[i]||a[1-i]||""}
+function fd(d){return d.slice(8,10)+"."+d.slice(5,7)+"."+d.slice(0,4)}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+function render(){
+ var v=N.filter(function(o){return(!sel.value||o.d.slice(0,4)===sel.value)&&(!q.value||pick(o.t).toLowerCase().indexOf(q.value.toLowerCase())>-1)});
+ var pages=Math.max(1,Math.ceil(v.length/PER));if(pg>pages)pg=pages;
+ C.textContent=tr("Найдено: ","Табылды: ","Found: ")+v.length+tr(" из "," / "," of ")+N.length;
+ L.innerHTML=v.slice((pg-1)*PER,pg*PER).map(function(o){
+  return '<article class="ni">'+(o.i?'<a href="novost.html?id='+o.id+'"><img src="'+o.i+'" alt="" loading="lazy"></a>':'<span class="nph"></span>')+'<div><time datetime="'+o.d+'">'+fd(o.d)+'</time><h3><a href="novost.html?id='+o.id+'">'+esc(pick(o.t))+'<span class="chev"></span></a></h3><p>'+esc(pick(o.a))+'</p></div></article>'}).join("");
+ var b="";for(var i=1;i<=pages;i++){if(i===1||i===pages||Math.abs(i-pg)<=2)b+='<button data-p="'+i+'"'+(i===pg?' aria-current="page"':"")+'>'+i+'</button>';else if(Math.abs(i-pg)===3)b+='<span>…</span>'}
+ P.innerHTML=b;
+}
+P.addEventListener("click",function(e){var t=e.target.closest("[data-p]");if(t){pg=+t.dataset.p;render();window.scrollTo(0,document.getElementById("nf").offsetTop)}});
+sel.onchange=q.oninput=function(){pg=1;render()};
+window.onLang=function(){render()};
+render();
+})();
+</script>
+</body>
+</html>

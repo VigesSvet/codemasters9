@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>История региона — Госархив ВКО</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-page="history" data-hdr="solid">
+<main id="main">
+  <div class="ptitle"><h1 data-i18n="h.title">Цифровая история региона</h1><p data-i18n="h.lead">Хронология событий, тематические подборки и исторические места Прииртышья. Каждая запись связана с делами каталога.</p></div>
+  <div class="chips" id="chips" role="group"></div>
+  <section class="hsec"><h2 data-i18n="h.tl">Хронология</h2><p class="meta2" id="tlmeta"></p></section>
+  <div class="tl" id="tl"></div>
+  <section class="hsec"><h2 data-i18n="h.places">Исторические места</h2><p class="meta2" data-i18n="h.placesm">Места, связанные с документами и фотографиями архива</p></section>
+  <div class="places" id="places"></div>
+  <div class="hmore"><a class="btn" href="katalog.html" data-i18n="coll.all">Вся коллекция</a><a class="btn btn--sec" href="vystavka.html" data-i18n="nav.exhib">Выставки</a><a class="btn btn--sec" href="filialy.html" data-i18n="nav.branches">Филиалы</a></div>
+</main>
+<script src="i18n-home.js"></script>
+<script src="i18n-more.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script>
+(function(){
+  const {L,t,esc}=APP,$=s=>document.querySelector(s);
+  let th="all";
+  const chipHref=c=>c[1]==="about"?"ob-arhive.html":c[1]==="kniga"?"ob-arhive.html#help":/^\d+-[A-Z]$/.test(c[1])?"fond.html?f="+c[1]:"delo.html";
+  function render(){
+    $("#chips").innerHTML=`<button data-th="all" aria-pressed="${th==="all"}">${t("h.all")}</button>`+Object.keys(THEMES).map(k=>`<button data-th="${k}" aria-pressed="${th===k}">${esc(L(THEMES[k]))}</button>`).join("");
+    const ev=EVENTS.filter(e=>th==="all"||e.th.includes(th));
+    $("#tlmeta").textContent=`${ev.length} ${t("h.events")}`;
+    $("#tl").innerHTML=ev.length?ev.map(e=>`<article class="ev"><div class="yr">${e.y}<small>${e.th.map(k=>esc(L(THEMES[k]))).join(" · ")}</small></div><div class="im${e.img?"":" noim"}">${e.img?`<img src="img/${e.img}" alt="" loading="lazy">`:t("h.noimg")}</div><div><h3>${esc(L(e.t))}</h3><p>${esc(L(e.d))}</p><div class="tags">${e.chips.map(c=>`<a href="${chipHref(c)}">${esc(APP.lang==="en"?c[1]:c[0])}</a>`).join("")}</div></div></article>`).join(""):`<p class="empty">${t("cat.none")}</p>`;
+    $("#places").innerHTML=HPLACES.map(p=>`<div class="place"><img src="img/${p.img}" alt="" style="object-position:${p.pos}" loading="lazy"><div class="in"><span class="badge">${t("h.place")}</span><h3>${esc(L(p.t))}</h3><span class="co">${p.co}</span><div class="tags">${p.chips.map(c=>`<a href="delo.html">${esc(APP.lang==="en"?c[1]:c[0])}</a>`).join("")}</div></div></div>`).join("");
+  }
+  document.addEventListener("click",e=>{ const b=e.target.closest("[data-th]"); if(b){ th=b.dataset.th; render(); } });
+  window.addEventListener("langchange",render); render();
+})();
+</script>
+</body>
+</html>

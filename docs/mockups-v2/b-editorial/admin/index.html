@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Панель сотрудников — ГАВКО</title>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../extra.css">
+</head>
+<body data-page="admin" data-base="../" data-title="a.title">
+<div id="hdr"></div>
+<div class="adm">
+  <aside class="adm-s"><small data-i="a.menu">Управление</small>
+    <a href="index.html" aria-current="page" data-i="a.m.dash">Дашборд</a><a href="index.html#materials" data-i="a.m.mat">Материалы</a><a href="index.html#reviews" data-i="a.m.rev">Отзывы</a><a href="index.html#aiq" data-i="a.m.ai">Запросы к ИИ</a><a href="delo-edit.html" data-i="a.m.edit">Карточка дела</a><a href="../index.html" data-i="a.m.site">На сайт</a></aside>
+  <main class="adm-m">
+    <h1 data-i="a.h1">Дашборд</h1>
+    <div class="stats">
+      <div class="stat"><b>4 812</b><span data-i="a.s1">материалов в каталоге</span></div>
+      <div class="stat"><b>7</b><span data-i="a.s2">на проверке</span></div>
+      <div class="stat"><b>3</b><span data-i="a.s3">выставки опубликовано</span></div>
+      <div class="stat"><b>5</b><span data-i="a.s4">отзывов ждут модерации</span></div>
+    </div>
+
+    <section id="materials"><h2 data-i="a.mat">Материалы на согласовании</h2>
+      <div class="tw"><table class="tbl"><thead><tr><th data-i="a.c.cipher">Шифр</th><th data-i="d.title">Заголовок</th><th data-i="a.c.author">Автор</th><th data-i="a.c.status">Статус</th><th></th></tr></thead><tbody>
+        <tr><td class="mono">Ф. 1-П, оп. 1, д. 245</td><td><a href="delo-edit.html" data-i="r.D245">Первая всеобщая перепись населения 1897 г., Семипалатинская область</a></td><td>Е. Костина</td><td><span class="st ok" data-i="a.st.ok">Одобрено</span></td><td class="acts"><button class="y" type="button" data-i="a.publish">Опубликовать</button></td></tr>
+        <tr><td class="mono">Ф. 1-П, оп. 1, д. 242</td><td><a href="delo-edit.html" data-i="r.D242">Списки населённых мест Усть-Каменогорского уезда</a></td><td>Ж. Бекниязқызы</td><td><span class="st rev" data-i="a.st.rev">На проверке</span></td><td class="acts"><button type="button" data-i="a.fix">На доработку</button><button class="y" type="button" data-i="a.approve">Одобрить</button></td></tr>
+        <tr><td class="mono">Ф. 98-ФД, оп. 1, д. 16</td><td data-i="x.e4t">Аул под Семипалатинском</td><td>Ж. Бекниязқызы</td><td><span class="st fix" data-i="a.st.fix">Требует доработки</span></td><td class="acts"></td></tr>
+        <tr><td class="mono">Ф. 5-К, оп. 1, д. 3</td><td data-i="k.r5">План Аблайкитского монастыря близ Семипалатинска</td><td>Е. Костина</td><td><span class="st draft" data-i="a.st.draft">Черновик</span></td><td class="acts"></td></tr>
+      </tbody></table></div>
+    </section>
+
+    <div class="grid2">
+      <section id="reviews"><h2 data-i="a.rev">Модерация отзывов</h2>
+        <table class="tbl"><tbody>
+          <tr><td data-i="a.rv1">«В карточке д. 245 неверно указан год издания свода.»</td><td class="acts"><button type="button" data-i="a.reject">Отклонить</button><button class="y" type="button" data-i="a.approve2">Принять</button></td></tr>
+          <tr><td data-i="a.rv2">«Предлагаю выставку о ярмарках Зайсанского уезда.»</td><td class="acts"><button type="button" data-i="a.reject2">Отклонить</button><button class="y" type="button" data-i="a.approve3">Принять</button></td></tr>
+          <tr><td data-i="a.rv3">«На мобильном не открывается вьюер скана.»</td><td class="acts"><button type="button" data-i="a.reject3">Отклонить</button><button class="y" type="button" data-i="a.approve4">Принять</button></td></tr>
+        </tbody></table></section>
+      <section id="aiq"><h2 data-i="a.ai">Запросы к ИИ без персональных данных</h2>
+        <p class="adm-note" data-i="a.ai.n">Тексты запросов очищаются от ФИО, телефонов и адресов до сохранения. Хранится только тема и число запросов.</p>
+        <div class="bars"><div><span data-i="a.ai1">метрические книги</span><i style="width:92%"></i><b>184</b></div><div><span data-i="a.ai2">перепись 1897</span><i style="width:64%"></i><b>129</b></div><div><span data-i="a.ai3">часы читального зала</span><i style="width:48%"></i><b>96</b></div><div><span data-i="a.ai4">личные фонды</span><i style="width:31%"></i><b>62</b></div></div>
+        <p class="meta" style="margin-top:12px" data-i="a.ai.p">За 30 дней: 471 запрос; без ответа в каталоге: 38.</p></section>
+    </div>
+  </main>
+</div>
+<div id="ftr"></div>
+<script src="../app.js"></script>
+<script>
+T({
+ 'a.title':['Панель сотрудников — ГАВКО','Қызметкерлер панелі — ШҚО МА','Staff panel — State Archive of EKR'],
+ 'a.menu':['Управление','Басқару','Management'],'a.m.dash':['Дашборд','Басқару тақтасы','Dashboard'],'a.m.mat':['Материалы','Материалдар','Materials'],'a.m.rev':['Отзывы','Пікірлер','Feedback'],'a.m.ai':['Запросы к ИИ','ЖИ-ге сұраныстар','AI queries'],'a.m.edit':['Карточка дела','Іс картасы','File record'],'a.m.site':['На сайт','Сайтқа','To the site'],
+ 'a.h1':['Дашборд','Басқару тақтасы','Dashboard'],
+ 'a.s1':['материалов в каталоге','каталогтағы материал','items in the catalogue'],'a.s2':['на проверке','тексеруде','awaiting review'],'a.s3':['выставки опубликовано','көрме жарияланды','exhibitions published'],'a.s4':['отзывов ждут модерации','пікір модерация күтуде','reviews awaiting moderation'],
+ 'a.mat':['Материалы на согласовании','Келісудегі материалдар','Materials awaiting approval'],
+ 'a.c.cipher':['Шифр','Шифр','Reference'],'a.c.author':['Автор','Автор','Author'],'a.c.status':['Статус','Мәртебе','Status'],
+ 'a.st.ok':['Одобрено','Мақұлданды','Approved'],'a.st.rev':['На проверке','Тексеруде','Under review'],'a.st.fix':['Требует доработки','Пысықтауды қажет етеді','Needs revision'],'a.st.draft':['Черновик','Жоба','Draft'],
+ 'a.publish':['Опубликовать','Жариялау','Publish'],'a.fix':['На доработку','Пысықтауға','Send back'],'a.approve':['Одобрить','Мақұлдау','Approve'],
+ 'a.rev':['Модерация отзывов','Пікірлерді модерациялау','Feedback moderation'],
+ 'a.rv1':['«В карточке д. 245 неверно указан год издания свода.»','«245-іс картасында жинақтың шыққан жылы қате көрсетілген.»','“The card of file 245 gives the wrong publication year of the summary.”'],
+ 'a.rv2':['«Предлагаю выставку о ярмарках Зайсанского уезда.»','«Зайсан уезінің жәрмеңкелері туралы көрме ұсынамын.»','“I suggest an exhibition on the fairs of Zaisan district.”'],
+ 'a.rv3':['«На мобильном не открывается вьюер скана.»','«Мобильдіде скан көрсеткіші ашылмайды.»','“The scan viewer does not open on mobile.”'],
+ 'a.reject':['Отклонить','Қабылдамау','Reject'],'a.reject2':['Отклонить','Қабылдамау','Reject'],'a.reject3':['Отклонить','Қабылдамау','Reject'],'a.approve2':['Принять','Қабылдау','Accept'],'a.approve3':['Принять','Қабылдау','Accept'],'a.approve4':['Принять','Қабылдау','Accept'],
+ 'a.ai':['Запросы к ИИ без персональных данных','Жеке деректерсіз ЖИ сұраныстары','AI queries without personal data'],
+ 'a.ai.n':['Тексты запросов очищаются от ФИО, телефонов и адресов до сохранения. Хранится только тема и число запросов.','Сұраныс мәтіндері сақтау алдында аты-жөнінен, телефондардан және мекенжайлардан тазартылады. Тек тақырып пен сұраныс саны сақталады.','Query texts are stripped of names, phones and addresses before saving. Only the topic and the count are kept.'],
+ 'a.ai1':['метрические книги','метрикалық кітаптар','parish registers'],'a.ai2':['перепись 1897','1897 жылғы санақ','census of 1897'],'a.ai3':['часы читального зала','оқу залының жұмыс уақыты','reading room hours'],'a.ai4':['личные фонды','жеке қорлар','personal fonds'],
+ 'a.ai.p':['За 30 дней: 471 запрос; без ответа в каталоге: 38.','30 күнде: 471 сұраныс; каталогта жауабы жоқ: 38.','Over 30 days: 471 queries; 38 had no match in the catalogue.'],
+ 'x.e4t':['Аул под Семипалатинском','Семей маңындағы ауыл','An aul near Semipalatinsk'],
+ 'k.r5':['План Аблайкитского монастыря близ Семипалатинска','Семей маңындағы Аблайкит монастырының жоспары','Plan of the Ablaikit monastery near Semipalatinsk']
+});
+</script>
+</body>
+</html>

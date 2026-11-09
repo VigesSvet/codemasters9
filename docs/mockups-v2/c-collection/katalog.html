@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Каталог — Госархив ВКО</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-page="catalog" data-hdr="solid">
+<main id="main">
+  <form class="sband" id="sform" role="search" onsubmit="return false">
+    <input class="inp" id="q" type="search" data-i18n-ph="cat.ph" aria-label="Search">
+    <button class="btn" type="submit"><span data-i18n="cat.find">Найти</span><svg><use href="#i-search"/></svg></button>
+    <button class="adv fbtn" type="button" data-facets-open><span data-i18n="filter">Фильтр</span><svg><use href="#i-filter"/></svg></button>
+  </form>
+  <div class="tabs2" role="tablist" id="tabs"></div>
+  <div class="cat">
+    <aside class="facets" id="facets" aria-label="Filters">
+      <div class="fhead"><h2 data-i18n="cat.filters">Параметры поиска</h2><button class="close" type="button" data-facets-close aria-label="Close"><svg><use href="#i-close"/></svg></button><button class="reset" type="button" id="reset" data-i18n="cat.reset">Сбросить</button></div>
+      <details class="fct" open><summary><span data-i18n="f.ciph">Шифр: фонд, опись, дело</span><svg><use href="#i-d"/></svg></summary><div class="bd">
+        <label class="lbl" for="f-fond" data-i18n="f.fond">Номер фонда</label><input class="inp" id="f-fond" placeholder="1-П" style="margin-bottom:10px">
+        <div class="two"><div><label class="lbl" for="f-op" data-i18n="f.op">Номер описи</label><input class="inp" id="f-op" inputmode="numeric" placeholder="1"></div><div><label class="lbl" for="f-d" data-i18n="f.d">Номер дела</label><input class="inp" id="f-d" inputmode="numeric" placeholder="245"></div></div></div></details>
+      <details class="fct" open><summary><span data-i18n="f.years">Год создания документа</span><svg><use href="#i-d"/></svg></summary><div class="bd"><div class="two"><div><label class="lbl" for="f-y1" data-i18n="f.from">С</label><input class="inp" id="f-y1" inputmode="numeric" placeholder="1850"></div><div><label class="lbl" for="f-y2" data-i18n="f.to">По</label><input class="inp" id="f-y2" inputmode="numeric" placeholder="1950"></div></div></div></details>
+      <details class="fct"><summary><span data-i18n="f.period">Исторический период</span><svg><use href="#i-d"/></svg></summary><div class="bd" id="g-per"></div></details>
+      <details class="fct"><summary><span data-i18n="f.type">Тип документа</span><svg><use href="#i-d"/></svg></summary><div class="bd" id="g-type"></div></details>
+      <details class="fct"><summary><span data-i18n="f.org">Автор или организация</span><svg><use href="#i-d"/></svg></summary><div class="bd" id="g-org"></div></details>
+      <details class="fct"><summary><span data-i18n="f.theme">Тематика</span><svg><use href="#i-d"/></svg></summary><div class="bd" id="g-th"></div></details>
+      <details class="fct"><summary><span data-i18n="f.place">Населённый пункт</span><svg><use href="#i-d"/></svg></summary><div class="bd" id="g-place"></div></details>
+      <details class="fct"><summary><span data-i18n="f.branch">Филиал архива</span><svg><use href="#i-d"/></svg></summary><div class="bd" id="g-br"></div></details>
+      <details class="fct" open><summary><span data-i18n="f.more">Доступ и оцифровка</span><svg><use href="#i-d"/></svg></summary><div class="bd">
+        <label class="ck"><input type="checkbox" id="f-dig"><span data-i18n="f.dig">Есть цифровая копия</span></label>
+        <label class="ck"><input type="checkbox" id="f-open"><span data-i18n="f.onlyopen">Только открытый доступ</span></label></div></details>
+      <button class="btn" type="button" style="width:100%;margin-top:6px" data-facets-close data-i18n="cat.apply" id="apply">Показать результаты</button>
+    </aside>
+    <section aria-live="polite">
+      <div class="rhead">
+        <div class="cnt" id="cnt"></div>
+        <div class="grp"><label class="lbl" for="sort" data-i18n="cat.sort">Сортировка</label><span class="sel"><select class="inp" id="sort"></select><svg><use href="#i-d"/></svg></span></div>
+        <div class="grp"><label class="lbl" for="pp" data-i18n="cat.pp">На странице</label><span class="sel"><select class="inp" id="pp"><option>6</option><option>12</option><option>24</option></select><svg><use href="#i-d"/></svg></span></div>
+        <div class="seg push" role="group" aria-label="View"><button id="v-list" aria-pressed="true" aria-label="List"><svg><use href="#i-list"/></svg></button><button id="v-gal" aria-pressed="false" aria-label="Gallery"><svg><use href="#i-grid"/></svg></button></div>
+      </div>
+      <ul class="res" id="res"></ul>
+      <div class="pg" id="pg"></div>
+    </section>
+  </div>
+</main>
+<script src="i18n-home.js"></script>
+<script src="i18n-more.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+<script>
+(function(){
+  const {L,t,esc}=APP, $=s=>document.querySelector(s);
+  const q0=new URLSearchParams(location.search);
+  const S={cat:q0.get("cat")||"all",q:q0.get("q")||"",place:q0.get("place")?[q0.get("place")]:[],per:[],type:[],org:[],th:[],br:[],page:1,view:"list",sort:"rel"};
+  $("#q").value=S.q;
+  const CATS=[["all","tab.all"],["files","tab.files"],["fonds","tab.fonds"],["photos","tab.photo2"],["maps","tab.maps"],["personal","tab.personal"]];
+  const TOTAL={all:412868,files:361902,fonds:1407,photos:38215,maps:2104,personal:3240};
+  function groups(){
+    const mk=(id,obj,key,counts)=>{ $(id).innerHTML=Object.keys(obj).map(k=>`<label class="ck"><input type="checkbox" data-g="${key}" value="${k}"${S[key].includes(k)?" checked":""}><span>${esc(L(obj[k]))}</span><small>${counts(k)}</small></label>`).join(""); };
+    const c=(f)=>k=>ITEMS.filter(i=>f(i,k)).length;
+    mk("#g-per",PERIODS,"per",c((i,k)=>i.per===k));
+    mk("#g-type",TYPES,"type",c((i,k)=>i.type===k));
+    mk("#g-org",ORGS,"org",c((i,k)=>i.org===k));
+    mk("#g-th",THEMES,"th",c((i,k)=>i.th.includes(k)));
+    mk("#g-place",PLACES,"place",c((i,k)=>i.place===k));
+    const brs={main:BR_NAMES.main,ridder:BR_NAMES.rid,zaisan:BR_NAMES.zai};
+    mk("#g-br",brs,"br",c((i,k)=>i.br===k));
+    $("#sort").innerHTML=[["rel","sort.rel"],["ya","sort.ya"],["yd","sort.yd"],["cipher","sort.cipher"]].map(o=>`<option value="${o[0]}"${S.sort===o[0]?" selected":""}>${t(o[1])}</option>`).join("");
+  }
+  function tabs(){ $("#tabs").innerHTML=CATS.map(c=>`<button role="tab" data-c="${c[0]}" aria-selected="${S.cat===c[0]}">${t(c[1])} (${TOTAL[c[0]].toLocaleString("ru").replace(/,/g," ")})</button>`).join(""); }
+  const fmt=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g,"\u00a0");
+  function filter(){
+    const f=k=>document.getElementById(k).value.trim().toLowerCase();
+    const fond=f("f-fond"),op=f("f-op"),dd=f("f-d"),y1=+f("f-y1")||0,y2=+f("f-y2")||9999;
+    const q=S.q.toLowerCase();
+    let r=ITEMS.filter(i=>{
+      if(S.cat!=="all"&&S.cat!=="fonds"&&i.cat!==S.cat) return false;
+      if(S.cat==="fonds") return false;
+      if(q){const hay=(L(i.t)+" "+i.t.ru+" "+i.t.en+" "+i.kw+" "+i.id+" "+L(ORGS[i.org])).toLowerCase(); if(!q.split(/\s+/).every(w=>hay.includes(w))) return false;}
+      if(fond&&!i.f.toLowerCase().replace("-","").includes(fond.replace("п","p").replace("ф","f").replace("м","m").replace("р","r").replace("к","k").replace("л","l").replace("-",""))) return false;
+      if(op&&String(i.op)!==op) return false;
+      if(dd&&String(i.d)!==dd) return false;
+      if(i.y[1]<y1||i.y[0]>y2) return false;
+      if(S.per.length&&!S.per.includes(i.per)) return false;
+      if(S.type.length&&!S.type.includes(i.type)) return false;
+      if(S.org.length&&!S.org.includes(i.org)) return false;
+      if(S.th.length&&!i.th.some(x=>S.th.includes(x))) return false;
+      if(S.place.length&&!S.place.includes(i.place)) return false;
+      if(S.br.length&&!S.br.includes(i.br)) return false;
+      if($("#f-dig").checked&&!i.dig) return false;
+      if($("#f-open").checked&&i.acc!=="open") return false;
+      return true;});
+    if(S.sort==="ya") r.sort((a,b)=>a.y[0]-b.y[0]); else if(S.sort==="yd") r.sort((a,b)=>b.y[0]-a.y[0]); else if(S.sort==="cipher") r.sort((a,b)=>a.id.localeCompare(b.id,"ru",{numeric:true}));
+    return r;
+  }
+  const cipher=i=>`Ф. ${FONDS.find(x=>x.k===i.f).no}, оп. ${i.op}, д. ${i.d}`;
+  const accSt=i=>`<span class="st st--${i.acc==="open"?"open":i.acc==="limited"?"lim":"closed"}">${L(ACCESS[i.acc])}</span>`;
+  const hl=(s,q)=>{ if(!q) return esc(s); let o=esc(s); q.split(/\s+/).filter(w=>w.length>1).forEach(w=>{o=o.replace(new RegExp("("+w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","ig"),"<mark>$1</mark>");}); return o; };
+  function render(){
+    tabs();
+    const r=filter(), pp=+$("#pp").value, pages=Math.max(1,Math.ceil(r.length/pp)); if(S.page>pages) S.page=1;
+    const shown=r.slice((S.page-1)*pp,S.page*pp);
+    const total=S.cat==="fonds"?FONDS.length:r.length;
+    $("#cnt").innerHTML=S.cat==="fonds"?`<b>${FONDS.length}</b> ${t("cat.fondsn")}`:`<b>${r.length}</b> ${t("cat.found")} <span style="color:var(--text2)">(${t("cat.demo")})</span>`;
+    const res=$("#res"); res.className="res"+(S.view==="gal"?" gal":"");
+    if(S.cat==="fonds"){
+      res.className="res";
+      res.innerHTML=FONDS.map(f=>`<li><div class="th">${esc(f.no)}</div><div><div class="code"><span>Ф. ${f.no}</span><span>${f.y[0]}–${f.y[1]}</span></div><h3><a href="fond.html?f=${f.k}">${esc(L(f.t))}</a></h3><p class="kv"><span><b>${t("k.ops")}:</b> ${f.ops}</span><span><b>${t("k.units")}:</b> ${fmt(f.units)}</span><span><b>${t("k.place")}:</b> ${esc(L(PLACES[f.place]))}</span></p></div></li>`).join("");
+      $("#pg").innerHTML=""; return;
+    }
+    if(!r.length){ res.innerHTML=`<li style="display:block"><p class="empty">${t("cat.none")}</p></li>`; $("#pg").innerHTML=""; return; }
+    res.innerHTML=shown.map(i=>{
+      if(S.view==="gal") return `<li><a class="tile" href="delo.html">${i.img?`<img src="img/${i.img}" alt="${esc(L(i.t))}">`:`<span class="nos">${esc(cipher(i))}</span>`}<span class="cap"><b>${esc(cipher(i))}</b>${esc(L(i.t))}</span></a></li>`;
+      return `<li><div class="th">${i.img?`<img src="img/${i.img}" alt="">`:t("k.noscan")}</div><div><div class="code"><span>${esc(cipher(i))}</span>${accSt(i)}${i.dig?`<span class="st st--open" style="background:var(--hdr)">${t("k.dig")}</span>`:""}</div><h3><a href="delo.html">${hl(L(i.t),S.q)}</a></h3><p class="kv"><span><b>${t("k.dates")}:</b> ${i.y[0]===i.y[1]?i.y[0]:i.y[0]+"–"+i.y[1]}</span><span><b>${t("k.type")}:</b> ${esc(L(TYPES[i.type]))}</span><span><b>${t("k.place")}:</b> ${esc(L(PLACES[i.place]))}</span><span><b>${t("k.sheets")}:</b> ${i.sheets}</span><span><b>${t("k.lang")}:</b> ${esc(L(LANGS[i.lang]))}</span></p></div></li>`;
+    }).join("");
+    const pg=[]; pg.push(`<button data-p="${S.page-1}"${S.page<2?" disabled":""} aria-label="Prev">${APP.ic("l",14)}</button>`);
+    for(let p=1;p<=pages;p++) pg.push(`<button data-p="${p}"${p===S.page?" aria-current=page":""}>${p}</button>`);
+    pg.push(`<button data-p="${S.page+1}"${S.page>=pages?" disabled":""} aria-label="Next">${APP.ic("r",14)}</button>`);
+    $("#pg").innerHTML=pages>1?pg.join(""):"";
+  }
+  function init(){ groups(); render(); }
+  document.addEventListener("change",e=>{
+    const g=e.target.dataset&&e.target.dataset.g;
+    if(g){ const a=S[g]; const v=e.target.value; if(e.target.checked) a.push(v); else a.splice(a.indexOf(v),1); S.page=1; render(); }
+    else if(e.target.id==="sort"){ S.sort=e.target.value; render(); }
+    else if(e.target.id==="pp"||e.target.id==="f-dig"||e.target.id==="f-open"){ S.page=1; render(); }
+  });
+  document.addEventListener("input",e=>{ if(/^f-(fond|op|d|y1|y2)$/.test(e.target.id)){ S.page=1; render(); } });
+  document.addEventListener("click",e=>{
+    const c=e.target.closest("[data-c]"); if(c){ S.cat=c.dataset.c; S.page=1; render(); }
+    const p=e.target.closest("[data-p]"); if(p&&!p.disabled){ S.page=+p.dataset.p; render(); window.scrollTo({top:0}); }
+    if(e.target.closest("#v-list")){ S.view="list"; $("#v-list").setAttribute("aria-pressed","true"); $("#v-gal").setAttribute("aria-pressed","false"); render(); }
+    if(e.target.closest("#v-gal")){ S.view="gal"; $("#v-gal").setAttribute("aria-pressed","true"); $("#v-list").setAttribute("aria-pressed","false"); render(); }
+    if(e.target.closest("[data-facets-open]")) $("#facets").classList.add("open");
+    if(e.target.closest("[data-facets-close]")) $("#facets").classList.remove("open");
+    if(e.target.closest("#reset")){ S.q="";$("#q").value=""; ["place","per","type","org","th","br"].forEach(k=>S[k]=[]); document.querySelectorAll("#facets input").forEach(i=>{ if(i.type==="checkbox") i.checked=false; else i.value=""; }); S.page=1; render(); }
+  });
+  $("#sform").addEventListener("submit",()=>{ S.q=$("#q").value; S.page=1; render(); });
+  window.addEventListener("langchange",init);
+  init();
+})();
+</script>
+</body>
+</html>

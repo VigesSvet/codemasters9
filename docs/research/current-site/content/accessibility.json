@@ -1,0 +1,40 @@
+[
+ {
+  "id": 52697,
+  "section": "accessibility",
+  "branch": null,
+  "langs": [
+   "kk",
+   "ru"
+  ],
+  "ru": {
+   "id": 52697,
+   "lang": "ru",
+   "title": "Система чтения с экрана для слабовидящих",
+   "date": null,
+   "markdown": "## [Ссылка на систему экранного диктора](https://screenreader.tilqazyna.kz)",
+   "files": [],
+   "external_links": [
+    "https://screenreader.tilqazyna.kz"
+   ],
+   "source_url": "http://e-arhiv.vko.gov.kz/ru/Page/Index/52697",
+   "raw": "main/ru/Page/Index/52697.html",
+   "chars": 75
+  },
+  "kk": {
+   "id": 52697,
+   "lang": "kk",
+   "title": "Көру қабілеті нашар адамдарға арналған экранды оқу жүйесі",
+   "date": null,
+   "markdown": "## [Баяндауыш жүйесінің сілтемесі](https://screenreader.tilqazyna.kz)",
+   "files": [],
+   "external_links": [
+    "https://screenreader.tilqazyna.kz"
+   ],
+   "source_url": "http://e-arhiv.vko.gov.kz/kk/Page/Index/52697",
+   "raw": "main/kk/Page/Index/52697.html",
+   "chars": 69
+  },
+  "en": null
+ }
+]

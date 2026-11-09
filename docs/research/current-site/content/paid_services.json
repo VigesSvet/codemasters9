@@ -1,0 +1,40 @@
+[
+ {
+  "id": 52679,
+  "section": "paid_services",
+  "branch": null,
+  "langs": [
+   "kk",
+   "ru"
+  ],
+  "ru": {
+   "id": 52679,
+   "lang": "ru",
+   "title": "Платные услуги",
+   "date": null,
+   "markdown": "[Постановление \"Об утверждении прейскуранта цен на товары (работы, услуги), реализуемые государственными архивами управления цифровизации и архивов Восточно Казахстанской области\"](http://e-arhiv.vko.gov.kz/akimsemey/other/Постановление%20прейскурант%20рус.pdf)",
+   "files": [
+    "http://e-arhiv.vko.gov.kz/akimsemey/other/Постановление%20прейскурант%20рус.pdf"
+   ],
+   "external_links": [],
+   "source_url": "http://e-arhiv.vko.gov.kz/ru/Page/Index/52679",
+   "raw": "main/ru/Page/Index/52679.html",
+   "chars": 261
+  },
+  "kk": {
+   "id": 52679,
+   "lang": "kk",
+   "title": "Ақылы қызметтер",
+   "date": null,
+   "markdown": "[\"Шығыс Қазақстан облысы цифрландыру және архивтер басқармасының мемлекеттік архивтері өткізетін тауарларға (жұмыстарға, көрсетілетін қызметтерге) баға прейскуратын бекіту туралы Қаулы](http://e-arhiv.vko.gov.kz/akimsemey/other/Постановление%20прейскурант%20каз.pdf)",
+   "files": [
+    "http://e-arhiv.vko.gov.kz/akimsemey/other/Постановление%20прейскурант%20каз.pdf"
+   ],
+   "external_links": [],
+   "source_url": "http://e-arhiv.vko.gov.kz/kk/Page/Index/52679",
+   "raw": "main/kk/Page/Index/52679.html",
+   "chars": 266
+  },
+  "en": null
+ }
+]

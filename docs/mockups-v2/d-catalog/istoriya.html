@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Цифровая история региона. Каталог ГА ВКО</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-nav="istoriya" data-mini="1">
+<a class="skip" href="#main">Перейти к содержимому</a>
+<header id="hd"></header>
+<div id="tb"></div>
+<main id="main">
+<div class="wrap"><div class="pgh"><h1>Цифровая история региона</h1><p class="lede">Хронология, темы и места Восточного Казахстана. Каждое событие и каждое место связано с делами, которые его документируют.</p></div></div>
+
+<div class="tiles" style="margin-top:20px" aria-label="Темы">
+  <a class="tile" href="#hronologiya" style="background-image:url(img/town.jpg)"><span>Хронология</span></a>
+  <a class="tile" href="#mesta" style="background-image:url(img/siberia.jpg)"><span>Места региона</span></a>
+  <a class="tile" href="vystavka.html?e=3" style="background-image:url(img/ferry.jpg)"><span>Переправы и торговля</span></a>
+  <a class="tile" href="vystavka.html?e=2" style="background-image:url(img/aul.jpg)"><span>Аул и степь</span></a>
+  <a class="tile" href="katalog.html?tab=Фотографии" style="background-image:url(img/bazaar.jpg)"><span>Фотографии</span></a>
+</div>
+
+<section class="sec" id="hronologiya">
+  <div class="wrap">
+    <h2 class="t">Хронология событий</h2>
+    <p class="lede">Выберите период. События с иллюстрацией взяты из оцифрованных дел, остальные ссылаются на описи.</p>
+    <div class="eras" id="eras"></div>
+    <ol class="tl" id="tl"></ol>
+  </div>
+</section>
+
+<section class="sec alt" id="mesta">
+  <div class="wrap">
+    <h2 class="t">Исторические места</h2>
+    <p class="lede">Места, о которых хранятся документы. Для каждого указаны дела в каталоге и филиал, где они находятся.</p>
+    <div class="plc" id="plc"></div>
+    <p class="src">Иллюстрации: Wikimedia Commons, общественное достояние (Library of Congress, LCCN 99615482, 99615488, 99615489, 99615508; Дж. Кеннан, 1891). Хронология составлена по описям фондов; формулировки событий, шифры и даты в макете условные.</p>
+  </div>
+</section>
+</main>
+<footer id="ft"></footer>
+<script src="data.js"></script>
+<script src="i18n.js"></script>
+<script>
+(function(){
+var D=window.VKO_DATA;
+var EV=[
+[1850,0,'Семипалатинск на рисунке середины XIX века','Город на правом берегу Иртыша: один из центров торговли с Центральной Азией.','1-П/3/12','town','Ф. 1-П, оп. 3, д. 12'],
+[1868,0,'Создание Семипалатинской области','Образовано областное правление, начинается делопроизводство фонда 1-П.','1-П/1/244',null,'Ф. 1-П, оп. 1, д. 244'],
+[1885,1,'Семипалатинский базар и ярмарка','Ведомости городской управы показывают товары, цены и обороты ярмарок.','7/2/118','bazaar','Ф. 7, оп. 2, д. 118'],
+[1888,1,'Перечень кочевых аулов Зайсанского уезда','Число юрт, скота и население волостей на 1888 год.','45/1/18','aul','Ф. 45, оп. 1, д. 18'],
+[1891,1,'Гравюра с видом Усть-Каменогорска','Город на берегу Иртыша глазами американского путешественника.','1-П/2/17','siberia','Ф. 1-П, оп. 2, д. 17'],
+[1893,1,'Годовой обзор Семипалатинской области','Население, хозяйство, торговля и переправы за один год.','1-П/1/245','survey1893','Ф. 1-П, оп. 1, д. 245'],
+[1905,1,'Метрическая книга Никольской церкви','Записи о рождении, браке и смерти прихожан Семипалатинска.','12/1/305',null,'Ф. 12, оп. 1, д. 305'],
+[1902,1,'План города Усть-Каменогорска','Кварталы, улицы и береговая линия на плане 1902 года.','15/2/3',null,'Ф. 15, оп. 2, д. 3'],
+[1942,3,'Рабочие Лениногорского рудника для фронта','Списки рабочих рудника; документ с ограниченным доступом.','61/1/27',null,'Ф. 61, оп. 1, д. 27'],
+[1943,3,'Зыряновский райисполком в военный год','Решения о помощи фронту, эвакуации и работе рудников.','88/1/9',null,'Ф. 88, оп. 1, д. 9'],
+[1952,4,'Строительство Усть-Каменогорской ГЭС','Сметы и акты по строительству гидроэлектростанции.','102/1/77',null,'Ф. 102, оп. 1, д. 77'],
+[1960,4,'Новые кварталы Усть-Каменогорска','Фотоальбом городской застройки 1960-х годов.','102/3/301',null,'Ф. 102, оп. 3, д. 301']
+].sort(function(a,b){return a[0]-b[0]});
+var eras=['Все периоды'].concat(D.PERIODS.map(function(p){return p[0]})),cur=-1;
+function drawEras(){document.getElementById('eras').innerHTML=eras.map(function(e,i){return '<button type="button" data-e="'+(i-1)+'" aria-pressed="'+(cur===i-1)+'">'+e+'</button>'}).join('')}
+function drawTl(){
+  document.getElementById('tl').innerHTML=EV.filter(function(e){return cur<0||e[1]===cur}).map(function(e){
+    var ph=e[5];
+    return '<li><div class="y">'+e[0]+'</div><div class="ev'+(ph?' ph':'')+'">'+(ph?'<div class="im"><img src="img/'+ph+'.jpg" alt="" loading="lazy"></div>':'')+'<span class="k">'+D.PERIODS[e[1]][0]+'</span><h3>'+e[2]+'</h3><p>'+e[3]+'</p><a class="ref" href="delo.html?id='+encodeURIComponent(e[4])+'">'+e[6]+'</a></div></li>'}).join('');
+}
+document.getElementById('eras').addEventListener('click',function(ev){var b=ev.target.closest('button');if(!b)return;cur=+b.dataset.e;drawEras();drawTl();window.VKO.apply(document.querySelector('main'))});
+var PL=[
+['Семипалатинск (Семей)','XIX век: торговый город на Иртыше.','town','1-П','Альбом фотографий, 1885','Ф. 1-П, оп. 3, д. 12','Главное здание'],
+['Усть-Каменогорск (Өскемен)','Крепость, уездный и областной центр.','siberia','15','План города, 1902','Ф. 15, оп. 2, д. 3','Главное здание'],
+['Зайсан','Пограничный уезд, кочевые аулы и волости.','aul','45','Перечень аулов, 1888','Ф. 45, оп. 1, д. 18','Зайсанский филиал'],
+['Риддер (Лениногорск)','Рудничный город, документы военных лет.','ferry','61','Воспоминания ветеранов, 1985','Ф. 61, оп. 2, д. 13','Риддерский филиал'],
+['Алтай (Зыряновск)','Рудник и райцентр; с 2018 года город Алтай.','bazaar','88','Протоколы райисполкома, 1943','Ф. 88, оп. 1, д. 9','Филиал Алтай']];
+document.getElementById('plc').innerHTML=PL.map(function(p){return '<article class="pc"><div class="im" style="background-image:url(img/'+p[2]+'.jpg)"></div><div class="b"><h3>'+p[0]+'</h3><span class="a">'+p[1]+'</span><ul><li><a href="delo.html?id='+encodeURIComponent(p[5].replace(/Ф\. ([\dА-Я-]+), оп\. (\d+), д\. (\d+)/,'$1/$2/$3'))+'">'+p[4]+'</a><small>'+p[5]+'</small></li><li><a href="fond.html?f='+encodeURIComponent(p[3])+'">Фонд '+p[3]+'</a><small>'+p[6]+'</small></li></ul><a href="katalog.html?place='+encodeURIComponent(p[0].split(' (')[0].replace('Алтай','Алтай (Зыряновск)'))+'">Все дела по месту</a></div></article>'}).join('');
+drawEras();drawTl();
+})();
+</script>
+<script src="app.js"></script>
+</body>
+</html>

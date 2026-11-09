@@ -1,0 +1,40 @@
+[
+ {
+  "id": 52670,
+  "section": "documents",
+  "branch": null,
+  "langs": [
+   "kk",
+   "ru"
+  ],
+  "ru": {
+   "id": 52670,
+   "lang": "ru",
+   "title": "Документы",
+   "date": null,
+   "markdown": "[Проект постановления Восточно-Казахстанского областного акимата «Об утверждении прейскуранта цен на товары (работы, услуги), реализуемые государственными архивами управления цифровизации и архивов Восточно-Казахстанской области»](http://e-arhiv.vko.gov.kz/akimsemey/other/Прейскурант%20цен%20на%20рус.%20яз..docx)",
+   "files": [
+    "http://e-arhiv.vko.gov.kz/akimsemey/other/Прейскурант%20цен%20на%20рус.%20яз..docx"
+   ],
+   "external_links": [],
+   "source_url": "http://e-arhiv.vko.gov.kz/ru/Page/Index/52670",
+   "raw": "main/ru/Page/Index/52670.html",
+   "chars": 314
+  },
+  "kk": {
+   "id": 52670,
+   "lang": "kk",
+   "title": "Құжаттар",
+   "date": null,
+   "markdown": "[«Шығыс Қазақстан облысы цифрландыру және архивтер басқармасының мемлекеттік архивтері өткізетін тауарларға (жұмыстарға, көрсетілетін қызметтерге) баға прейскурантын бекіту туралы» Шығыс Қазақстан облысының әкімдігінің қаулысының жобасы](http://e-arhiv.vko.gov.kz/akimsemey/other/Прейскурант%20цен%20на%20каз.%20яз.docx)",
+   "files": [
+    "http://e-arhiv.vko.gov.kz/akimsemey/other/Прейскурант%20цен%20на%20каз.%20яз.docx"
+   ],
+   "external_links": [],
+   "source_url": "http://e-arhiv.vko.gov.kz/kk/Page/Index/52670",
+   "raw": "main/kk/Page/Index/52670.html",
+   "chars": 320
+  },
+  "en": null
+ }
+]
