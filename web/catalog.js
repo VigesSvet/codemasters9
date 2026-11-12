@@ -206,7 +206,9 @@
       var c = row[0], n = catCount(c);
       var lbl = t.apply(null, CAT_LABEL[c]);
       var txt = n ? lbl + " (" + n + ")" : lbl;
-      return c === cur ? "<span>" + esc(txt) + "</span>" : '<a href="#" data-cat="' + c + '">' + esc(txt) + "</a>";
+      var tab = c === cur ? "<span>" + esc(txt) + "</span>" : '<a href="#" data-cat="' + c + '">' + esc(txt) + "</a>";
+      var q = (c === "fond" || c === "opis" || c === "delo") ? '<button type="button" class="gt-btn" data-term="' + c + '" aria-expanded="false"></button>' : "";
+      return '<div class="tabw">' + tab + q + "</div>";
     }).join("");
   }
 
@@ -235,6 +237,7 @@
       var typ = TYPES[r.doc_type] ? t.apply(null, TYPES[r.doc_type]) : r.doc_type;
       var lv = LEVELS[r.level] ? t.apply(null, LEVELS[r.level]) : r.level;
       var lvCls = r.level === "opis" ? " l2" : (r.level === "delo" || r.level === "doc") ? " l3" : "";
+      var lvTerm = (r.level === "fond" || r.level === "opis" || r.level === "delo") ? '<button type="button" class="gt-btn" data-term="' + r.level + '" aria-expanded="false"></button>' : "";
       var access = r.has_public_file
         ? '<span class="tag ok">' + t("Открыто", "Ашық", "Open") + "</span>"
         : (r.access_note ? '<span class="tag lim">' + esc(r.access_note) + "</span>" : '<span class="tag">' + t("Без скана", "Скансыз", "No scan") + "</span>");
@@ -244,8 +247,8 @@
       var href = document.body.dataset.base ? document.body.dataset.base + url : url;
       var demo = r.is_demo ? '<span class="tag demo">' + t("Образец записи", "Жазба үлгісі", "Sample record") + "</span>" : "";
       var branch = r.branch && r.branch.name ? esc(r.branch.name) : "";
-      return '<article class="res"><div class="ph">' + esc(typ) + '</div><div><span class="chip' + lvCls + '">' + esc(lv) + '</span><h3><a href="' + esc(href) + '">' + esc(pick(r.title)) + '<span class="chev"></span></a></h3><dl>' +
-        "<dt>" + t("Шифр", "Шифр", "Reference") + "</dt><dd>" + esc(r.code) + "</dd>" +
+      return '<article class="res"><div class="ph">' + esc(typ) + '</div><div><span class="chip' + lvCls + '">' + esc(lv) + '</span>' + lvTerm + '<h3><a href="' + esc(href) + '">' + esc(pick(r.title)) + '<span class="chev"></span></a></h3><dl>' +
+        '<dt data-term="ref">' + t("Шифр", "Шифр", "Reference") + "</dt><dd>" + esc(r.code) + "</dd>" +
         "<dt>" + t("Даты", "Күндер", "Dates") + "</dt><dd>" + esc(yr) + "</dd>" +
         (branch ? "<dt>" + t("Хранится", "Сақталады", "Held by") + "</dt><dd>" + branch + "</dd>" : "") +
         (r.extent ? "<dt>" + t("Объём", "Көлемі", "Extent") + "</dt><dd>" + esc(r.extent) + "</dd>" : "") +
@@ -282,6 +285,7 @@
     renderTabs(resp);
     renderItems(resp);
     renderPager(resp);
+    if (window.gosGlossary) window.gosGlossary(document);
   }
 
   function load() {
