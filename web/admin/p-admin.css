@@ -1,8 +1,7 @@
-/* p-admin.css — стили админки Госархива ВКО (T5). Подключать после style.css.
-   Только новые элементы админки: вход, тулбар фильтров, пагинация, файлы,
-   журнал, импорт, версии, уведомления. Общие токены берём из style.css. */
+/* p-admin.css - стили админки Госархива ВКО(T5). Подключать после style.css.
+   Новые элементы админки: вход, тулбар фильтров, пагинация, файлы, журнал, импорт, версии, уведомления. Токены - из style.css. */
 
-/* --- вход --- */
+/* ---------- вход ---------- */
 .login-page { display: flex; justify-content: center; align-items: center; padding: 48px 16px; min-height: 60vh; }
 .login-box { width: 100%; max-width: 440px; background: var(--surface); border: 1px solid var(--line-strong); border-top: 6px solid var(--accent); padding: 32px; }
 .login-box h1 { font-size: 28px; margin: 0 0 8px; }
@@ -10,7 +9,7 @@
 .login-box .err { display: none; margin: 0 0 16px; padding: 10px 12px; background: var(--restricted-bg); border-left: 4px solid #b3261e; font-size: 15px; }
 .login-box .err.show { display: block; }
 
-/* --- тулбар фильтров и пагинация --- */
+/* ---------- тулбар фильтров и пагинация ---------- */
 .atb { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin: 0 0 20px; }
 .atb .fld { margin: 0; flex: 1 1 180px; }
 .atb .fld.search { flex: 2 1 260px; }
@@ -23,13 +22,13 @@
 .pager button.cur { background: var(--btn-bg); color: #fff; border-color: var(--btn-bg); }
 .pager .cnt { font: 400 14px var(--font-mono); color: var(--text-muted); margin-left: 4px; }
 
-/* --- ошибки полей --- */
+/* ---------- ошибки полей ---------- */
 .fld .err { display: none; }
 .fld.has-error .err { display: block; }
 .fld.has-error .inp { border-color: #b3261e; }
 .inp:disabled { background: var(--bg-tint); color: var(--text-muted); cursor: not-allowed; }
 
-/* --- рабочий процесс статусов (кнопки переходов) --- */
+/* ---------- рабочий процесс статусов(кнопки переходов) ---------- */
 .trans { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0 0; }
 .trans .btn { min-height: 44px; }
 .btn.danger, .btn.danger:visited { background: #b3261e; border-color: #b3261e; color: #fff; }
@@ -39,7 +38,7 @@
 .stbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 8px 0 4px; }
 .stbar .meta { font: 400 14px var(--font-mono); color: var(--text-muted); }
 
-/* --- файлы --- */
+/* ---------- файлы ---------- */
 .flist { border: 1px solid var(--line); background: var(--surface); }
 .file-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--line); }
 .file-row:last-child { border-bottom: 0; }
@@ -51,14 +50,14 @@
 .file-hint { margin: 8px 0 0; font-size: 13px; color: var(--text-muted); }
 .drop.busy { opacity: .5; pointer-events: none; }
 
-/* --- журнал --- */
+/* ---------- журнал ---------- */
 .res { display: inline-block; font: 500 13px/22px var(--font-mono); border: 1px solid var(--line-strong); border-radius: var(--r-chip); padding: 0 6px; text-transform: uppercase; }
 .res-ok { background: var(--pastel); color: var(--level); border-color: var(--level); }
 .res-denied { background: var(--restricted-bg); color: #b3261e; border-color: #b3261e; }
 .res-error { background: var(--pastel-blue); color: #004c7e; border-color: #004c7e; }
 .audit .obj { font: 400 14px var(--font-mono); color: var(--text-muted); }
 
-/* --- импорт --- */
+/* ---------- импорт ---------- */
 .mapping { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin: 16px 0; }
 .mapping .fld { margin: 0; }
 .mapping label { font-size: 13px; color: var(--text-muted); display: block; margin-bottom: 4px; }
@@ -71,7 +70,7 @@
 .imp-errors { color: #b3261e; }
 .imp-summary { font-size: 16px; margin: 12px 0 0; }
 
-/* --- история версий --- */
+/* ---------- история версий ---------- */
 .vh { list-style: none; margin: 8px 0 0; padding: 0; border: 1px solid var(--line); background: var(--surface); }
 .vh li { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; padding: 10px 14px; border-bottom: 1px solid var(--line); }
 .vh li:last-child { border-bottom: 0; }
@@ -79,12 +78,12 @@
 .vh .vwho { font-size: 14px; color: var(--text-muted); }
 .vh .vcom { font-size: 14px; flex-basis: 100%; color: var(--text); }
 
-/* --- уведомление --- */
+/* ---------- уведомление ---------- */
 .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); max-width: 640px; width: calc(100% - 32px); padding: 14px 18px; background: var(--contrast); color: var(--contrast-text); border-left: 6px solid var(--accent); font-size: 16px; z-index: 1000; box-shadow: 0 6px 24px rgb(0 0 0 / .3); }
 .toast.err { border-left-color: #b3261e; background: #3a1d1d; }
 .toast.ok { border-left-color: var(--level); }
 
-/* --- блоки "состояние/согласование" и секции --- */
+/* ---------- блоки "состояние/согласование" и секции ---------- */
 .statusbox { border: 1px solid var(--line); background: var(--surface); padding: 16px; margin: 0 0 24px; }
 .statusbox h2 { border-top: 0; font-size: 20px; margin: 0 0 12px; }
 .divider { border: 0; border-top: 5px solid var(--line-strong); margin: 32px 0; }

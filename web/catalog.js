@@ -1,12 +1,12 @@
 /* Каталог: поиск по /api/catalog/search, фасеты, пагинация, сортировка, URL-состояние.
-   Данные — только через window.gosApi. При недоступном API — понятное состояние (gosState). */
+   Данные - только через window.gosApi. При недоступном API - понятное состояние(gosState). */
 (function () {
   "use strict";
   var $ = function (id) { return document.getElementById(id); };
   function esc(s) { return window.gosEsc ? window.gosEsc(s) : String(s === null || s === undefined ? "" : s); }
   function lang() { return (window.getLang && window.getLang()) || "ru"; }
   function t(ru, kk, en) { return (window.tr && window.tr(ru, kk, en)) || ru; }
-  // Локализованное поле API ({ru,kk,en} либо строка, либо *_ru/*_kk/*_en).
+  // локализованное поле API({ru,kk,en} либо строка, либо *_ru/*_kk/*_en)
   function pick(v, base) {
     if (base !== undefined) { v = v[base]; }
     if (v === null || v === undefined) return "";
@@ -43,7 +43,7 @@
     fam: ["История семьи", "Отбасы тарихы", "Family history"]
   };
   var PLACES = ["Усть-Каменогорск", "Семипалатинск", "Риддер", "Алтай", "Зайсан"];
-  // Вкладки категорий: [значение, какой параметр задаёт].
+  // вкладки категорий: [значение, какой параметр задаёт]
   var CATS = [["all", ""], ["fond", "level"], ["opis", "level"], ["delo", "level"], ["photo", "type"], ["map", "type"], ["personal", "type"]];
   var CAT_LABEL = {
     all: ["Все", "Барлығы", "All"],
@@ -124,7 +124,7 @@
     if (s.digitized) p.digitized = true;
     if (s.open) p.open = true;
     if (s.sort && s.sort !== "rel") p.sort = s.sort;
-    // Категория задаёт level (фонд/опись/дело) либо type (фото/карта/личные).
+    // категория задаёт level(фонд/опись/дело) либо type(фото/карта/личные)
     var types = s.type.slice();
     if (s.cat === "fond" || s.cat === "opis" || s.cat === "delo") p.level = s.cat;
     else if (s.cat === "photo" || s.cat === "map" || s.cat === "personal") { if (types.indexOf(s.cat) < 0) types.push(s.cat); }
@@ -314,7 +314,7 @@
     load();
   }
 
-  // Категория хранится в скрытом поле (обновляется кликами по вкладкам).
+  // категория хранится в скрытом поле(обновляется кликами по вкладкам)
   var catEl = document.createElement("input");
   catEl.type = "hidden"; catEl.id = "catstate"; catEl.value = lastCat;
 

@@ -1,6 +1,5 @@
-/* Карточки единицы хранения (delo.html) и фонда (fond.html) на API.
-   Данные: /api/catalog/units/{id} и /api/catalog/fonds/{id}(+inventories).
-   При недоступном API или отсутствии записи — понятное состояние. */
+/* Карточки единицы хранения(delo.html) и фонда(fond.html) на API.
+   Данные: /api/catalog/units/{id} и /api/catalog/fonds/{id}(+inventories); при недоступном API или отсутствии записи - понятное состояние. */
 (function () {
   "use strict";
   var B = document.body.dataset.base || "";
@@ -10,7 +9,7 @@
   function esc(s) { return window.gosEsc ? window.gosEsc(s) : String(s === null || s === undefined ? "" : s); }
   function lang() { return (window.getLang && window.getLang()) || "ru"; }
   function t(ru, kk, en) { return (window.tr && window.tr(ru, kk, en)) || ru; }
-  // Локализованное поле: {ru,kk,en}, либо строка, либо key_ru/key_kk/key_en.
+  // локализованное поле: {ru,kk,en}, либо строка, либо key_ru/key_kk/key_en
   function field(obj, key) {
     if (!obj) return "";
     var v = obj[key];
@@ -40,7 +39,7 @@
     if (n >= 1024) return Math.round(n / 1024) + " КБ";
     return n + " Б";
   }
-  // Мини-markdown: сначала экранируем, затем жирный/курсив/абзацы/переносы.
+  // мини-markdown: сначала экранируем, затем жирный/курсив/абзацы/переносы
   function md(s) {
     if (!s) return "";
     s = esc(String(s));
@@ -52,13 +51,13 @@
       return "<p>" + p + "</p>";
     }).join("");
   }
-  // Описание с fallback, если его нет.
+  // описание с заглушкой, если оно не заполнено
   function descHtml(text) {
     var d = md(text);
     if (d) return d;
     return '<p class="desc-empty">' + t("Описание готовится", "Сипаттама дайындалуда", "Description is being prepared") + "</p>";
   }
-  // Код типа документа -> локальный текст.
+  // код типа документа → локальный текст
   function typeLabel(code) {
     var L = (window.gosLabels && window.gosLabels.types) || {};
     var v = L[code];
@@ -115,7 +114,7 @@
       (full ? '<button data-copy="' + esc(location.href) + '">' + t("Поделиться ссылкой", "Сілтемемен бөлісу", "Share link") + "</button>" : "") + "</p>";
   }
 
-  // Список файлов: скачать при downloadable, иначе блок недоступности.
+  // список файлов: скачивание, если разрешено, иначе блок недоступности
   function filesBlock(u) {
     var files = u.files || [];
     if (!files.length) return "";
@@ -138,7 +137,7 @@
     return h;
   }
 
-  // Вьюер изображений: листание доступных image/*.
+  // просмотр изображений: листание доступных image/*
   var curImgs = [];
   function viewer(u) {
     curImgs = (u.files || []).filter(function (f) { return f.downloadable && /^image\//.test(f.mime || ""); });

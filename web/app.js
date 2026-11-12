@@ -1,6 +1,5 @@
 /* Общая оболочка сайта: шапка, подвал, переключатели темы и языка, ИИ-помощник.
-   Язык: RU по умолчанию; для каждого элемента перевод лежит в data-kk / data-en (RU — сам текст разметки).
-   Тема и язык хранятся в localStorage и действуют на всех страницах. */
+   Перевод элемента - в data-kk / data-en(RU - сам текст разметки); тема и язык хранятся в localStorage на всех страницах. */
 (function () {
   var root = document.documentElement, body = document.body;
   var B = body.dataset.base || "";
@@ -100,13 +99,13 @@
   if (top) top.outerHTML = ADMIN ? ADMTOP : TOP;
   if (bot) bot.outerHTML = BOTTOM;
 
-  /* ---------- ИИ-помощник ---------- */
+  // ---------- ИИ-помощник ----------
   var QS = {
     ru: "Где найти метрические книги Семипалатинска 1900-х?",
     kk: "1900 жылдардағы Семей метрикалық кітаптарын қайдан табуға болады?",
     en: "Where can I find parish (metric) registers of Semipalatinsk from the 1900s?"
   };
-  // Полное экранирование для данных API/пользователя (в отличие от esc, экранирует < и >).
+  // полное экранирование для данных API/пользователя(в отличие от esc, экранирует < и >)
   function escHtml(s) {
     return String(s === null || s === undefined ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   }
@@ -225,7 +224,7 @@
     btn.onclick = function () { window.openAI(false); };
   }
 
-  /* ---------- тема ---------- */
+  // ---------- тема ----------
   function effTheme() { var t = root.getAttribute("data-theme"); if (t) return t; return window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; }
   function ttLabel() {
     var d = effTheme() === "dark";
@@ -239,7 +238,7 @@
     ttLabel();
   }
 
-  /* ---------- язык ---------- */
+  // ---------- язык ----------
   function lbEls(scope) {
     scope.querySelectorAll('[data-lb="kk"]').forEach(function (k) {
       var kz = LANG === "kk";
@@ -294,7 +293,7 @@
     if (e.target.id === "hide-desc") document.querySelector(".full").classList.toggle("hide-desc", e.target.checked);
   });
 
-  /* ---------- погода (open-meteo.com, без ключа) ---------- */
+  // ---------- погода(open-meteo.com, без ключа) ----------
   var WI = {
     sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',
     cloud: '<path d="M7 18a4 4 0 010-8 5 5 0 019.6-1A4.5 4.5 0 0117 18z"/>',
@@ -317,7 +316,7 @@
   }
   weather();
 
-  /* ---------- режим для слабовидящих ---------- */
+  // ---------- режим для слабовидящих ----------
   function setVI(on) {
     if (on) root.setAttribute("data-vi", ""); else root.removeAttribute("data-vi");
     try { localStorage.setItem("gos-vi", on ? "1" : "0"); } catch (e) {}
@@ -327,7 +326,7 @@
   if (new URLSearchParams(location.search).get("vi")) setVI(true);
   document.addEventListener("click", function (e) { if (e.target.closest("[data-vi-toggle]")) setVI(!root.hasAttribute("data-vi")); });
 
-  /* ---------- вкладка «Опрос» ---------- */
+  // ---------- вкладка «Опрос» ----------
   if (!ADMIN) {
     var PQ = { q: ["Какой раздел сайта для Вас наиболее интересен?", "Сайттың қай бөлімі сізге ең қызықты?", "Which section of the site interests you most?"],
       a: [["Научно-методическая база", 308], ["Личные фонды", 548], ["Сборники документов", 460], ["Публицистика", 95], ["История края", 763], ["Базы данных", 1634], ["Фотогалерея", 897]] };
@@ -354,7 +353,7 @@
     window.gosPoll = function () { lab(); drawPoll(false); };
   }
 
-  /* ---------- карусель баннеров ---------- */
+  // ---------- карусель баннеров ----------
   document.querySelectorAll("[data-carousel]").forEach(function (c) {
     var sl = [].slice.call(c.querySelectorAll(".sl")), i = 0, dots = c.querySelector(".dots"), timer;
     sl.forEach(function (s, k) { var d = document.createElement("button"); d.type = "button"; d.setAttribute("aria-label", (k + 1) + " / " + sl.length); d.onclick = function () { go(k); }; dots.appendChild(d); });
