@@ -32,14 +32,14 @@ CSP = (
     "base-uri 'self'; "
     "frame-ancestors 'none'; "
     "form-action 'self'; "
-    # карта филиалов: Leaflet с unpkg и тайлы OpenStreetMap; видео - встраивание YouTube
+    # карта: Leaflet локально и тайлы OpenStreetMap; видео - ссылки на YouTube
     "img-src 'self' data: blob: https://*.tile.openstreetmap.org https://tile.openstreetmap.org "
-    "https://unpkg.com https://i.ytimg.com; "
-    "style-src 'self' 'unsafe-inline' https://unpkg.com; "
-    "script-src 'self' 'unsafe-inline' https://unpkg.com; "
+    "https://i.ytimg.com; "
+    "style-src 'self' 'unsafe-inline'; "
+    "script-src 'self' 'unsafe-inline'; "
     "frame-src https://www.youtube.com https://www.youtube-nocookie.com; "
     "font-src 'self' data:; "
-    "connect-src 'self' https://unpkg.com https://api.open-meteo.com https://nominatim.openstreetmap.org"
+    "connect-src 'self'"
 )
 PERMISSIONS_POLICY = "camera=(), microphone=(), geolocation=()"
 

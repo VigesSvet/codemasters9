@@ -115,8 +115,8 @@ stateDiagram-v2
   (без него 403 с `{"error":"csrf"}`).
 - **Заголовки** — CSP, `X-Content-Type-Options: nosniff`, `Referrer-Policy`,
   `X-Frame-Options: DENY`, `Permissions-Policy`, `Cross-Origin-Opener-Policy` и
-  `Cross-Origin-Resource-Policy: same-origin`, HSTS при `COOKIE_SECURE=true`. CSP разрешает только нужное: Leaflet с unpkg,
-  тайлы OpenStreetMap, встраивание YouTube, open-meteo и nominatim для карты/погоды.
+  `Cross-Origin-Resource-Policy: same-origin`, HSTS при `COOKIE_SECURE=true`. CSP разрешает только нужное: тайлы
+  OpenStreetMap, ссылки на YouTube; Leaflet подключён локально (без внешнего CDN), внешних fetch-запросов из фронта нет.
 - **Noindex админки** — `/admin` и `/api/admin` получают `X-Robots-Tag: noindex, nofollow`
   и `Cache-Control: no-store`.
 - **SQL** — только параметризованные запросы (плейсхолдеры `?`).
@@ -182,12 +182,10 @@ stateDiagram-v2
 
 | Сервис | Где | Владелец | Что при недоступности |
 |---|---|---|---|
-| open-meteo.com | Погода (блок на страницах) | внешний бесплатный API погоды | блок погоды не грузится, остальной сайт работает |
-| Leaflet (unpkg.com) + тайлы OpenStreetMap | Карта филиалов | Leaflet/OSM, CDN unpkg | карта не отображается, список и адреса филиалов остаются |
-| YouTube (встраивание) | Видео | YouTube/Google | встроенный ролик не грузится, страница остаётся |
-| nominatim.openstreetmap.org | геокодирование (подсказки) | OSM | поиск по карте не работает |
+| Leaflet (локально) + тайлы OpenStreetMap | Карта филиалов и исторических мест | Leaflet (файлы в проекте), OSM | без сети карта показывает плашку, список филиалов и координаты остаются |
+| YouTube (ссылки) | Видео | YouTube/Google | без сети страница видео остаётся, ролики открываются по ссылке в новой вкладке |
 
-Все внешние ресурсы перечислены в CSP; от них не зависит ни каталог, ни права, ни API.
+Единственная внешняя зависимость для показа страницы — тайлы OpenStreetMap (с запасным видом при недоступности); каталог, права и API от внешних адресов не зависят.
 
 ## Путь к промышленной версии
 

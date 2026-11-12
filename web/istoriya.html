@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Цифровая история региона — Госархив ВКО</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin>
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css">
 <link rel="stylesheet" href="style.css">
 </head>
 <body data-nav="istoriya" data-map>
@@ -30,7 +30,7 @@
 </div>
 </main>
 <div id="bottom"></div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin></script>
+<script src="vendor/leaflet/leaflet.js"></script>
 <script src="api.js"></script>
 <script src="app.js"></script>
 <script>
@@ -61,10 +61,27 @@ function build(){
 }
 function card(){var p=PL.filter(function(x){return x.id===sel})[0];pc.innerHTML='<span class="chip">'+p.y+"</span><h2>"+lg(p.n)+"</h2><p>"+lg(p.d)+'</p><p><a href="katalog.html?q='+encodeURIComponent(p.q)+'">'+tr("Связанные дела в каталоге","Каталогтағы байланысты істер","Related files in the catalogue")+'<span class="chev"></span></a></p><div class="dist">'+p.ll[0].toFixed(4)+", "+p.ll[1].toFixed(4)+"</div>";
  for(var k in mk){var el=mk[k].getElement();if(el&&el.firstChild)el.firstChild.classList.toggle("sel",k===sel)}}
+function mapOffline(){
+  var m=document.getElementById("hmap");
+  if(!m||document.getElementById("mapoff"))return;
+  var d=document.createElement("div");
+  d.id="mapoff";
+  d.setAttribute("role","status");
+  d.style.cssText="position:absolute;left:0;top:0;right:0;z-index:1000;background:var(--surface);border-bottom:2px solid var(--level);padding:16px;font-size:15px;color:var(--text)";
+  d.setAttribute("data-kk","Карта интернетсіз қолжетімсіз — тарихи орындар мен олардың координаттары төменде көрсетілген");
+  d.setAttribute("data-en","Map is unavailable without internet — historical places and their coordinates are shown below");
+  d.textContent="Карта недоступна без интернета — исторические места и их координаты показаны ниже";
+  m.appendChild(d);
+  if(window.trEls)window.trEls(d);
+}
 map=L.map("hmap",{scrollWheelZoom:false}).setView([49.6,83.6],6);
-L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:"&copy; OpenStreetMap contributors"}).addTo(map);
+var tiles=L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:"&copy; OpenStreetMap contributors"});
+tiles.on("tileerror",mapOffline);
+tiles.addTo(map);
 PL.forEach(function(p,i){var m=L.marker(p.ll,{icon:L.divIcon({className:"",html:'<div class="mk'+(p.id===sel?" sel":"")+'">'+(i+1)+"</div>",iconSize:[30,30],iconAnchor:[15,15]}),keyboard:true,title:p.n[0]}).addTo(map);m.on("click",function(){sel=p.id;card()});mk[p.id]=m});
 map.fitBounds(PL.map(function(p){return p.ll}),{padding:[30,30]});
+if(!navigator.onLine)mapOffline();
+window.addEventListener("offline",mapOffline);
 th.onclick=function(e){var b=e.target.closest("[data-t]");if(b){F=b.dataset.t;build()}};
 window.onLang=build;build();
 </script>
