@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title data-kk="Кіру — ШҚО мемлекеттік архиві" data-en="Sign in — State Archive of EKR">Вход — Госархив ВКО</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="p-admin.css">
+</head>
+<body data-base="../" data-admin data-page="login">
+<div id="top"></div>
+<main class="amain login-page" id="main">
+ <div class="login-box">
+  <h1 data-kk="Қызметкерлерге кіру" data-en="Staff sign-in">Вход для сотрудников</h1>
+  <p class="login-sub" data-kk="Жалғастыру үшін жұмыс логиніңіз бен құпиясөзіңізді енгізіңіз." data-en="Enter your work login and password to continue.">Введите рабочий логин и пароль для продолжения.</p>
+  <form id="login-form" novalidate>
+   <div class="fld"><label for="login-user" data-kk="Логин" data-en="Login">Логин</label><input class="inp" id="login-user" name="username" autocomplete="username" required></div>
+   <div class="fld"><label for="login-pass" data-kk="Құпиясөз" data-en="Password">Пароль</label><input class="inp" id="login-pass" name="password" type="password" autocomplete="current-password" required></div>
+   <div class="err" id="login-error" role="alert"></div>
+   <button class="btn" type="submit" data-kk="Кіру" data-en="Sign in">Войти</button>
+  </form>
+ </div>
+</main>
+<div id="bottom"></div>
+<script src="../api.js"></script>
+<script src="../app.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

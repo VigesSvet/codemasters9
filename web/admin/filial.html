@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title data-kk="Филиалдар — ШҚО мемлекеттік архиві" data-en="Branches — State Archive of EKR">Филиалы — Госархив ВКО</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="p-admin.css">
+</head>
+<body data-base="../" data-admin data-page="filial">
+<div id="top"></div>
+<div class="adm">
+ <aside class="aside" id="adm-nav" aria-label="Разделы админки"></aside>
+ <main class="amain" id="main">
+  <section>
+   <h2 style="border-top:0" data-kk="Филиалдар" data-en="Branches">Филиалы</h2>
+   <div class="fld" id="fil-select-wrap"><label for="fil-select" data-kk="Филиал" data-en="Branch">Филиал</label><select class="inp" id="fil-select"></select></div>
+   <div class="note" id="fil-403" style="display:none;color:#b3261e"></div>
+   <div id="fil-form">
+    <p class="ref" id="fil-name"></p>
+    <div class="row2">
+     <div class="fld"><label for="b-phones" data-kk="Телефондар" data-en="Phones">Телефоны</label><input class="inp" id="b-phones"></div>
+     <div class="fld"><label for="b-email" data-kk="Электрондық пошта" data-en="Email">Email</label><input class="inp" id="b-email"></div>
+    </div>
+    <div class="row2">
+     <div class="fld"><label for="b-hours-ru" data-kk="Жұмыс уақыты (RU)" data-en="Hours (RU)">Часы работы (RU)</label><input class="inp" id="b-hours-ru"></div>
+     <div class="fld"><label for="b-hours-kk" data-kk="Жұмыс уақыты (KZ)" data-en="Hours (KZ)">Часы работы (KZ)</label><input class="inp" id="b-hours-kk"></div>
+    </div>
+    <div class="fld"><label for="b-hours-en" data-kk="Жұмыс уақыты (EN)" data-en="Hours (EN)">Часы работы (EN)</label><input class="inp" id="b-hours-en"></div>
+    <div class="row2">
+     <div class="fld"><label for="b-addr-ru" data-kk="Мекенжай (RU)" data-en="Address (RU)">Адрес (RU)</label><input class="inp" id="b-addr-ru"></div>
+     <div class="fld"><label for="b-addr-kk" data-kk="Мекенжай (KZ)" data-en="Address (KZ)">Адрес (KZ)</label><input class="inp" id="b-addr-kk"></div>
+    </div>
+    <div class="fld"><label for="b-addr-en" data-kk="Мекенжай (EN)" data-en="Address (EN)">Адрес (EN)</label><input class="inp" id="b-addr-en"></div>
+    <div class="row2">
+     <div class="fld"><label for="b-lat" data-kk="Ендік (lat)" data-en="Latitude">Широта (lat)</label><input class="inp" id="b-lat" inputmode="decimal"></div>
+     <div class="fld"><label for="b-lon" data-kk="Бойлық (lon)" data-en="Longitude">Долгота (lon)</label><input class="inp" id="b-lon" inputmode="decimal"></div>
+    </div>
+    <div class="fld"><label for="b-head" data-kk="Басшы" data-en="Head">Руководитель</label><input class="inp" id="b-head"></div>
+    <div class="fld"><label for="b-note" data-kk="Ескертпе" data-en="Note">Примечание</label><textarea class="inp" id="b-note"></textarea></div>
+    <div class="stickybar"><button class="btn" type="button" id="fil-save" data-kk="Сақтау" data-en="Save">Сохранить</button></div>
+   </div>
+  </section>
+ </main>
+</div>
+<div id="bottom"></div>
+<script src="../api.js"></script>
+<script src="../app.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

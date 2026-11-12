@@ -55,8 +55,9 @@
   var ADMTOP =
     '<a class="skip" href="#main">' + X("Перейти к содержимому", "Мазмұнға өту", "Skip to content") + "</a>" +
     '<header class="hdr"><div class="wrap">' +
-    '<div class="util" style="height:auto;padding:12px 0"><span style="margin-right:auto">' + X("Администрирование: Мария Ибраева, редактор", "Әкімшілік: Мария Ибраева, редактор", "Admin: Maria Ibrayeva, editor") + "</span>" +
+    '<div class="util" style="height:auto;padding:12px 0"><span style="margin-right:auto" id="adm-user">' + X("Администрирование", "Әкімшілік", "Administration") + "</span>" +
     '<a href="' + B + 'index.html">' + X("На сайт", "Сайтқа", "To the site") + "</a>" +
+    '<button type="button" id="adm-logout" style="display:none">' + X("Выйти", "Шығу", "Sign out") + "</button>" +
     '<span class="lang" role="group" aria-label="Язык"><button data-lang="kk" aria-pressed="false">KZ</button><button data-lang="ru" aria-pressed="true">RU</button><button data-lang="en" aria-pressed="false">EN</button></span>' +
     '<button class="tt" data-theme-toggle type="button"><span data-tt></span></button></div>' +
     '<div class="main" style="padding-bottom:16px;align-items:center">' + LOGO +

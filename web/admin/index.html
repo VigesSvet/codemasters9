@@ -3,73 +3,39 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Панель управления — Госархив ВКО</title>
+<title data-kk="Материалдар — ШҚО мемлекеттік архиві" data-en="Materials — State Archive of EKR">Материалы — Госархив ВКО</title>
 <meta name="robots" content="noindex,nofollow">
 <link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="p-admin.css">
 </head>
-<body data-base="../" data-admin>
+<body data-base="../" data-admin data-page="index">
 <div id="top"></div>
 <div class="adm">
- <aside class="aside" aria-label="Разделы админки"><h2 data-kk="Бөлімдер" data-en="Sections">Разделы</h2>
-  <a href="index.html" aria-current="page" data-kk="Басты тақта" data-en="Dashboard">Дашборд</a>
-  <a href="#materials" data-kk="Материалдар" data-en="Materials">Материалы</a>
-  <a href="delo-edit.html" data-kk="Іс картасы" data-en="File record">Карточка дела</a>
-  <a href="#exhib" data-kk="Көрмелер" data-en="Exhibitions">Выставки</a>
-  <a href="#moderation" data-kk="Пікірлерді модерациялау" data-en="Feedback moderation">Модерация отзывов</a>
-  <a href="#ai" data-kk="ЖИ сұраулары" data-en="AI queries">Запросы к ИИ</a>
-  <a href="#log" data-kk="Әрекеттер журналы" data-en="Action log">Журнал действий</a>
-  <a href="../index.html" data-kk="Сайтқа өту" data-en="Back to site">На сайт</a>
- </aside>
+ <aside class="aside" id="adm-nav" aria-label="Разделы админки"></aside>
  <main class="amain" id="main">
-  <h1 data-kk="Басты тақта" data-en="Dashboard">Дашборд</h1>
-  <p data-kk="Өз рөліңіз шеңберіндегі материалдар, көрмелер, пікірлер және ЖИ аналитикасы." data-en="Materials, exhibitions, feedback and AI analytics within your role.">Материалы, выставки, отзывы и аналитика ИИ в рамках вашей роли.</p>
-  <div class="metrics">
-   <div class="metric"><b>14 872</b><span data-kk="Каталогтағы жазбалар" data-en="Catalogue records">Записей в каталоге</span><small>+126 <span data-kk="аптасына" data-en="this week">за неделю</span></small></div>
-   <div class="metric"><b>3 410</b><span data-kk="Цифрландырылған істер" data-en="Digitised files">Оцифрованных дел</span><small>23%</small></div>
-   <div class="metric"><b>7</b><span data-kk="Тексеруде" data-en="Awaiting review">На проверке</span><small data-kk="3 жұмыс күнінен артық емес" data-en="no more than 3 working days">не более 3 раб. дней</small></div>
-   <div class="metric"><b>5</b><span data-kk="Жаңа пікірлер" data-en="New feedback">Новых отзывов</span><small data-kk="модерация күтуде" data-en="awaiting moderation">ожидают модерации</small></div>
-  </div>
-  <section id="materials"><h2><span data-kk="Материалдар" data-en="Materials">Материалы</span><a href="delo-edit.html" data-kk="Іс қосу" data-en="Add a file">Добавить дело</a></h2>
-   <div class="wf" aria-label="Статусы"><span class="st">Черновик</span> &rarr; <span class="st rev">На проверке</span> &rarr; <span class="st fix">Требует доработки</span> &rarr; <span class="st ok">Одобрено</span> &rarr; <span class="st pub">Опубликовано</span> &rarr; <span class="st arc">Архивировано</span></div>
-   <div class="tblw"><table class="tbl stack"><thead><tr><th>Шифр</th><th>Название</th><th>Автор</th><th>Обновлено</th><th>Статус</th></tr></thead><tbody>
-    <tr><td class="m" data-h="Шифр">Ф. 1-П, оп. 1, д. 245</td><td data-h="Название"><a href="delo-edit.html">Обзор Семипалатинской области за 1893 год</a></td><td data-h="Автор">М. Ибраева</td><td class="m" data-h="Обновлено">2026-11-08</td><td data-h="Статус"><span class="st pub">Опубликовано</span></td></tr>
-    <tr><td class="m" data-h="Шифр">Ф. 61, оп. 2, д. 38</td><td data-h="Название"><a href="delo-edit.html">Приказы по личному составу Риддерского рудника, 1938-1945</a></td><td data-h="Автор">Ш. Сарсембинова</td><td class="m" data-h="Обновлено">2026-11-08</td><td data-h="Статус"><span class="st rev">На проверке</span></td></tr>
-    <tr><td class="m" data-h="Шифр">Ф. 9, оп. 1, д. 77</td><td data-h="Название"><a href="delo-edit.html">Список населённых мест Зайсанского уезда, 1901</a></td><td data-h="Автор">В. Козлов</td><td class="m" data-h="Обновлено">2026-11-07</td><td data-h="Статус"><span class="st fix">Требует доработки</span></td></tr>
-    <tr><td class="m" data-h="Шифр">Ф. 33, оп. 1, д. 105</td><td data-h="Название"><a href="delo-edit.html">Зыряновский рудник: отчёты о добыче, 1920-1935</a></td><td data-h="Автор">С. Сейлханов</td><td class="m" data-h="Обновлено">2026-11-05</td><td data-h="Статус"><span class="st ok">Одобрено</span></td></tr>
-    <tr><td class="m" data-h="Шифр">Ф. 120, оп. 3, д. 14</td><td data-h="Название"><a href="delo-edit.html">Свинцово-цинковый комбинат: годовые отчёты, 1950-1960</a></td><td data-h="Автор">М. Ибраева</td><td class="m" data-h="Обновлено">2026-11-03</td><td data-h="Статус"><span class="st">Черновик</span></td></tr>
-   </tbody></table></div></section>
-  <section id="exhib"><h2><span data-kk="Онлайн көрмелер" data-en="Online exhibitions">Онлайн-выставки</span><a href="../vystavka.html" data-kk="Сайтта қарау" data-en="View on site">Смотреть на сайте</a></h2>
-   <div class="tblw"><table class="tbl stack"><thead><tr><th>Название</th><th>Экспонатов</th><th>Период</th><th>Статус</th></tr></thead><tbody>
-    <tr><td data-h="Название">Усть-Каменогорск, 1885: город глазами путешественника</td><td class="m" data-h="Экспонатов">6</td><td class="m" data-h="Период">1885-1891</td><td data-h="Статус"><span class="st pub">Опубликовано</span></td></tr>
-    <tr><td data-h="Название">Восточный Казахстан в годы Великой Отечественной войны</td><td class="m" data-h="Экспонатов">24</td><td class="m" data-h="Период">1941-1945</td><td data-h="Статус"><span class="st rev">На проверке</span></td></tr>
-    <tr><td data-h="Название">Промышленное развитие Восточного Казахстана</td><td class="m" data-h="Экспонатов">11</td><td class="m" data-h="Период">1920-1960</td><td data-h="Статус"><span class="st">Черновик</span></td></tr>
-   </tbody></table></div></section>
-  <section id="moderation"><h2 data-kk="Пікірлерді модерациялау" data-en="Feedback moderation">Модерация отзывов</h2>
-   <div class="mod"><div><p>В описи Ф. 9, оп. 1 дело 77 указано 1901 год, на скане 1903. Проверьте, пожалуйста.</p><small>Ошибка в описи · 2026-11-08 · без персональных данных</small></div><div style="display:flex;gap:8px"><button class="btn sm" data-act="ok" data-kk="Қабылдау" data-en="Approve">Принять</button><button class="btn sm out" data-act="no" data-kk="Қабылдамау" data-en="Reject">Отклонить</button></div></div>
-   <div class="mod"><div><p>Предлагаю сделать выставку о промышленных предприятиях Риддера в 1950-е годы.</p><small>Предложение выставки · 2026-11-07</small></div><div style="display:flex;gap:8px"><button class="btn sm" data-act="ok" data-kk="Қабылдау" data-en="Approve">Принять</button><button class="btn sm out" data-act="no" data-kk="Қабылдамау" data-en="Reject">Отклонить</button></div></div>
-   <div class="mod"><div><p>На мобильном телефоне фильтры каталога сложно найти.</p><small>Замечание по сайту · 2026-11-06</small></div><div style="display:flex;gap:8px"><button class="btn sm" data-act="ok" data-kk="Қабылдау" data-en="Approve">Принять</button><button class="btn sm out" data-act="no" data-kk="Қабылдамау" data-en="Reject">Отклонить</button></div></div></section>
-  <section id="ai"><h2 data-kk="ЖИ-ға сұраулар (жеке деректерсіз)" data-en="AI queries (no personal data)">Запросы к ИИ без персональных данных</h2>
-   <div class="note" data-kk="Аналитика анонимді: сұрау мәтіні жеке деректерден тазартылады, IP мен аккаунттар сақталмайды." data-en="Analytics are anonymous: query text is stripped of personal data; IP addresses and accounts are not stored.">Аналитика обезличена: текст запроса очищается от персональных данных, IP и учётные записи не сохраняются.</div>
-   <div class="grid2">
-    <div><h3 style="font:700 19px var(--font-text);margin:0 0 8px" data-kk="Күн сайынғы сұраулар, соңғы 7 күн" data-en="Queries per day, last 7 days">Запросов в день, 7 дней</h3>
-     <div class="bars"><i style="height:48%"><b>62</b></i><i style="height:60%"><b>78</b></i><i style="height:54%"><b>70</b></i><i style="height:74%"><b>96</b></i><i style="height:100%"><b>130</b></i><i style="height:40%"><b>51</b></i><i style="height:46%"><b>60</b></i></div>
-     <div class="barl"><span>пн</span><span>вт</span><span>ср</span><span>чт</span><span>пт</span><span>сб</span><span>вс</span></div></div>
-    <div><h3 style="font:700 19px var(--font-text);margin:0 0 8px" data-kk="Жауапсыз сұраулар" data-en="Queries without results">Запросы без результата</h3>
-     <div class="tblw"><table class="tbl"><thead><tr><th>Запрос</th><th>Раз</th></tr></thead><tbody><tr><td>фотографии Усть-Каменогорска 1960-х</td><td class="m">23</td></tr><tr><td>метрические книги Зайсана</td><td class="m">17</td></tr><tr><td>списки эвакуированных предприятий</td><td class="m">11</td></tr></tbody></table></div></div>
+  <section>
+   <h2 style="border-top:0"><span data-kk="Материалдар" data-en="Materials">Материалы</span><a class="btn" href="delo-edit.html" data-kk="Іс қосу" data-en="New file">Создать дело</a></h2>
+   <div class="wf" aria-label="Статусы">
+    <span class="st">Черновик</span> &rarr; <span class="st rev">На проверке</span> &rarr; <span class="st fix">Требует доработки</span> &rarr; <span class="st ok">Одобрено</span> &rarr; <span class="st pub">Опубликовано</span> &rarr; <span class="st arc">Архив</span>
    </div>
-   <div class="sbox" style="margin-top:16px"><b data-kk="ЖИ ұсынысы" data-en="AI recommendation">Рекомендация ИИ</b><p style="margin:6px 0 0" data-kk="1960-жылдардағы Өскемен фотосуреттері бойынша тақырыптық жинақ қосыңыз: сұраулар жиі, нәтиже жоқ. Жариялау алдында қызметкер растайды." data-en="Add a themed collection of Ust-Kamenogorsk photographs of the 1960s: queries are frequent and have no results. A staff member confirms before publishing.">Добавьте тематическую подборку «Усть-Каменогорск 1960-х»: запросы частые, результатов нет. Перед публикацией подтверждает сотрудник.</p></div></section>
-  <section id="log"><h2 data-kk="Әрекеттер журналы" data-en="Action log">Журнал действий</h2>
-   <div class="tblw"><table class="tbl stack"><thead><tr><th>Дата и время</th><th>Пользователь</th><th>Действие</th></tr></thead><tbody>
-    <tr><td class="m" data-h="Дата">2026-11-08 17:42</td><td data-h="Пользователь">Ш. Сарсембинова</td><td data-h="Действие">Отправила на проверку: Ф. 61, оп. 2, д. 38</td></tr>
-    <tr><td class="m" data-h="Дата">2026-11-08 15:10</td><td data-h="Пользователь">М. Ибраева</td><td data-h="Действие">Опубликовала: Ф. 1-П, оп. 1, д. 245</td></tr>
-    <tr><td class="m" data-h="Дата">2026-11-07 11:03</td><td data-h="Пользователь">Администратор</td><td data-h="Действие">Изменил роль: В. Козлов, администратор филиала</td></tr>
-    <tr><td class="m" data-h="Дата">2026-11-07 09:31</td><td data-h="Пользователь">М. Ибраева</td><td data-h="Действие">Вход в систему</td></tr>
-   </tbody></table></div></section>
+   <div class="atb">
+    <div class="fld"><label for="f-status" data-kk="Мәртебе" data-en="Status">Статус</label><select class="inp" id="f-status"></select></div>
+    <div class="fld"><label for="f-branch" data-kk="Филиал" data-en="Branch">Филиал</label><select class="inp" id="f-branch"></select></div>
+    <div class="fld search"><label for="f-q" data-kk="Іздеу (шифр немесе атау)" data-en="Search (code or title)">Поиск (шифр или название)</label><input class="inp" id="f-q" type="search"></div>
+    <button class="btn" type="button" id="idx-apply" data-kk="Қолдану" data-en="Apply">Применить</button>
+   </div>
+   <div class="tblw"><table class="tbl stack">
+    <thead><tr><th data-kk="Шифр" data-en="Code">Шифр</th><th data-kk="Атауы" data-en="Title">Название</th><th data-kk="Автор" data-en="Author">Автор</th><th data-kk="Жаңартылды" data-en="Updated">Обновлено</th><th data-kk="Мәртебе" data-en="Status">Статус</th></tr></thead>
+    <tbody id="idx-table"></tbody>
+   </table></div>
+   <div class="pager" id="idx-pager"></div>
+   <div class="cnt" id="idx-count"></div>
+  </section>
  </main>
 </div>
 <div id="bottom"></div>
+<script src="../api.js"></script>
 <script src="../app.js"></script>
-<script>
-document.addEventListener("click",function(e){var b=e.target.closest("[data-act]");if(!b)return;var m=b.closest(".mod");m.classList.add("done");m.querySelector("div:last-child").innerHTML='<span class="st '+(b.dataset.act==="ok"?"pub":"fix")+'">'+(b.dataset.act==="ok"?tr("Принято","Қабылданды","Approved"):tr("Отклонено","Қабылданбады","Rejected"))+"</span>"});
-</script>
-</body></html>
+<script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title data-kk="Импорт — ШҚО мемлекеттік архиві" data-en="Import — State Archive of EKR">Импорт — Госархив ВКО</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="p-admin.css">
+</head>
+<body data-base="../" data-admin data-page="import">
+<div id="top"></div>
+<div class="adm">
+ <aside class="aside" id="adm-nav" aria-label="Разделы админки"></aside>
+ <main class="amain" id="main">
+  <section>
+   <h2 style="border-top:0" data-kk="CSV / XLSX импорты" data-en="CSV / XLSX import">Импорт CSV / XLSX</h2>
+   <p data-kk="Файлды жүктеңіз, бағандарды салыстырыңыз және қолданыңыз. Жолдар жоба ретінде жасалады." data-en="Upload a file, map the columns and apply. Rows are created as drafts.">Загрузите файл, сопоставьте колонки и примените. Строки создаются как черновики.</p>
+   <p><a href="sample_import.csv" data-kk="Үлгі CSV жүктеу" data-en="Download sample CSV">Скачать образец CSV</a></p>
+   <div class="drop"><b data-kk="CSV немесе XLSX файлын таңдаңыз" data-en="Choose a CSV or XLSX file">Выберите файл CSV или XLSX</b> <label class="btn sm out" style="cursor:pointer;display:inline-flex">Выбрать файл<input type="file" id="imp-file" accept=".csv,.xlsx" style="position:absolute;left:-999px"></label><p class="file-hint">до 5 МБ, до 5000 строк</p></div>
+
+   <div id="imp-preview" style="display:none">
+    <div class="imp-box"><h3 data-kk="Бағандарды салыстыру" data-en="Column mapping">Сопоставление колонок</h3><div class="mapping" id="imp-mapping"></div></div>
+    <div class="imp-box"><h3 data-kk="Алдын ала қарау" data-en="Preview">Предпросмотр</h3><div class="preview-scroll"><table class="tbl" id="imp-preview-table"></table></div><p class="cnt" id="imp-total"></p></div>
+    <div class="imp-box" id="imp-errors"></div>
+    <div class="imp-box" id="imp-dups"></div>
+    <div class="stickybar"><button class="btn warn" type="button" id="imp-apply" data-kk="Қолдану" data-en="Apply">Применить</button></div>
+    <div id="imp-result"></div>
+   </div>
+  </section>
+ </main>
+</div>
+<div id="bottom"></div>
+<script src="../api.js"></script>
+<script src="../app.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

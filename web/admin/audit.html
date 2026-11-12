@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title data-kk="Журнал — ШҚО мемлекеттік архиві" data-en="Audit log — State Archive of EKR">Журнал — Госархив ВКО</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="p-admin.css">
+</head>
+<body data-base="../" data-admin data-page="audit">
+<div id="top"></div>
+<div class="adm">
+ <aside class="aside" id="adm-nav" aria-label="Разделы админки"></aside>
+ <main class="amain" id="main">
+  <section class="audit">
+   <h2 style="border-top:0" data-kk="Әрекеттер журналы" data-en="Audit log">Журнал действий</h2>
+   <div class="atb">
+    <div class="fld"><label for="a-user" data-kk="Пайдаланушы" data-en="User">Пользователь</label><input class="inp" id="a-user"></div>
+    <div class="fld"><label for="a-action" data-kk="Әрекет" data-en="Action">Действие</label><input class="inp" id="a-action" placeholder="unit.create, login…"></div>
+    <div class="fld"><label for="a-object-type" data-kk="Нысан түрі" data-en="Object type">Тип объекта</label><input class="inp" id="a-object-type" placeholder="unit, file, branch…"></div>
+    <div class="fld"><label for="a-result" data-kk="Нәтиже" data-en="Result">Результат</label><select class="inp" id="a-result"><option value="">—</option><option value="ok" data-kk="OK" data-en="OK">OK</option><option value="denied" data-kk="Бас тартылды" data-en="Denied">Отказано</option><option value="error" data-kk="Қате" data-en="Error">Ошибка</option></select></div>
+    <button class="btn" type="button" id="a-apply" data-kk="Қолдану" data-en="Apply">Применить</button>
+   </div>
+   <div class="tblw"><table class="tbl stack">
+    <thead><tr><th data-kk="Уақыт" data-en="Time">Время</th><th data-kk="Пайдаланушы" data-en="User">Пользователь</th><th data-kk="Әрекет" data-en="Action">Действие</th><th data-kk="Нысан" data-en="Object">Объект</th><th data-kk="Нәтиже" data-en="Result">Результат</th></tr></thead>
+    <tbody id="audit-table"></tbody>
+   </table></div>
+   <div class="pager" id="audit-pager"></div>
+   <div class="cnt" id="audit-count"></div>
+  </section>
+ </main>
+</div>
+<div id="bottom"></div>
+<script src="../api.js"></script>
+<script src="../app.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
