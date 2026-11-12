@@ -1,7 +1,24 @@
-# API-контракт (зафиксирован этапом 0)
+# API-контракт
 
-Источник: docs/plan/2026-11-12-tehnichka.md, раздел «API». Все ответы — JSON в UTF-8.
-Mutating-запросы /api/* требуют cookie-сессию и заголовок X-Requested-With: gos (иначе 403).
+Источник: docs/plan/2026-11-12-tehnichka.md, раздел «API», сверен с роутерами
+`backend/app/routers/`. Все ответы — JSON в UTF-8. Mutating-запросы `/api/*`
+(POST/PUT/PATCH/DELETE) требуют cookie-сессию и заголовок `X-Requested-With: gos`
+(иначе 403 с `{"error":"csrf",...}`).
+
+## Коды ответов и формат ошибок
+
+| Код | Когда | Формат тела |
+|---|---|---|
+| 401 | Нет сессии / неверный пароль | `{"detail":"..."}` |
+| 403 | Нет прав на действие / объект | `{"detail":"..."}` (обычно «Недостаточно прав») |
+| 403 | Отказ в скачивании файла | `{"error":"restricted","reason":"no_publish\|needs_check\|unpublished","howto":"reading_room"}` |
+| 403 | Нет заголовка CSRF на mutating `/api/*` | `{"error":"csrf","detail":"Требуется заголовок X-Requested-With: gos"}` |
+| 404 | Объект не найден или скрыт | `{"detail":"not found"}` / `{"detail":"Единица не найдена"}` и т. п. |
+| 409 | Конфликт: недопустимый переход статуса, дубль code/username, устаревшая version | `{"detail":"..."}` |
+| 413 | Файл больше лимита (20 МБ загрузка / 5 МБ импорт) | `{"detail":"..."}` |
+| 422 | Не заполнены обязательные поля / недопустимое значение / ошибка валидации FastAPI | `{"detail":"..."}` либо `{"detail":[{"loc":[...],"msg":"...","type":"..."}]}` |
+| 429 | Превышен лимит попыток входа (5 за 10 минут на username+IP) | `{"detail":"Слишком много попыток входа"}` |
+| 503 | `AI_PROVIDER=anthropic` без ключа | `{"detail":"..."}` |
 
 ## Публичное
 
@@ -11,7 +28,7 @@ GET /api/health
 GET /api/catalog/search
   Параметры: q, level, fond, opis, delo, period, year_from, year_to, type, branch,
   place, theme, author, keywords, lang, digitized, open,
-  sort (rel|d1|d2|code, по умолчанию rel), page=1, per_page=10.
+  sort (rel|d1|d2|code, по умолчанию rel), page=1, per_page=10 (макс. 50).
   -> {total, page, per_page, items: [UnitCard],
       facets: {type:{k:n}, branch:{k:n}, level:{k:n}}, query_variants: [...]}
 
@@ -27,7 +44,7 @@ GET /api/catalog/units/{id}
 
 GET /api/catalog/fonds/{id}
 GET /api/catalog/fonds/{id}/inventories
-GET /api/catalog/fonds?kind=personal&q&page
+GET /api/catalog/fonds?kind=personal&q&page&per_page
 
 GET /api/files/{id}/download
   -> файл, либо 403 {error:"restricted", reason:"no_publish|needs_check|unpublished",
@@ -51,8 +68,9 @@ GET /robots.txt   (Disallow /admin/, /api/admin/)
 
 POST /api/auth/login  {username, password}
   -> {user:{id, username, role, branch_id, display_name}}
-POST /api/auth/logout
-GET  /api/auth/me
+  401 при неверных учётных данных, 429 после 5 неудач за 10 минут.
+POST /api/auth/logout  -> {ok:true}
+GET  /api/auth/me  -> {user:{...}} | 401
 
 GET    /api/admin/units?status&branch&q&page
 POST   /api/admin/units
@@ -89,3 +107,5 @@ POST /api/admin/users  (admin)
 - Публично видно только published; файл отдаётся только если files.access='public'
   и описание published; needs_check -> отказ.
 - catalog_fts содержит только published.
+- Загруженный файл хранится на диске под случайным именем (в `files.filename`),
+  исходное имя клиента сохраняется в `files.origin`.
