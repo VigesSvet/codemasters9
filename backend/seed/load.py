@@ -130,6 +130,9 @@ def load_fixture(db: sqlite3.Connection) -> None:
             )
 
     users = [
+        ("superadmin", "superadmin", None, "Главный администратор"),
+        ("analyst", "analyst", None, "Аналитик"),
+        ("staff", "staff", None, "Сотрудник архива"),
         ("admin", "admin", None, "Администратор"),
         ("moderator", "moderator", None, "Модератор"),
         ("editor", "editor", None, "Редактор"),

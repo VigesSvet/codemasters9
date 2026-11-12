@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Пользователи — Госархив ВКО</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="p-admin.css">
+</head>
+<body data-base="../" data-admin data-page="users">
+<div id="top"></div>
+<div class="adm">
+ <aside class="aside" id="adm-nav" aria-label="Разделы админки"></aside>
+ <main class="amain" id="main">
+  <section>
+   <h2 style="border-top:0">Пользователи</h2>
+   <div class="tblw"><table class="tbl stack">
+    <thead><tr><th>Логин</th><th>Имя</th><th>Роль</th><th>Статус</th><th></th></tr></thead>
+    <tbody id="u-table"></tbody>
+   </table></div>
+   <div class="cnt" id="u-msg"></div>
+  </section>
+ </main>
+</div>
+<div id="bottom"></div>
+<script src="../api.js"></script>
+<script src="../app.js"></script>
+<script src="admin.js"></script>
+<script src="users.js"></script>
+</body>
+</html>

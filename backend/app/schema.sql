@@ -59,11 +59,12 @@ CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY,
     username TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
-    role TEXT NOT NULL CHECK (role IN ('admin','moderator','editor','branch_admin')),
+    role TEXT NOT NULL,
     branch_id INTEGER NULL REFERENCES branches(id),
     display_name TEXT,
     is_active INTEGER NOT NULL DEFAULT 1,
-    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    deleted_at TEXT NULL
 );
 
 CREATE TABLE IF NOT EXISTS units (
@@ -194,3 +195,9 @@ CREATE INDEX IF NOT EXISTS idx_units_pub_status ON units(pub_status);
 CREATE INDEX IF NOT EXISTS idx_units_fond_id ON units(fond_id);
 CREATE INDEX IF NOT EXISTS idx_files_unit_id ON files(unit_id);
 CREATE INDEX IF NOT EXISTS idx_audit_log_ts ON audit_log(ts);
+
+CREATE TABLE IF NOT EXISTS role_permissions (
+    role TEXT NOT NULL,
+    permission TEXT NOT NULL,
+    PRIMARY KEY (role, permission)
+);

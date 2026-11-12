@@ -190,7 +190,9 @@
     }
     if (role === "admin" || role === "editor") a("import.html", PAGE === "import", "Импорт", "Импорт", "Import");
     if (role === "admin" || role === "branch_admin") a("filial.html", PAGE === "filial", "Филиалы", "Филиалдар", "Branches");
-    if (role === "admin" || role === "moderator") a("audit.html", PAGE === "audit", "Журнал", "Әрекеттер журналы", "Audit log");
+    if (role === "admin" || role === "superadmin" || role === "moderator" || role === "analyst") a("audit.html", PAGE === "audit", "Журнал", "Әрекеттер журналы", "Audit log");
+    if (role === "admin" || role === "superadmin") a("users.html", PAGE === "users", "Пользователи", "Пайдаланушылар", "Users");
+    if (role === "superadmin") a("roles.html", PAGE === "roles", "Роли и права", "Рөлдер", "Roles");
     a("../index.html", false, "На сайт", "Сайтқа", "To the site");
     nav.innerHTML = h;
     if (window.trEls) window.trEls(nav);

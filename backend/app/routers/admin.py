@@ -477,6 +477,42 @@ def list_branches(
     return rows(cur)
 
 
+@router.post("/branches")
+def create_branch(
+    request: Request,
+    body: dict,
+    db: Annotated[Any, Depends(get_db)],
+    user: Annotated[Any, Depends(security.require_user())],
+):
+    _check(db, user, "branch.create", None, "branch", "new")
+    slug = str(body.get("slug") or "").strip()
+    name_ru = str(body.get("name_ru") or "").strip()
+    if not slug or not name_ru or not all(c.isalnum() or c in "-_" for c in slug):
+        raise HTTPException(status_code=422, detail="slug (латиница, цифры, -) и name_ru обязательны")
+    fields = ["slug", "kind", "name_ru"] + [
+        f for f in _BRANCH_EDITABLE_FIELDS if f in body and f != "name_ru"
+    ]
+    values = [slug, body.get("kind") or "branch", name_ru] + [body[f] for f in fields[3:]]
+    try:
+        cur = db.execute(
+            f"INSERT INTO branches ({', '.join(fields)}) VALUES ({', '.join('?' * len(fields))})", values
+        )
+    except sqlite3.IntegrityError:
+        raise HTTPException(status_code=409, detail="Филиал с таким slug уже есть") from None
+    db.commit()
+    audit.log(
+        db,
+        user,
+        "branch.create",
+        "branch",
+        str(cur.lastrowid),
+        result="ok",
+        details={"slug": slug},
+        ip=_ip(request),
+    )
+    return dict(db.execute("SELECT * FROM branches WHERE id = ?", (cur.lastrowid,)).fetchone())
+
+
 @router.put("/branches/{branch_id}")
 def update_branch(
     request: Request,
@@ -515,7 +551,7 @@ def update_branch(
 def list_audit(
     request: Request,
     db: Annotated[Any, Depends(get_db)],
-    current_user: Annotated[Any, Depends(security.require_role("admin", "moderator"))],
+    current_user: Annotated[Any, Depends(security.require_user())],
     user: str | None = None,
     action: str | None = None,
     object_type: str | None = None,
@@ -523,6 +559,7 @@ def list_audit(
     page: int = 1,
     per_page: int = PER_PAGE,
 ):
+    _check(db, current_user, "audit.read", None, "audit", "list")
     page, per_page = _page(page, per_page)
     where: list[str] = []
     params: list[Any] = []
@@ -625,14 +662,35 @@ def export_csv(
 # ---------- пользователи ----------
 
 
+def _public_user(row) -> dict:
+    return {k: row[k] for k in ("id", "username", "role", "branch_id", "display_name", "is_active")}
+
+
+def _guard_superadmin(db, user, target_role: str | None, new_role: str | None = None) -> None:
+    """Только superadmin может назначать/менять/блокировать superadmin."""
+    if user["role"] != "superadmin" and "superadmin" in (target_role, new_role):
+        audit.log(db, user, "users.manage", "user", "-", result="denied")
+        raise HTTPException(status_code=403, detail="Недостаточно прав")
+
+
 @router.get("/users")
 def list_users(
     request: Request,
     db: Annotated[Any, Depends(get_db)],
-    user: Annotated[Any, Depends(security.require_role("admin"))],
+    user: Annotated[Any, Depends(security.require_user())],
 ):
-    cur = db.execute("SELECT id, username, role, branch_id, display_name, is_active FROM users ORDER BY id")
+    _check(db, user, "users.manage", None, "user", "list")
+    cur = db.execute(
+        "SELECT id, username, role, branch_id, display_name, is_active FROM users"
+        " WHERE deleted_at IS NULL ORDER BY id"
+        if _has_deleted(db)
+        else "SELECT id, username, role, branch_id, display_name, is_active FROM users ORDER BY id"
+    )
     return rows(cur)
+
+
+def _has_deleted(db) -> bool:
+    return any(r[1] == "deleted_at" for r in db.execute("PRAGMA table_info(users)"))
 
 
 @router.post("/users")
@@ -640,8 +698,9 @@ def create_user(
     request: Request,
     body: dict,
     db: Annotated[Any, Depends(get_db)],
-    user: Annotated[Any, Depends(security.require_role("admin"))],
+    user: Annotated[Any, Depends(security.require_user())],
 ):
+    _check(db, user, "users.manage", None, "user", "new")
     username = body.get("username")
     password = body.get("password")
     role = body.get("role")
@@ -649,6 +708,7 @@ def create_user(
         raise HTTPException(status_code=422, detail="username, password, role обязательны")
     if role not in permissions.ROLES:
         raise HTTPException(status_code=422, detail="Недопустимая роль")
+    _guard_superadmin(db, user, None, role)
     password_hash = security.hash_password(password)
     branch_id = body.get("branch_id")
     display_name = body.get("display_name", username)
@@ -667,7 +727,7 @@ def create_user(
         "user",
         str(cur.lastrowid),
         result="ok",
-        details={"username": username},
+        details={"username": username, "role": role},
         ip=_ip(request),
     )
     return {
@@ -677,3 +737,144 @@ def create_user(
         "branch_id": branch_id,
         "display_name": display_name,
     }
+
+
+def _target_user(db, user_id: int):
+    row = db.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+    if row is None or (_has_deleted(db) and row["deleted_at"] is not None):
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
+    return row
+
+
+@router.put("/users/{user_id}")
+def update_user(
+    request: Request,
+    user_id: int,
+    body: dict,
+    db: Annotated[Any, Depends(get_db)],
+    user: Annotated[Any, Depends(security.require_user())],
+):
+    _check(db, user, "users.manage", None, "user", user_id)
+    row = _target_user(db, user_id)
+    updates: list[str] = []
+    params: list[Any] = []
+    details: dict[str, Any] = {}
+    if "role" in body:
+        role = body["role"]
+        if role not in permissions.ROLES:
+            raise HTTPException(status_code=422, detail="Недопустимая роль")
+        if user_id == user["id"] and role != row["role"]:
+            raise HTTPException(status_code=400, detail="Нельзя изменить собственную роль")
+        _guard_superadmin(db, user, row["role"], role)
+        updates.append("role = ?")
+        params.append(role)
+        details["role"] = role
+    if "is_active" in body:
+        active = 1 if body["is_active"] else 0
+        if user_id == user["id"] and not active:
+            raise HTTPException(status_code=400, detail="Нельзя заблокировать самого себя")
+        _guard_superadmin(db, user, row["role"])
+        updates.append("is_active = ?")
+        params.append(active)
+        details["is_active"] = active
+    if "display_name" in body:
+        updates.append("display_name = ?")
+        params.append(body["display_name"])
+    if not updates:
+        raise HTTPException(status_code=400, detail="Нет полей для обновления")
+    params.append(user_id)
+    db.execute(f"UPDATE users SET {', '.join(updates)} WHERE id = ?", params)
+    if details.get("is_active") == 0:
+        db.execute("DELETE FROM sessions WHERE user_id = ?", (user_id,))
+    db.commit()
+    audit.log(db, user, "users.manage", "user", str(user_id), result="ok", details=details, ip=_ip(request))
+    return _public_user(db.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone())
+
+
+@router.delete("/users/{user_id}")
+def delete_user(
+    request: Request,
+    user_id: int,
+    db: Annotated[Any, Depends(get_db)],
+    user: Annotated[Any, Depends(security.require_user())],
+):
+    """Мягкое удаление: учётная запись блокируется, сессии сбрасываются, логин освобождается."""
+    _check(db, user, "users.manage", None, "user", user_id)
+    row = _target_user(db, user_id)
+    if user_id == user["id"]:
+        raise HTTPException(status_code=400, detail="Нельзя удалить самого себя")
+    _guard_superadmin(db, user, row["role"])
+    db.execute(
+        "UPDATE users SET is_active = 0, deleted_at = ?, username = ? WHERE id = ?",
+        (security.now().isoformat(), f"{row['username']}#deleted{user_id}", user_id),
+    )
+    db.execute("DELETE FROM sessions WHERE user_id = ?", (user_id,))
+    db.commit()
+    audit.log(
+        db,
+        user,
+        "users.manage",
+        "user",
+        str(user_id),
+        result="ok",
+        details={"deleted": row["username"]},
+        ip=_ip(request),
+    )
+    return {"ok": True}
+
+
+# ---------- роли и права ----------
+
+
+@router.get("/roles")
+def get_roles(
+    db: Annotated[Any, Depends(get_db)],
+    user: Annotated[Any, Depends(security.require_user())],
+):
+    _check(db, user, "users.manage", None, "role", "matrix")
+    m = permissions.matrix()
+    return {
+        "roles": list(permissions.ROLES),
+        "permissions": list(permissions.PERMISSIONS),
+        "matrix": {r: sorted(m.get(r, ())) for r in permissions.ROLES},
+    }
+
+
+@router.put("/roles")
+def put_roles(
+    request: Request,
+    body: dict,
+    db: Annotated[Any, Depends(get_db)],
+    user: Annotated[Any, Depends(security.require_user())],
+):
+    """Сохранить матрицу {matrix: {роль: [права]}}; менять может только superadmin."""
+    _check(db, user, "roles.manage", None, "role", "matrix")
+    matrix = body.get("matrix")
+    if not isinstance(matrix, dict):
+        raise HTTPException(status_code=422, detail="matrix обязателен")
+    for role, perms in matrix.items():
+        if role not in permissions.ROLES or not isinstance(perms, list):
+            raise HTTPException(status_code=422, detail="Недопустимая роль")
+        if any(p not in permissions.PERMISSIONS for p in perms):
+            raise HTTPException(status_code=422, detail="Недопустимое право")
+        if role == "superadmin" and "roles.manage" not in perms:
+            raise HTTPException(status_code=400, detail="Нельзя снять у superadmin право управлять ролями")
+    for role, perms in matrix.items():
+        db.execute("DELETE FROM role_permissions WHERE role = ?", (role,))
+        db.executemany(
+            "INSERT INTO role_permissions (role, permission) VALUES (?,?)",
+            [(role, p) for p in sorted(set(perms))],
+        )
+    db.commit()
+    permissions.reload(db)
+    audit.log(
+        db,
+        user,
+        "roles.manage",
+        "role",
+        "matrix",
+        result="ok",
+        details={"roles": sorted(matrix)},
+        ip=_ip(request),
+    )
+    return get_roles(db, user)
