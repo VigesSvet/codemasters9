@@ -17,7 +17,9 @@ def connect(path: str) -> sqlite3.Connection:
     parent = Path(path).parent
     if str(parent) and not parent.exists():
         parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(path)
+    # FastAPI выполняет sync-зависимости/хендлеры в threadpool: соединение создаётся
+    # в одном потоке, а закрывается в другом -> check_same_thread=False.
+    conn = sqlite3.connect(path, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     conn.execute("PRAGMA journal_mode = WAL")
