@@ -20,7 +20,7 @@
 | 413 | Файл больше лимита (20 МБ загрузка / 5 МБ импорт) | `{"detail":"..."}` |
 | 422 | Не заполнены обязательные поля / недопустимое значение / ошибка валидации FastAPI | `{"detail":"..."}` либо `{"detail":[{"loc":[...],"msg":"...","type":"..."}]}` |
 | 429 | Превышен лимит попыток входа (5 за 10 минут на username+IP или 30 на IP) | `{"detail":"Слишком много попыток входа"}` |
-| 503 | `AI_PROVIDER=anthropic` без ключа | `{"detail":"..."}` |
+| 503 | `AI_PROVIDER=deepseek` или `anthropic` без ключа | `{"detail":"ИИ-провайдер настроен как deepseek, но ключ DEEPSEEK_API_KEY не задан. Укажите ключ или переключите AI_PROVIDER=local."}` |
 
 ## Публичное
 
@@ -63,7 +63,9 @@ GET /api/news/{id}
 POST /api/ai/ask  {question, lang}
   -> {mode:"source"|"no_data"|"restricted", answer,
       sources:[{type:"unit"|"news"|"branch"|"page", id, code, title, url}],
-      generated:true, provider:"local-demo", disclaimer}
+      generated:true, provider:"local-demo"|"deepseek"|"anthropic", disclaimer}
+  restricted и no_data всегда локально (provider "local-demo"); сбой внешнего
+  провайдера -> локальный ответ с пометкой
 
 GET /sitemap.xml  (статические страницы + published units)
 GET /robots.txt   (Disallow /admin/, /api/admin/)

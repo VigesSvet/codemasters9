@@ -67,7 +67,7 @@ flowchart LR
         DB[("SQLite + FTS5<br/>catalog_fts: только published")]
         FS[("FILES_DIR<br/>случайные имена")]
     end
-    EXT["Внешний ИИ (Anthropic)<br/>только при AI_PROVIDER=anthropic"]
+    EXT["Внешний ИИ (DeepSeek / Anthropic)<br/>только при AI_PROVIDER=deepseek|anthropic и ключе"]
 
     V -->|HTTPS| P
     S -->|HTTPS, cookie gos_session| P
@@ -80,13 +80,15 @@ flowchart LR
     ADM --> DB
     ADM --> FS
     AI --> DB
-    AI -.->|вопрос + заголовки открытых единиц| EXT
+    AI -.->|только режим source: вопрос + заголовки открытых единиц| EXT
 ```
 
 Границы доверия: (1) интернет -> reverse proxy, (2) proxy -> приложение (приложение доверяет
 `X-Forwarded-For` только от адресов из `FORWARDED_ALLOW_IPS`), (3) публичное API -> данные: проверка
 `pub_status` и `files.access` на каждом запросе, (4) админ-API -> данные: роль и права на конкретный
-объект, (5) приложение -> внешний ИИ: наружу уходят только открытые данные.
+объект, (5) приложение -> внешний ИИ: наружу уходят только вопрос и заголовки/сниппеты опубликованных
+единиц с публичным файлом; режимы `restricted` (персональные данные) и `no_data` решаются локально до
+вызова провайдера, поэтому такие вопросы наружу не уходят вообще.
 
 ## 3. Соответствие ТЗ
 
@@ -121,7 +123,7 @@ flowchart LR
 | 3.1 | FTS только по разрешённым материалам | в `catalog_fts` попадают только `published`; переиндексация при каждом переходе | `backend/app/search.py` | `test_draft_review_archived_not_searchable`, `test_reindex_unit_only_published`, `test_sitemap_no_draft` |
 | 3.4 | ИИ только по открытым материалам, без вымышленных шифров | ретривер берёт только `published`, ссылки - на реальные id | `backend/app/ai/retriever.py` | `test_ai_source_with_published_ids`, `test_ai_excludes_draft_and_closed` |
 | 3.4 | Ситуации «источник / нет данных / ограниченный доступ» | режимы `source`, `no_data`, `restricted` | `backend/app/ai/local.py` | `test_ai_no_data`, `test_ai_restricted_intent`, `test_ai_restricted_no_public_file_download` |
-| 3.4 | Не передавать данные внешнему ИИ без основания | по умолчанию `AI_PROVIDER=local`, сеть не нужна; без ключа - 503, а не тихая отправка | `backend/app/ai/providers.py`, `backend/app/routers/ai.py` | `test_ai_local_no_network`, `test_ai_anthropic_no_key_503` |
+| 3.4 | Не передавать данные внешнему ИИ без основания | по умолчанию `AI_PROVIDER=local`, сеть не нужна; без ключа - 503, а не тихая отправка; DeepSeek/Anthropic вызываются только для режима `source`, наружу - вопрос и открытые фрагменты, вопросы о персональных данных остаются локальными; сбой провайдера - локальный ответ | `backend/app/ai/providers.py`, `backend/app/routers/ai.py` | `test_ai_local_no_network`, `test_ai_anthropic_no_key_503`, `test_deepseek_no_key_503`, `test_deepseek_payload_only_open_data`, `test_deepseek_restricted_stays_local`, `test_deepseek_error_falls_back_to_local`, `test_default_provider_no_external_call` |
 | 3.5 | Права на каждую операцию и конкретный объект, включая филиалы | `permissions.can(user, action, obj)`; `branch_admin` - только свой `branch_id` (правка филиала и чтение единиц); импорт - только автор задачи или admin | `backend/app/permissions.py`, `backend/app/routers/admin.py`, `backend/app/importer.py` | `test_branch_admin_edit_other_branch`, `test_branch_admin_foreign_unit_404`, `test_branch_admin_own_unit_visible`, `test_import_apply_other_user_403` |
 | 3.5 | Смена статуса не обходит права на публикацию | переход проверяется по `TRANSITIONS` (409) и по праву целевого статуса (403) | `backend/app/workflow.py` | `test_editor_cannot_publish`, `test_moderator_can_publish`, `test_invalid_transition_409` |
 | 3.5 | Неуспешная строка импорта не теряет сохранённые | каждая строка в своём `SAVEPOINT` | `backend/app/importer.py` | `test_import_apply_inserts_8_drafts` |
@@ -175,7 +177,8 @@ SRI для внешнего скрипта. sha256 каждого загруже
 вход, превышение лимита, нехватка роли, скачивание закрытого файла, чужой импорт
 (`backend/app/audit.py`). Оповещений нет - раздел 10.
 
-**A10 Server-Side Request Forgery.** Сервер ходит наружу только к API Anthropic при
+**A10 Server-Side Request Forgery.** Сервер ходит наружу только к API DeepSeek при
+`AI_PROVIDER=deepseek` (адрес из `DEEPSEEK_BASE_URL` в окружении) или к API Anthropic при
 `AI_PROVIDER=anthropic` с фиксированным адресом SDK (`backend/app/ai/providers.py`); URL от пользователя
 сервер не запрашивает. Карта, погода и геокодер вызываются из браузера, ограничены CSP `connect-src`.
 
@@ -205,7 +208,7 @@ SRI для внешнего скрипта. sha256 каждого загруже
 | SEC-17 | Низкая | сессия без абсолютного срока, cookie не продлевается | план: абсолютный лимит 12 ч, фоновая чистка `sessions`, продление cookie |
 | SEC-18 | Низкая | нетипизированные тела админ-запросов (`dict`) могут дать 500 | план: pydantic-модели для units/branches/users |
 | SEC-19 | Инфо | фонды видны без опубликованных единиц | план: показывать фонд при наличии опубликованного |
-| SEC-20 | Инфо | внешний ИИ без системного промпта | план: system-промпт и разделители фрагментов; по умолчанию провайдер `local` |
+| SEC-20 | Инфо | внешний ИИ без системного промпта | для DeepSeek закрыто: system-промпт (только по фрагментам, инструкции в данных не выполнять) и явные разделители вопроса и фрагментов, подделка границ из данных обезврежена; `test_deepseek_payload_only_open_data`, `test_deepseek_delimiters_not_forgeable`. Для Anthropic - план; по умолчанию провайдер `local` |
 | SEC-21 | Инфо | мелочи журнала и эксплуатации (`ip` не везде, число единиц в `/api/health`, compose без `read_only`/`cap_drop`) | план |
 
 Отклонения от предложений аудита:
@@ -240,11 +243,11 @@ SRI для внешнего скрипта. sha256 каждого загруже
 `.github/workflows/ci.yml` на каждый push и pull request:
 
 - `backend`: `pip-audit -r requirements.txt`, `ruff check`, `ruff format --check`, `pytest -q`
-  (132 теста), seed + uvicorn + curl-smoke `/api/health` и поиска;
+  (142 теста), seed + uvicorn + curl-smoke `/api/health` и поиска;
 - `web`: `html-validate`, `scripts/check_links.py web`;
 - `docker`: сборка образа.
 
-Тесты безопасности - 82 из 132:
+Тесты безопасности - 92 из 142:
 
 | Файл | Тестов | Что проверяют |
 |---|---|---|
@@ -254,6 +257,7 @@ SRI для внешнего скрипта. sha256 каждого загруже
 | `tests/test_permissions.py` | 7 | публикация, правка по статусу, филиалы, доступ к файлу |
 | `tests/test_cards.py` | 9 | 404 для неопубликованных карточек, выдача и отказы по файлам |
 | `tests/test_ai.py` | 5 | `test_ai_restricted_intent`, `test_ai_restricted_no_public_file_download`, `test_ai_excludes_draft_and_closed`, `test_ai_anthropic_no_key_503`, `test_ai_local_no_network` |
+| `tests/test_ai_deepseek.py` | 10 (3 из них - параметры `test_deepseek_error_falls_back_to_local`) | ключ, состав исходящего запроса, разделители, restricted/no_data локально, таймаут/500/сеть -> фолбэк, по умолчанию без внешних вызовов |
 | `tests/test_import.py` | 2 | `test_import_file_too_large`, `test_import_no_permission_403` |
 | `tests/test_search.py` | 2 | `test_draft_review_archived_not_searchable`, `test_reindex_unit_only_published` |
 | `tests/test_workflow.py` | 2 | `test_invalid_transition_409`, `test_publish_does_not_change_files_access` |
@@ -394,7 +398,9 @@ c -b adm.jar $B/api/admin/export.csv | grep HYPERLINK
 | `LOGIN_MAX_ATTEMPTS` / `LOGIN_WINDOW_MIN` | `5` / `10` | неудачи на пару логин+IP за окно |
 | `LOGIN_IP_MAX_ATTEMPTS` | `30` | неудачи с одного IP на все логины за окно |
 | `API_DOCS` | `false` | `true` открывает `/docs`, `/redoc`, `/openapi.json`; `make dev` включает для разработки |
-| `AI_PROVIDER` | `local` | `anthropic` отправляет вопрос и открытые фрагменты внешнему провайдеру |
+| `AI_PROVIDER` | `local` | `deepseek` или `anthropic` отправляет вопрос и открытые фрагменты внешнему провайдеру (только режим `source`) |
+| `DEEPSEEK_API_KEY` | не задан | ключ DeepSeek; хранить в секретах окружения, не в репозитории |
+| `DEEPSEEK_MODEL` / `DEEPSEEK_BASE_URL` | `deepseek-chat` / `https://api.deepseek.com` | модель и адрес OpenAI-совместимого API |
 | `ANTHROPIC_API_KEY` | не задан | ключ провайдера; хранить в секретах окружения, не в репозитории |
 | `SEED_PASSWORD` | `Demo-2026!` | пароль пользователей seed; на проде задать свой |
 | `FORWARDED_ALLOW_IPS` | `127.0.0.1` | адреса прокси, которым uvicorn верит в `X-Forwarded-For` |
@@ -450,7 +456,7 @@ python3 scripts/backup_db.py --db /tmp/sec.db --dir /tmp/sec-bk   # провер
 | Сессии без абсолютного срока (SEC-17) | активная сессия живёт бесконечно | лимит 12 ч, фоновая чистка, продление cookie |
 | Нетипизированные тела админ-запросов (SEC-18) | 500 на некорректных типах | pydantic-модели |
 | Фонды без опубликованных единиц видны (SEC-19) | раскрытие названия фонда | фильтр по наличию опубликованного |
-| Внешний ИИ без системного промпта (SEC-20) | prompt injection через текст единиц | system-промпт, разделители фрагментов |
+| Внешний ИИ Anthropic без системного промпта (SEC-20) | prompt injection через текст единиц | system-промпт и разделители, как у DeepSeek |
 | Журнал и эксплуатация (SEC-21) | неполный IP в журнале, лишние сведения в `/api/health`, контейнер без `read_only`/`cap_drop` | дописать IP, убрать счётчик, ужесточить compose |
 | Нет антивирусной проверки загрузок | вредоносный PDF с разрешённой сигнатурой | ClamAV перед сохранением, карантин до `public` |
 | Нет двухфакторной аутентификации и SSO | компрометация пароля = доступ | TOTP для admin/moderator или вход через корпоративный IdP |

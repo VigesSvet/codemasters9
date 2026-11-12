@@ -49,7 +49,7 @@ Swagger включается API_DOCS=true (make dev включает его с�
 
 Модель угроз, соответствие ТЗ §7.3 и дополнениям 3.1/3.4/3.5/3.6, меры по OWASP Top 10,
 итоги аудита 12.11.2026 (SEC-01...SEC-21: что исправлено и каким тестом, что в плане) и
-curl-примеры для ручной проверки - в [docs/SECURITY.md](docs/SECURITY.md). 82 из 132 тестов
+curl-примеры для ручной проверки - в [docs/SECURITY.md](docs/SECURITY.md). 92 из 142 тестов
 pytest проверяют безопасность; CI дополнительно запускает pip-audit. Как сообщить об
 уязвимости - [SECURITY.md](SECURITY.md).
 
@@ -62,7 +62,10 @@ pytest проверяют безопасность; CI дополнительн�
 | DB_PATH | backend/data/archive.db | путь к SQLite |
 | WEB_DIR | web | каталог статики |
 | FILES_DIR | backend/data/files | каталог файлов |
-| AI_PROVIDER | local | local / anthropic |
+| AI_PROVIDER | local | local / deepseek / anthropic |
+| DEEPSEEK_API_KEY | не задан | ключ DeepSeek, только в секретах окружения |
+| DEEPSEEK_MODEL | deepseek-chat | модель DeepSeek |
+| DEEPSEEK_BASE_URL | https://api.deepseek.com | адрес OpenAI-совместимого API |
 | SESSION_TTL_MIN | 30 | автовыход, минут |
 | LOGIN_MAX_ATTEMPTS | 5 | лимит неудачных входов |
 | LOGIN_WINDOW_MIN | 10 | окно лимита, минут |
@@ -71,6 +74,11 @@ pytest проверяют безопасность; CI дополнительн�
 | API_DOCS | false | true открывает /docs, /redoc, /openapi.json |
 | FORWARDED_ALLOW_IPS | 127.0.0.1 | адрес reverse proxy, которому верим в X-Forwarded-For |
 | SEED_PASSWORD | Demo-2026! | пароль демо-пользователей |
+
+Подключить DeepSeek: задать в окружении (не в репозитории) `AI_PROVIDER=deepseek` и
+`DEEPSEEK_API_KEY`, перезапустить приложение. Наружу уходят только вопрос и заголовки опубликованных
+единиц с публичным файлом; вопросы о персональных данных и вопросы без найденных материалов
+отвечаются локально. Без ключа `/api/ai/ask` возвращает 503, при сбое DeepSeek - локальный ответ.
 
 ## Команды make
 

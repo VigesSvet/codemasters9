@@ -28,13 +28,21 @@ def ask(body: AiRequest, request: Request, db: Annotated[sqlite3.Connection, Dep
     settings = request.app.state.settings
     provider = providers.get_provider(settings)
     if provider is None:
+        key_env = providers.KEY_ENV.get(settings.ai_provider, "API-ключ")
         raise HTTPException(
             status_code=503,
-            detail="ИИ-провайдер настроен как anthropic, но ключ ANTHROPIC_API_KEY не задан. "
-            "Укажите ключ или переключите AI_PROVIDER=local.",
+            detail="ИИ-провайдер настроен как "
+            + settings.ai_provider
+            + ", но ключ "
+            + key_env
+            + " не задан. Укажите ключ или переключите AI_PROVIDER=local.",
         )
 
     hits = retriever.search(db, question, lang)
+    # restricted и no_data решаются локально - вопросы о персональных данных наружу не уходят
+    pre = local.compose(question, hits, lang)
+    if isinstance(provider, providers.LocalProvider) or pre["mode"] != "source":
+        return pre
     try:
         result = provider.answer(question, hits, lang)
     except Exception:

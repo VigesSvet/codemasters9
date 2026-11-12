@@ -30,6 +30,11 @@ class Settings:
     web_dir: str = field(default_factory=lambda: os.environ.get("WEB_DIR", "web"))
     files_dir: str = field(default_factory=lambda: os.environ.get("FILES_DIR", "backend/data/files"))
     ai_provider: str = field(default_factory=lambda: os.environ.get("AI_PROVIDER", "local"))
+    # модель и адрес DeepSeek; ключ(DEEPSEEK_API_KEY) читается только из окружения
+    deepseek_model: str = field(default_factory=lambda: os.environ.get("DEEPSEEK_MODEL", "deepseek-chat"))
+    deepseek_base_url: str = field(
+        default_factory=lambda: os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
+    )
     session_ttl_min: int = field(default_factory=lambda: _env_int("SESSION_TTL_MIN", 30))
     login_max_attempts: int = field(default_factory=lambda: _env_int("LOGIN_MAX_ATTEMPTS", 5))
     login_window_min: int = field(default_factory=lambda: _env_int("LOGIN_WINDOW_MIN", 10))
