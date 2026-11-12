@@ -21,7 +21,7 @@ FastAPI (`backend/app/main.py`), данные - SQLite с FTS5 (`backend/app/sch
 - статический фронт (`web/`), заголовки безопасности, конфигурация Docker и CI.
 
 Вне области: TLS-терминация и reverse proxy (настраиваются при развёртывании, раздел 9),
-инфраструктура хостинга, сторонние сервисы в браузере (карта OpenStreetMap, YouTube, open-meteo),
+инфраструктура хостинга, сторонние сервисы в браузере (тайлы OpenStreetMap, ссылки на YouTube),
 внешний ИИ-провайдер (по умолчанию выключен).
 
 ## 2. Модель угроз
@@ -162,7 +162,7 @@ Swagger и схема выключены без `API_DOCS=true` (`backend/app/ma
 
 **A06 Vulnerable and Outdated Components.** Пины `==` (`requirements.txt`, `requirements-dev.txt`),
 `pip-audit` в CI (`.github/workflows/ci.yml`); на 12.11.2026 известных уязвимостей не найдено.
-Leaflet 1.9.4 подключён с SRI (`web/filialy.html`, `web/istoriya.html`).
+Leaflet 1.9.4 подключён локально (`web/vendor/leaflet/`), без внешнего CDN.
 
 **A07 Identification and Authentication Failures.** Лимиты по логин+IP и по IP, scrypt против
 фиктивного хеша для неизвестного логина, одно сообщение на любую ошибку входа
@@ -170,7 +170,7 @@ Leaflet 1.9.4 подключён с SRI (`web/filialy.html`, `web/istoriya.html`
 `password_is_default`, админка показывает баннер (`web/admin/admin.js`).
 
 **A08 Software and Data Integrity Failures.** Токен CI только на чтение (`permissions: contents: read`).
-SRI для внешнего скрипта. sha256 каждого загруженного файла. Импорт в два шага (preview -> apply) с
+SRI для внешних скриптов (сейчас внешних скриптов нет — Leaflet локально). sha256 каждого загруженного файла. Импорт в два шага (preview -> apply) с
 привязкой к автору; все импортированные записи попадают в `draft`.
 
 **A09 Security Logging and Monitoring Failures.** `audit_log` пишет и успехи, и отказы (`denied`):
@@ -180,7 +180,7 @@ SRI для внешнего скрипта. sha256 каждого загруже
 **A10 Server-Side Request Forgery.** Сервер ходит наружу только к API DeepSeek при
 `AI_PROVIDER=deepseek` (адрес из `DEEPSEEK_BASE_URL` в окружении) или к API Anthropic при
 `AI_PROVIDER=anthropic` с фиксированным адресом SDK (`backend/app/ai/providers.py`); URL от пользователя
-сервер не запрашивает. Карта, погода и геокодер вызываются из браузера, ограничены CSP `connect-src`.
+сервер не запрашивает. Карта (тайлы OSM) загружается из браузера; внешних fetch-запросов из фронта нет (`connect-src 'self'`).
 
 ## 5. Результаты аудита 12.11.2026
 

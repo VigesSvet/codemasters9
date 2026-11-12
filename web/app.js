@@ -34,7 +34,6 @@
     '<header class="hdr"><div class="wrap">' +
     '<div class="util"><a href="tel:+77232255976">8 (7232) 25-59-76</a>' +
     '<a href="' + B + 'karta-sayta.html">' + X("Все разделы", "Барлық бөлімдер", "All sections") + "</a>" +
-    '<span class="wx" id="wx" title="Усть-Каменогорск" aria-live="polite"></span>' +
     '<button class="vi" type="button" data-vi-toggle aria-pressed="false">' + X("Для слабовидящих", "Нашар көретіндерге", "Accessible version") + "</button>" +
     '<span class="lang" role="group" aria-label="Язык / Тіл / Language"><button data-lang="kk" aria-pressed="false">KZ</button><button data-lang="ru" aria-pressed="true">RU</button><button data-lang="en" aria-pressed="false">EN</button></span>' +
     '<button class="tt" data-theme-toggle type="button"><span data-tt></span></button>' +
@@ -301,28 +300,6 @@
     if (e.target.id === "hide-desc") document.querySelector(".full").classList.toggle("hide-desc", e.target.checked);
   });
 
-  // ---------- погода(open-meteo.com, без ключа) ----------
-  var WI = {
-    sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',
-    cloud: '<path d="M7 18a4 4 0 010-8 5 5 0 019.6-1A4.5 4.5 0 0117 18z"/>',
-    rain: '<path d="M7 15a4 4 0 010-8 5 5 0 019.6-1A4.5 4.5 0 0117 15z"/><path d="M8 18l-1 3M12 18l-1 3M16 18l-1 3"/>',
-    snow: '<path d="M7 14a4 4 0 010-8 5 5 0 019.6-1A4.5 4.5 0 0117 14z"/><path d="M8 18h.01M12 20h.01M16 18h.01"/>',
-    fog: '<path d="M3 9h18M5 13h14M3 17h18"/>',
-    storm: '<path d="M7 14a4 4 0 010-8 5 5 0 019.6-1A4.5 4.5 0 0117 14z"/><path d="M12 14l-2 4h4l-2 4"/>'
-  };
-  function wxIcon(c) { return c === 0 ? "sun" : c <= 3 ? "cloud" : c <= 48 ? "fog" : c <= 67 || (c >= 80 && c <= 82) ? "rain" : c <= 77 || c === 85 || c === 86 ? "snow" : "storm"; }
-  function weather() {
-    var w = document.getElementById("wx"); if (!w || ADMIN) return;
-    var ic = function (k, t) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + WI[k] + "</svg><span>" + t + "</span>"; };
-    w.innerHTML = ic("cloud", "—");
-    fetch("https://api.open-meteo.com/v1/forecast?latitude=49.95&longitude=82.61&current=temperature_2m,weather_code,wind_speed_10m&timezone=auto")
-      .then(function (r) { return r.json(); }).then(function (d) {
-        var c = d.current, t = Math.round(c.temperature_2m);
-        w.innerHTML = ic(wxIcon(c.weather_code), (t > 0 ? "+" : "") + t + " °C");
-        w.title = L("Погода в Усть-Каменогорске, ветер ", "Өскемендегі ауа райы, жел ", "Weather in Ust-Kamenogorsk, wind ") + c.wind_speed_10m + " " + L("км/ч", "км/сағ", "km/h");
-      }).catch(function () { w.innerHTML = ic("cloud", L("Усть-Каменогорск", "Өскемен", "Ust-Kamenogorsk")); });
-  }
-  weather();
 
   // ---------- режим для слабовидящих ----------
   function setVI(on) {

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Филиалы на карте — Госархив ВКО</title>
 <meta name="description" content="Государственный архив ВКО и его филиалы на карте: адреса, телефоны, часы работы, маршруты в 2GIS и Google Maps.">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin>
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css">
 <link rel="stylesheet" href="style.css">
 </head>
 <body data-nav="filialy" data-map>
@@ -33,7 +33,7 @@
 </div>
 </main>
 <div id="bottom"></div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin></script>
+<script src="vendor/leaflet/leaflet.js"></script>
 <script src="api.js"></script>
 <script src="app.js"></script>
 <script>
@@ -92,11 +92,28 @@ function card(){var b=BR.filter(function(x){return x.id===sel})[0]||BR[0];
  }
 }
 function pick(id,fly){sel=id;var b=BR.filter(function(x){return x.id===id})[0];if(b&&b.ll&&fly&&map)map.flyTo(b.ll,12,{duration:.6});list();card()}
+function mapOffline(){
+  var m=document.getElementById("map");
+  if(!m||document.getElementById("mapoff"))return;
+  var d=document.createElement("div");
+  d.id="mapoff";
+  d.setAttribute("role","status");
+  d.style.cssText="position:absolute;left:0;top:0;right:0;z-index:1000;background:var(--surface);border-bottom:2px solid var(--level);padding:16px;font-size:15px;color:var(--text)";
+  d.setAttribute("data-kk","Карта интернетсіз қолжетімсіз — мекенжайлар мен жұмыс уақыты сол жақтағы тізімде");
+  d.setAttribute("data-en","Map is unavailable without internet — addresses and opening hours are in the list on the left");
+  d.textContent="Карта недоступна без интернета — адреса и часы работы в списке слева";
+  m.appendChild(d);
+  if(window.trEls)window.trEls(d);
+}
 if(window.L){
 map=L.map("map",{scrollWheelZoom:false}).setView([49.4,83.6],7);
-L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:"&copy; OpenStreetMap contributors"}).addTo(map);
+var tiles=L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:"&copy; OpenStreetMap contributors"});
+tiles.on("tileerror",mapOffline);
+tiles.addTo(map);
 BR.forEach(function(b,i){if(!b.ll)return;var m=L.marker(b.ll,{icon:L.divIcon({className:"",html:'<div class="mk">'+(i+1)+"</div>",iconSize:[30,30],iconAnchor:[15,15]}),keyboard:true,title:b.n[0]}).addTo(map);m.on("click",function(){pick(b.id,false)});mk[b.id]=m});
 map.fitBounds(BR.filter(function(b){return b.ll}).map(function(b){return b.ll}),{padding:[30,30]});
+if(!navigator.onLine)mapOffline();
+window.addEventListener("offline",mapOffline);
 }else{
 var mapEl=document.getElementById("map");
 mapEl.innerHTML='<div class="mapoff" data-kk="Карта қолжетімсіз; мекенжайлар, телефондар және бағыт сілтемелері — төменде" data-en="Map unavailable; addresses, phones and route links are below">Карта недоступна; адреса, телефоны и ссылки на маршрут — ниже</div>';

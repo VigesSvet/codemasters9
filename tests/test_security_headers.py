@@ -33,3 +33,12 @@ def test_csrf_without_header_403(client):
     r = client.post("/api/admin/units", json={"code": "x"})
     assert r.status_code == 403
     assert r.json().get("error") == "csrf"
+
+
+def test_csp_no_external_cdn_or_weather(client):
+    """CSP не разрешает unpkg и open-meteo; тайлы OSM остаются в img-src."""
+    r = client.get("/")
+    csp = r.headers.get("content-security-policy", "")
+    assert "unpkg" not in csp
+    assert "open-meteo" not in csp
+    assert "tile.openstreetmap.org" in csp
