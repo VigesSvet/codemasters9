@@ -252,7 +252,7 @@ def list_fonds(
     where_sql = " AND ".join(where)
     total = db.execute(f"SELECT COUNT(*) AS n FROM fonds WHERE {where_sql}", args).fetchone()["n"]
 
-    page = max(1, page)
+    page = max(1, min(page, 100_000))
     per_page = max(1, min(per_page, 50))
     rows = db.execute(
         f"SELECT {_FOND_SELECT} FROM fonds "
@@ -286,7 +286,11 @@ def download_file(
         )
 
     if row["pub_status"] != "published":
-        return _denied("unpublished")
+        # черновик неотличим от несуществующего файла(SEC-06) - иначе перебором id видно, что файл есть
+        audit.log(
+            db, None, "file.download", "file", file_id, result="denied", details={"reason": "unpublished"}
+        )
+        raise HTTPException(status_code=404, detail="not found")
     if row["access"] != "public":
         return _denied(row["access"])
 

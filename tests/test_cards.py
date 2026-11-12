@@ -55,7 +55,7 @@ def test_download_needs_check_403(client):
     assert resp.json()["reason"] == "needs_check"
 
 
-def test_download_unpublished_403(client, db):
+def test_download_unpublished_404(client, db):
     draft_id = db.execute("SELECT id FROM units WHERE code='T-004'").fetchone()["id"]
     db.execute(
         "INSERT INTO files (unit_id, filename, mime, size, kind, access) VALUES (?,?,?,?,?,?)",
@@ -64,8 +64,9 @@ def test_download_unpublished_403(client, db):
     db.commit()
     file_id = db.execute("SELECT id FROM files WHERE unit_id=?", (draft_id,)).fetchone()["id"]
     resp = client.get(f"/api/files/{file_id}/download")
-    assert resp.status_code == 403
-    assert resp.json()["reason"] == "unpublished"
+    # SEC-06: ответ как у несуществующего файла, без reason
+    assert resp.status_code == 404
+    assert "reason" not in resp.json()
 
 
 def test_download_nonexistent_404(client):

@@ -9,21 +9,28 @@ from typing import Any
 from .db import fts5_available
 from .textnorm import expand_query, norm
 
+# ---------- разбор запроса ----------
+
+# потолок публичного запроса(SEC-01) - длинная строка не должна раздувать MATCH
+MAX_QUERY_CHARS = 200
+MAX_QUERY_TOKENS = 16
+
 
 def _normalized_variants(q: Any) -> list[str]:
     """Синонимичные варианты запроса (нормализованные). Пустой запрос - пусто."""
     if not q or not str(q).strip():
         return []
-    return expand_query(str(q))
+    return expand_query(str(q)[:MAX_QUERY_CHARS])
 
 
 def _fts_expr(q: Any) -> str | None:
     """FTS5-выражение: варианты через OR, внутри варианта токены через AND с префиксом."""
     parts: list[str] = []
     for variant in _normalized_variants(q):
-        tokens = [t for t in re.split(r"\s+", variant) if t]
+        # только буквы и цифры в кавычках - операторы FTS5(" * : ( ) NEAR) из запроса не доходят до MATCH
+        tokens = re.findall(r"\w+", variant)[:MAX_QUERY_TOKENS]
         if tokens:
-            parts.append(" AND ".join(f"{t}*" for t in tokens))
+            parts.append(" AND ".join(f'"{t}"*' for t in tokens))
     if not parts:
         return None
     return " OR ".join(f"({p})" for p in parts)
@@ -195,18 +202,32 @@ def search_units(db: sqlite3.Connection, params: dict) -> dict:
     variants = _normalized_variants(q)
     fts_expr = _fts_expr(q)
 
-    where, args = _filters(params)
-
     use_fts = fts_expr is not None and fts5_available(db)
+    if use_fts:
+        try:
+            return _run_search(db, params, variants, fts_expr)
+        except sqlite3.OperationalError:
+            # страховка(SEC-01): любой сбой разбора MATCH - поиск через LIKE, а не 500
+            pass
+    return _run_search(db, params, variants, None)
+
+
+def _run_search(db: sqlite3.Connection, params: dict, variants: list[str], fts_expr: str | None) -> dict:
+    """Выполнить поиск: с FTS-выражением или фолбэком на LIKE (fts_expr=None)."""
+    where, args = _filters(params)
+    use_fts = fts_expr is not None
     if use_fts:
         from_sql = _FTS_FROM_SQL
         leading: list[Any] = [fts_expr]
     else:
         from_sql = _FROM_SQL
         leading = []
-        if variants:
+        # LIKE в SQLite не сворачивает регистр кириллицы - добавляем и запрос как есть
+        raw = str(params.get("q") or "").strip()[:MAX_QUERY_CHARS]
+        patterns = variants + ([raw] if raw and raw not in variants else [])
+        if patterns:
             like_parts = []
-            for v in variants:
+            for v in patterns:
                 like_parts.append(_LIKE_SQL)
                 args.extend([f"%{v}%"] * 7)
             where.append("(" + " OR ".join(like_parts) + ")")
@@ -214,7 +235,8 @@ def search_units(db: sqlite3.Connection, params: dict) -> dict:
     where_sql = " AND ".join(where)
     all_args = leading + args
 
-    page = max(1, _as_int(params.get("page")) or 1)
+    # потолок страницы - page=10^20 переполняет 64-битный OFFSET SQLite(SEC-12)
+    page = max(1, min(_as_int(params.get("page")) or 1, 100_000))
     per_page = _as_int(params.get("per_page")) or 10
     per_page = max(1, min(per_page, 50))
 
