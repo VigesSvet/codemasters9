@@ -6,6 +6,7 @@ import re
 import sqlite3
 from typing import Any
 
+from .db import fts5_available
 from .textnorm import expand_query, norm
 
 
@@ -88,6 +89,14 @@ _FROM_SQL = (
     "LEFT JOIN inventories ON inventories.id = units.inventory_id "
 )
 
+_FTS_FROM_SQL = (
+    "FROM units "
+    "JOIN catalog_fts ON catalog_fts.unit_id = units.id AND catalog_fts MATCH ? "
+    "LEFT JOIN branches ON branches.id = units.branch_id "
+    "LEFT JOIN fonds ON fonds.id = units.fond_id "
+    "LEFT JOIN inventories ON inventories.id = units.inventory_id "
+)
+
 _COLS_SQL = (
     "units.id, units.level, units.code, units.fond_id, units.inventory_id, "
     "units.title_ru, units.title_kk, units.title_en, "
@@ -97,9 +106,14 @@ _COLS_SQL = (
     f"{_PUBLIC_FILE_SQL} AS has_public_file"
 )
 
+_LIKE_SQL = (
+    "(units.title_ru LIKE ? OR units.title_kk LIKE ? OR units.title_en LIKE ? "
+    "OR units.code LIKE ? OR units.keywords LIKE ? OR units.author LIKE ? OR units.place LIKE ?)"
+)
 
-def _where(params: dict, fts_expr: str | None) -> tuple[str, str, list[Any]]:
-    """Вернуть (from_sql, where_sql, args) для поиска."""
+
+def _filters(params: dict) -> tuple[list[str], list[Any]]:
+    """Только фильтры (без FTS/запроса). Возвращает (where, args)."""
     where = ["units.pub_status = 'published'"]
     args: list[Any] = []
 
@@ -172,38 +186,43 @@ def _where(params: dict, fts_expr: str | None) -> tuple[str, str, list[Any]]:
         else:
             where.append(f"NOT {_PUBLIC_FILE_SQL}")
 
-    if fts_expr:
-        from_sql = (
-            "FROM units "
-            "JOIN catalog_fts ON catalog_fts.unit_id = units.id AND catalog_fts MATCH ? "
-            "LEFT JOIN branches ON branches.id = units.branch_id "
-            "LEFT JOIN fonds ON fonds.id = units.fond_id "
-            "LEFT JOIN inventories ON inventories.id = units.inventory_id "
-        )
-        leading = [fts_expr]
-    else:
-        from_sql = _FROM_SQL
-        leading = []
-
-    return from_sql, " AND ".join(where), leading + args
+    return where, args
 
 
 def search_units(db: sqlite3.Connection, params: dict) -> dict:
-    """Поиск по опубликованным единицам (catalog_fts + units)."""
-    fts_expr = _fts_expr(params.get("q"))
-    variants = _normalized_variants(params.get("q"))
+    """Поиск по опубликованным единицам (FTS5, фолбэк — LIKE)."""
+    q = params.get("q")
+    variants = _normalized_variants(q)
+    fts_expr = _fts_expr(q)
 
-    from_sql, where_sql, args = _where(params, fts_expr)
+    where, args = _filters(params)
+
+    use_fts = fts_expr is not None and fts5_available(db)
+    if use_fts:
+        from_sql = _FTS_FROM_SQL
+        leading: list[Any] = [fts_expr]
+    else:
+        from_sql = _FROM_SQL
+        leading = []
+        if variants:
+            like_parts = []
+            for v in variants:
+                like_parts.append(_LIKE_SQL)
+                args.extend([f"%{v}%"] * 7)
+            where.append("(" + " OR ".join(like_parts) + ")")
+
+    where_sql = " AND ".join(where)
+    all_args = leading + args
 
     page = max(1, _as_int(params.get("page")) or 1)
     per_page = _as_int(params.get("per_page")) or 10
     per_page = max(1, min(per_page, 50))
 
-    total = db.execute(f"SELECT COUNT(*) AS n {from_sql} WHERE {where_sql}", args).fetchone()["n"]
+    total = db.execute(f"SELECT COUNT(*) AS n {from_sql} WHERE {where_sql}", all_args).fetchone()["n"]
 
     sort = params.get("sort") or "rel"
     order_map = {
-        "rel": ("bm25(catalog_fts), units.code" if fts_expr else "units.code"),
+        "rel": ("bm25(catalog_fts), units.code" if use_fts else "units.code"),
         "d1": "units.years_from DESC, units.code",
         "d2": "units.years_from ASC, units.code",
         "code": "units.code",
@@ -212,14 +231,14 @@ def search_units(db: sqlite3.Connection, params: dict) -> dict:
 
     rows = db.execute(
         f"SELECT {_COLS_SQL} {from_sql} WHERE {where_sql} ORDER BY {order_expr} LIMIT ? OFFSET ?",
-        args + [per_page, (page - 1) * per_page],
+        all_args + [per_page, (page - 1) * per_page],
     ).fetchall()
 
     facets = {"type": {}, "branch": {}, "level": {}}
     for key, column in (("type", "units.doc_type"), ("branch", "branches.slug"), ("level", "units.level")):
         facet_rows = db.execute(
             f"SELECT {column} AS k, COUNT(*) AS n {from_sql} WHERE {where_sql} GROUP BY {column}",
-            args,
+            all_args,
         ).fetchall()
         facets[key] = {r["k"]: r["n"] for r in facet_rows if r["k"]}
 
@@ -255,6 +274,8 @@ def _insert_fts(db: sqlite3.Connection, row: sqlite3.Row | dict) -> None:
 
 def reindex_unit(db: sqlite3.Connection, unit_id: int) -> None:
     """Переиндексировать одну единицу: вставлять только published."""
+    if not fts5_available(db):
+        return
     db.execute("DELETE FROM catalog_fts WHERE unit_id = ?", (unit_id,))
     row = db.execute("SELECT * FROM units WHERE id = ?", (unit_id,)).fetchone()
     if row is not None and row["pub_status"] == "published":
@@ -264,6 +285,8 @@ def reindex_unit(db: sqlite3.Connection, unit_id: int) -> None:
 
 def reindex_all(db: sqlite3.Connection) -> None:
     """Полная переиндексация catalog_fts (только published)."""
+    if not fts5_available(db):
+        return
     db.execute("DELETE FROM catalog_fts")
     rows = db.execute("SELECT * FROM units WHERE pub_status = 'published'").fetchall()
     for row in rows:
