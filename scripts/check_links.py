@@ -8,7 +8,7 @@ import re
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
-# внешние/служебные схемы и протокол-относительные — не проверяем
+# внешние/служебные схемы и протокол-относительные - не проверяем
 _SKIP_PREFIXES = ("http://", "https://", "mailto:", "tel:", "javascript:", "data:", "//")
 _SKIP_PATH_PREFIXES = ("/api/", "/api", "/docs")
 # блоки, внутри которых href/src не являются статическими ссылками
@@ -22,7 +22,7 @@ def _extract_links(text: str) -> list[str]:
 
 
 def _normalize(raw: str) -> str | None:
-    """Локальный путь без query/hash; None — пропустить."""
+    """Локальный путь без query/hash; None - пропустить."""
     raw = raw.strip()
     if not raw or raw.startswith(_SKIP_PREFIXES):
         return None

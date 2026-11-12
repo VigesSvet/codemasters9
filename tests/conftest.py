@@ -1,4 +1,4 @@
-"""Фикстуры pytest для этапа 0 и будущих задач."""
+"""Фикстуры pytest: settings, app, db, client, login."""
 
 from __future__ import annotations
 
@@ -53,7 +53,7 @@ def client(app, db):
 
 @pytest.fixture
 def login(client):
-    """Вход по роли. На этапе 0 /api/auth/login — 501, поэтому пока падает."""
+    """Вход по роли: POST /api/auth/login."""
 
     def _login(role: str):
         username, password = _SEED_USERS[role]

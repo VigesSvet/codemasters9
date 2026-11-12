@@ -11,7 +11,7 @@ from openpyxl import Workbook
 
 from backend.app import permissions, security
 
-# Заголовок защиты от CSRF: без него сервер отклоняет любые изменяющие запросы.
+# заголовок защиты от CSRF: без него сервер отклоняет любые изменяющие запросы
 CSRF = {"X-Requested-With": "gos"}
 
 ROOT = Path(__file__).resolve().parent.parent

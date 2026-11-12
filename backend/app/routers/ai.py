@@ -38,7 +38,7 @@ def ask(body: AiRequest, request: Request, db: Annotated[sqlite3.Connection, Dep
     try:
         result = provider.answer(question, hits, lang)
     except Exception:
-        # Ошибка внешнего провайдера -> фолбэк на локальный шаблон.
+        # ошибка внешнего провайдера -> фолбэк на локальный шаблон
         result = local.compose(question, hits, lang)
         result["provider"] = "local-demo"
         result["answer"] = (

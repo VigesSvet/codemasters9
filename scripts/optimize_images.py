@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Пережатие изображений web/img: jpg ≤1600px q78 progressive, png — оптимизация (имена сохраняем)."""
+"""Пережатие изображений web/img: jpg ≤1600px q78 progressive, png - оптимизация (имена сохраняем)."""
 
 from __future__ import annotations
 

@@ -104,7 +104,7 @@ def _unit_row(db, unit_id: int) -> dict:
     return dict(row)
 
 
-# --- units ---
+# ---------- units ----------
 
 
 @router.get("/units")
@@ -345,7 +345,7 @@ def unit_versions(
     return {"unit_id": unit_id, "items": rows(cur)}
 
 
-# --- files ---
+# ---------- files ----------
 
 
 @router.post("/units/{unit_id}/files")
@@ -452,7 +452,7 @@ def list_unit_files(
     return {"unit_id": unit_id, "items": rows(cur)}
 
 
-# --- branches ---
+# ---------- branches ----------
 
 
 @router.get("/branches")
@@ -496,7 +496,7 @@ def update_branch(
     return dict(new_row)
 
 
-# --- audit ---
+# ---------- audit ----------
 
 
 @router.get("/audit")
@@ -535,7 +535,7 @@ def list_audit(
     return {"total": total, "page": page, "per_page": per_page, "items": rows(cur)}
 
 
-# --- export ---
+# ---------- export ----------
 
 
 @router.get("/export.csv")
@@ -599,7 +599,7 @@ def export_csv(
     )
 
 
-# --- users ---
+# ---------- users ----------
 
 
 @router.get("/users")
