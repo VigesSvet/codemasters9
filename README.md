@@ -14,6 +14,7 @@
 - Контракт API: docs/api.md
 - Инструкция редактора: docs/EDITOR-GUIDE.md
 - Готовность модулей: docs/READINESS.md
+- Безопасность: docs/SECURITY.md
 
 ## Быстрый старт
 
@@ -23,7 +24,8 @@
     make seed      # загружает демо-данные в backend/data/archive.db
     make dev       # uvicorn на http://localhost:8000
 
-Откройте http://localhost:8000 — сайт, и http://localhost:8000/docs — Swagger (OpenAPI).
+Откройте http://localhost:8000 — сайт, и http://localhost:8000/docs — Swagger (OpenAPI);
+Swagger включается API_DOCS=true (make dev включает его сам, на проде /docs отвечает 404).
 
 ## Docker Compose
 
@@ -40,7 +42,16 @@
 | editor | редактор |
 | ridder | администратор филиала Риддер |
 
-Пароль по умолчанию: Demo-2026! (переопределяется переменной SEED_PASSWORD).
+Пароль по умолчанию: Demo-2026! (переопределяется переменной SEED_PASSWORD). При входе с ним
+админка показывает баннер «Демо-пароль: смените перед развёртыванием».
+
+## Безопасность
+
+Модель угроз, соответствие ТЗ §7.3 и дополнениям 3.1/3.4/3.5/3.6, меры по OWASP Top 10,
+итоги аудита 12.11.2026 (SEC-01...SEC-21: что исправлено и каким тестом, что в плане) и
+curl-примеры для ручной проверки - в [docs/SECURITY.md](docs/SECURITY.md). 82 из 132 тестов
+pytest проверяют безопасность; CI дополнительно запускает pip-audit. Как сообщить об
+уязвимости - [SECURITY.md](SECURITY.md).
 
 ## Переменные окружения
 
@@ -55,7 +66,10 @@
 | SESSION_TTL_MIN | 30 | автовыход, минут |
 | LOGIN_MAX_ATTEMPTS | 5 | лимит неудачных входов |
 | LOGIN_WINDOW_MIN | 10 | окно лимита, минут |
-| COOKIE_SECURE | false | Secure-флаг cookie (за reverse proxy — true) |
+| LOGIN_IP_MAX_ATTEMPTS | 30 | лимит неудачных входов с одного IP на все логины |
+| COOKIE_SECURE | false | Secure-флаг cookie и HSTS (за reverse proxy с TLS — true) |
+| API_DOCS | false | true открывает /docs, /redoc, /openapi.json |
+| FORWARDED_ALLOW_IPS | 127.0.0.1 | адрес reverse proxy, которому верим в X-Forwarded-For |
 | SEED_PASSWORD | Demo-2026! | пароль демо-пользователей |
 
 ## Команды make

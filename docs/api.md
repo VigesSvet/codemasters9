@@ -11,13 +11,15 @@
 |---|---|---|
 | 401 | Нет сессии / неверный пароль | `{"detail":"..."}` |
 | 403 | Нет прав на действие / объект | `{"detail":"..."}` (обычно «Недостаточно прав») |
-| 403 | Отказ в скачивании файла | `{"error":"restricted","reason":"no_publish\|needs_check\|unpublished","howto":"reading_room"}` |
+| 403 | Отказ в скачивании файла опубликованной единицы | `{"error":"restricted","reason":"no_publish\|needs_check","howto":"reading_room"}` |
 | 403 | Нет заголовка CSRF на mutating `/api/*` | `{"error":"csrf","detail":"Требуется заголовок X-Requested-With: gos"}` |
-| 404 | Объект не найден или скрыт | `{"detail":"not found"}` / `{"detail":"Единица не найдена"}` и т. п. |
+| 404 | Объект не найден или скрыт (черновик, файл черновика, единица чужого филиала для branch_admin) | `{"detail":"not found"}` / `{"detail":"Единица не найдена"}` и т. п. |
 | 409 | Конфликт: недопустимый переход статуса, дубль code/username, устаревшая version | `{"detail":"..."}` |
+| 411 | Изменяющий `/api/*` в chunked-кодировке без Content-Length | `{"error":"too_large","detail":"Требуется заголовок Content-Length"}` |
+| 413 | Тело запроса больше 25 МБ | `{"error":"too_large","detail":"Тело запроса больше 25 МБ"}` |
 | 413 | Файл больше лимита (20 МБ загрузка / 5 МБ импорт) | `{"detail":"..."}` |
 | 422 | Не заполнены обязательные поля / недопустимое значение / ошибка валидации FastAPI | `{"detail":"..."}` либо `{"detail":[{"loc":[...],"msg":"...","type":"..."}]}` |
-| 429 | Превышен лимит попыток входа (5 за 10 минут на username+IP) | `{"detail":"Слишком много попыток входа"}` |
+| 429 | Превышен лимит попыток входа (5 за 10 минут на username+IP или 30 на IP) | `{"detail":"Слишком много попыток входа"}` |
 | 503 | `AI_PROVIDER=anthropic` без ключа | `{"detail":"..."}` |
 
 ## Публичное
@@ -28,7 +30,8 @@ GET /api/health
 GET /api/catalog/search
   Параметры: q, level, fond, opis, delo, period, year_from, year_to, type, branch,
   place, theme, author, keywords, lang, digitized, open,
-  sort (rel|d1|d2|code, по умолчанию rel), page=1, per_page=10 (макс. 50).
+  sort (rel|d1|d2|code, по умолчанию rel), page=1 (макс. 100000), per_page=10 (макс. 50).
+  q - до 200 символов и 16 слов, операторы FTS5 в q не действуют.
   -> {total, page, per_page, items: [UnitCard],
       facets: {type:{k:n}, branch:{k:n}, level:{k:n}}, query_variants: [...]}
 
@@ -47,7 +50,8 @@ GET /api/catalog/fonds/{id}/inventories
 GET /api/catalog/fonds?kind=personal&q&page&per_page
 
 GET /api/files/{id}/download
-  -> файл, либо 403 {error:"restricted", reason:"no_publish|needs_check|unpublished",
+  Единица не published -> 404, как у несуществующего файла.
+  -> файл, либо 403 {error:"restricted", reason:"no_publish|needs_check",
                     howto:"reading_room"}
 
 GET /api/branches
@@ -67,12 +71,14 @@ GET /robots.txt   (Disallow /admin/, /api/admin/)
 ## Админ (cookie-сессия)
 
 POST /api/auth/login  {username, password}
-  -> {user:{id, username, role, branch_id, display_name}}
-  401 при неверных учётных данных, 429 после 5 неудач за 10 минут.
+  -> {user:{id, username, role, branch_id, display_name}, password_is_default}
+  username до 64 символов, password до 256.
+  401 при неверных учётных данных (одно сообщение для неизвестного логина и неверного пароля),
+  429 после 5 неудач за 10 минут на username+IP или 30 неудач с IP.
 POST /api/auth/logout  -> {ok:true}
-GET  /api/auth/me  -> {user:{...}} | 401
+GET  /api/auth/me  -> {user:{...}, password_is_default} | 401
 
-GET    /api/admin/units?status&branch&q&page
+GET    /api/admin/units?status&branch&q&page&per_page  (per_page 1..100; branch_admin - только свой филиал)
 POST   /api/admin/units
 GET    /api/admin/units/{id}
 PUT    /api/admin/units/{id}
@@ -93,10 +99,13 @@ POST /api/admin/import/preview  (multipart csv/xlsx + mapping JSON)
       errors:[{row, field, message}], duplicates:[{row, code, existing_id}], total}
 POST /api/admin/import/{job_id}/apply  {mapping}
   -> {inserted, updated:0, skipped, errors}
+  (применяет только автор preview или admin, иначе 403; XLSX до 5000 строк и 64 колонок,
+   битый файл -> 422)
   (построчно; ошибка строки не откатывает ранее вставленные; создаются draft;
    иерархия fond->opis->delo по колонкам fond_code, opis_no, delo_no)
 
 GET /api/admin/export.csv?status=published
+  (значения, начинающиеся с = + - @ TAB CR, экранируются апострофом - защита от CSV-инъекции)
 
 GET  /api/admin/users  (admin)
 POST /api/admin/users  (admin)

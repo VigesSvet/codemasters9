@@ -103,15 +103,19 @@ stateDiagram-v2
 
 ## Безопасность
 
-- **Пароли** — `hashlib.scrypt` (N=16384, r=8, p=1, соль 16 байт, сравнение через `hmac.compare_digest`).
+- **Пароли** — `hashlib.scrypt` (N=16384, r=8, p=5, 16 МиБ, соль 16 байт, сравнение через `hmac.compare_digest`);
+  параметры хранятся в строке хеша, поэтому старые хеши p=1 продолжают проверяться.
 - **Сессии** — случайный токен `secrets.token_urlsafe(32)`, в БД хранится только sha256;
   cookie `gos_session` HttpOnly, SameSite=Lax, Secure по настройке `COOKIE_SECURE`.
 - **Автовыход** — 30 минут неактивности (`SESSION_TTL_MIN`), срок продлевается при каждом запросе.
-- **Лимит входов** — 5 неудачных попыток за 10 минут на username+IP → 429.
+- **Лимит входов** — 5 неудачных попыток за 10 минут на username+IP и 30 на IP по всем логинам → 429;
+  для неизвестного логина scrypt считается против фиктивного хеша, ответ одинаковый; записи
+  `login_attempts` старше суток удаляются. За прокси нужен `FORWARDED_ALLOW_IPS`.
 - **CSRF** — SameSite=Lax + обязательный заголовок `X-Requested-With: gos` на любом mutating `/api/*`
   (без него 403 с `{"error":"csrf"}`).
 - **Заголовки** — CSP, `X-Content-Type-Options: nosniff`, `Referrer-Policy`,
-  `X-Frame-Options: DENY`, `Permissions-Policy`. CSP разрешает только нужное: Leaflet с unpkg,
+  `X-Frame-Options: DENY`, `Permissions-Policy`, `Cross-Origin-Opener-Policy` и
+  `Cross-Origin-Resource-Policy: same-origin`, HSTS при `COOKIE_SECURE=true`. CSP разрешает только нужное: Leaflet с unpkg,
   тайлы OpenStreetMap, встраивание YouTube, open-meteo и nominatim для карты/погоды.
 - **Noindex админки** — `/admin` и `/api/admin` получают `X-Robots-Tag: noindex, nofollow`
   и `Cache-Control: no-store`.
@@ -119,6 +123,11 @@ stateDiagram-v2
 - **Вывод** — фронт выводит данные через `textContent`, а не `innerHTML`, поэтому разметка
   из БД не исполняется как HTML.
 - **Журнал** — `audit_log` хранит тип операции, ID объекта и результат, секреты из деталей вырезаются.
+- **Лимиты ввода** — тело изменяющего `/api/*` до 25 МБ (иначе 413, chunked без длины - 411); файл
+  единицы до 20 МБ, импорт до 5 МБ, 5000 строк и 64 колонок; поисковый запрос - 200 символов и
+  16 токенов, токены попадают в FTS5 MATCH только в кавычках.
+- **Документация API** — `/docs`, `/redoc`, `/openapi.json` доступны только при `API_DOCS=true`.
+- **Подробно** — модель угроз, соответствие ТЗ и итоги аудита: `docs/SECURITY.md`.
 
 ## ИИ-помощник
 

@@ -23,6 +23,7 @@
 | Роль «администратор филиала» (правит только свой филиал) | Реализовано | branch.edit разрешён только для своего branch_id |
 | Версии и согласование (автор, согласующий, дата статуса) | Реализовано | unit_versions: снимок, автор, согласующий, комментарий, дата |
 | Журнал действий (тип операции, ID объекта, результат) | Реализовано | audit_log, отказы и успехи, без секретов |
+| Аудит безопасности | Реализовано | Аудит 12.11.2026: 21 находка; SEC-01...SEC-14 исправлены (SEC-08 и SEC-10 частично), регрессия - tests/test_security.py; SEC-15...SEC-21 - принятый риск или план; итоги и модель угроз в docs/SECURITY.md |
 | Импорт CSV/XLSX с сопоставлением полей и протоколом ошибок | Реализовано | preview + apply, автоподбор колонок, построчный импорт в draft |
 | Погода, опрос | Имитация/макет | Погода с open-meteo.com; опрос голосует локально |
 | Социальные сети | Реализовано | Ссылки на Instagram @arhiv_vko и Facebook vkoarhiv |
@@ -34,7 +35,7 @@ docs/research/current-site/ (выгрузка старого сайта e-arhiv.
 
 CI (.github/workflows/ci.yml) при каждом push и PR:
 
-- backend: установка зависимостей, ruff check, ruff format --check, pytest -q (87 тестов),
+- backend: установка зависимостей, ruff check, ruff format --check, pip-audit, pytest -q (132 теста),
   загрузка демо-БД (python -m backend.seed) и smoke-проверка — запуск uvicorn в фоне и
   curl /api/health и /api/catalog/search?q=риддер;
 - web: html-validate и scripts/check_links.py web;

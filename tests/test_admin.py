@@ -34,3 +34,5 @@ def test_upload_pdf_ok(client, login, db):
     data = r.json()
     assert data["mime"] == "application/pdf"
     assert data["access"] == "needs_check"
+    # контрольная сумма мастер-файла(п. 3.6 дополнений)
+    assert len(data["sha256"]) == 64
