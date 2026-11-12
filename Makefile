@@ -22,10 +22,10 @@ fmt:
 
 check-web:
 	python3 scripts/check_links.py web
+	npx --yes html-validate@9 "web/**/*.html"
 
 backup:
-	mkdir -p backend/data/backups
-	cp backend/data/archive.db backend/data/backups/archive-$$(date +%Y%m%d-%H%M%S).db
+	python3 scripts/backup_db.py
 
 docker-build:
 	docker build -t gosarhiv-vko .

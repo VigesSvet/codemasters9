@@ -1,10 +1,10 @@
 /* a-gos: «Строгий национальный архив». Референс: UK The National Archives (TNA Frontend). Токены: SYNTHESIS §3.7 */
-@font-face{font-family:"Roboto Condensed";font-weight:500;src:url(fonts/RC500.ttf) format("truetype");font-display:swap}
-@font-face{font-family:"Roboto Condensed";font-weight:600;src:url(fonts/RC600.ttf) format("truetype");font-display:swap}
-@font-face{font-family:"Inter";font-weight:400;src:url(fonts/Inter400.ttf) format("truetype");font-display:swap}
-@font-face{font-family:"Inter";font-weight:600 700;src:url(fonts/Inter600.ttf) format("truetype");font-display:swap}
-@font-face{font-family:"Roboto Mono";font-weight:400;src:url(fonts/Mono400.ttf) format("truetype");font-display:swap}
-@font-face{font-family:"Roboto Mono";font-weight:500;src:url(fonts/Mono500.ttf) format("truetype");font-display:swap}
+@font-face{font-family:"Roboto Condensed";font-weight:500;src:url(fonts/RC500.woff2) format("woff2");font-display:swap}
+@font-face{font-family:"Roboto Condensed";font-weight:600;src:url(fonts/RC600.woff2) format("woff2");font-display:swap}
+@font-face{font-family:"Inter";font-weight:400;src:url(fonts/Inter400.woff2) format("woff2");font-display:swap}
+@font-face{font-family:"Inter";font-weight:600 700;src:url(fonts/Inter600.woff2) format("woff2");font-display:swap}
+@font-face{font-family:"Roboto Mono";font-weight:400;src:url(fonts/Mono400.woff2) format("woff2");font-display:swap}
+@font-face{font-family:"Roboto Mono";font-weight:500;src:url(fonts/Mono500.woff2) format("woff2");font-display:swap}
 
 :root{
   color-scheme:light;
