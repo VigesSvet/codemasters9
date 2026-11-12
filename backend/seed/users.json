@@ -1,0 +1,6 @@
+[
+  {"username":"admin","role":"admin","branch_slug":null,"display_name":"Администратор"},
+  {"username":"moderator","role":"moderator","branch_slug":null,"display_name":"Модератор"},
+  {"username":"editor","role":"editor","branch_slug":null,"display_name":"Редактор"},
+  {"username":"ridder","role":"branch_admin","branch_slug":"ridder","display_name":"Администратор филиала Риддер"}
+]

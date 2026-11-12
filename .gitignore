@@ -10,3 +10,8 @@ docs/mockups-v2/*/compare/
 docs/mockups-v2/*/shots/
 docs/mockups-v2/*/*-full.png
 .DS_Store
+backend/data/
+.venv/
+__pycache__/
+node_modules/
+*.pyc
