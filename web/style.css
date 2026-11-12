@@ -94,6 +94,7 @@ img{display:block;max-width:100%}
 .hdr .util a,.hdr .util button{color:#fff;text-decoration:none;font:inherit;background:none;border:0;padding:0;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
 .hdr .util a:hover,.hdr .util button:hover{text-decoration:underline}
 .lang{display:inline-flex;gap:14px}
+.lang .f,.hbtns{display:none}
 .lang button[aria-pressed="true"]{text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:6px;font-weight:700}
 .hdr .main{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:23px;margin-top:-1px}
 .logo{display:block;width:108px;border:1px solid #fff;color:#fff;text-decoration:none;font-family:var(--font-display);font-weight:500;font-size:21px;line-height:34px;text-transform:uppercase}
@@ -185,7 +186,7 @@ img{display:block;max-width:100%}
 /* хлебные крошки */
 .crumbs{background:var(--bg-tint)}
 .crumbs ol{list-style:none;margin:0;padding:16px 0 4px;display:flex;flex-wrap:wrap;gap:0;font-size:16px;line-height:33px}
-.crumbs li+li::before{content:"";display:inline-block;width:6px;height:6px;border-right:1.5px solid currentColor;border-top:1.5px solid currentColor;transform:rotate(45deg);margin:0 12px 2px 8px}
+.crumbs li:not(:last-child)::after{content:"";display:inline-block;width:6px;height:6px;border-right:1.5px solid currentColor;border-top:1.5px solid currentColor;transform:rotate(45deg);margin:0 12px 2px 8px}
 .crumbs .lv{font:400 13px var(--font-mono);color:var(--level);margin-right:6px}
 .tabs{display:flex;gap:32px;font-size:16px}
 .tabs a,.tabs span{display:inline-block;padding:4px 0 6px;border-bottom:5px solid transparent;color:var(--accent)}
@@ -258,7 +259,6 @@ dl.f{margin:16px 0 0;border-top:1px solid var(--line-strong)}
   .cols4{grid-template-columns:1fr 1fr}
   .ftr .cols{grid-template-columns:1fr 1fr}
   .work{grid-template-columns:1fr}
-  .nav{width:auto;flex:1;margin-left:48px}
 }
 @media(max-width:768px){
   .grid3{grid-template-columns:1fr}
@@ -266,30 +266,14 @@ dl.f{margin:16px 0 0;border-top:1px solid var(--line-strong)}
   .feat img{height:auto;aspect-ratio:3/2}
   .two{grid-template-columns:1fr}
   .f>div{grid-template-columns:1fr;gap:4px}
-  .hdr .util{height:auto;padding:12px 0 0;justify-content:flex-start;flex-wrap:wrap;gap:12px 24px}
 }
 @media(max-width:600px){
-  .hdr .util{display:none}
-  .hdr.open .util{display:flex}
-  .phase .wrap{display:block}
-  .phase b{display:block}
-  .hdr .main{flex-wrap:wrap;padding:16px 0;align-items:center}
-  .logo{width:56px;font-size:11px;line-height:17px}
-  .logo .r{height:18px}
-  .logo .r span{padding:0 5px}
-  .burger{display:inline-flex;align-items:center;gap:16px;background:none;border:0;color:#fff;font:700 18px var(--font-text);cursor:pointer;padding:0}
-  .burger i{display:block;width:32px;height:24px;border-top:4px solid #fff;border-bottom:4px solid #fff;position:relative}
-  .burger i::after{content:"";position:absolute;left:0;right:0;top:6px;border-top:4px solid #fff}
-  .nav{display:none;flex:0 0 100%;width:100%;margin:16px 0 0}
-  .hdr.open .nav{display:block;flex:0 0 100%}
-  .nav ul{display:block}
   .hero{padding:32px 0}
   .hero .sub{font-size:20px;margin:16px 0 24px}
   .btns{flex-direction:column;gap:16px}
   .btns .btn{width:100%}
   .cols4{grid-template-columns:1fr}
   .ftr .cols{grid-template-columns:1fr}
-  .themebar .wrap{gap:16px;justify-content:flex-start;overflow:hidden}
   .legal2{flex-direction:column;align-items:flex-start}
   .feat h2{font-size:29px}
   .vstage{height:420px}
@@ -298,11 +282,11 @@ dl.f{margin:16px 0 0;border-top:1px solid var(--line-strong)}
 
 /* ---------- дополнения v2: формы, каталог, карта, лента, галерея, админка, ИИ ---------- */
 mark{background:var(--mark);color:#010101;padding:0 1px}
-.util form.hs{display:flex;margin:0}
-.util form.hs input{height:36px;width:200px;border:2px solid #fff;border-right:0;background:transparent;color:#fff;font:400 15px var(--font-text);padding:0 10px;border-radius:0}
-.util form.hs input::placeholder{color:rgb(255 255 255 / .7)}
-.util form.hs button{width:36px;height:36px;background:#fff;color:#010101;border:2px solid #fff;display:grid;place-items:center;padding:0}
-.util form.hs button svg{fill:#010101}
+.hdr form.hs{display:flex;margin:0}
+.hdr form.hs input{height:36px;width:150px;border:2px solid #fff;border-right:0;background:transparent;color:#fff;font:400 15px var(--font-text);padding:0 10px;border-radius:0}
+.hdr form.hs input::placeholder{color:rgb(255 255 255 / .7)}
+.hdr form.hs button{width:36px;height:36px;background:#fff;color:#010101;border:2px solid #fff;display:grid;place-items:center;padding:0}
+.hdr form.hs button svg{fill:#010101}
 .util .tt{border:2px solid #fff;height:36px;padding:0 12px!important}
 .util .tt:hover{background:#fff;color:#010101!important;text-decoration:none!important}
 .hero.sm{padding:32px 0 36px}
@@ -324,7 +308,7 @@ select.inp{appearance:none;background-image:linear-gradient(45deg,transparent 50
 .btn.out{background:var(--surface);color:var(--text-dark);border-color:var(--line-strong)}
 .btn.out:hover{background:var(--btn-bg);color:#fff}
 .lnkbtn{background:none;border:0;padding:0;font:inherit;color:var(--accent);text-decoration:underline;cursor:pointer}
-.cat{display:grid;grid-template-columns:320px 1fr;gap:32px;padding:32px 0 64px;align-items:start}
+.cat{display:grid;grid-template-columns:320px 1fr;gap:32px;padding:32px var(--pad-x) 64px;align-items:start}
 .filters{border:1px solid var(--line);background:var(--surface)}
 .filters>h2{font:700 19px/1.5 var(--font-text);padding:12px 16px;margin:0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
 .filters details{border-bottom:1px solid var(--line)}
@@ -527,7 +511,7 @@ body[data-dark-map] .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brigh
 .cin button{width:52px;height:52px;background:#010101;color:#fff;border:0;cursor:pointer;font:700 16px var(--font-text)}
 :root[data-theme="dark"] .cin button{border-left:2px solid #fff}
 .cnote{font-size:12px;line-height:1.4;color:var(--text-muted);padding:6px 14px;border-top:1px solid var(--line);background:var(--surface)}
-.aifull{display:grid;grid-template-columns:320px 1fr;gap:32px;padding:32px 0 64px;align-items:start}
+.aifull{display:grid;grid-template-columns:320px 1fr;gap:32px;padding:32px var(--pad-x) 64px;align-items:start}
 .aifull .chat{border:2px solid var(--line-strong);height:calc(100vh - 140px);min-height:560px;background:var(--surface)}
 .aifull .m1,.aifull .m2{max-width:80%}
 @media(max-width:1024px){
@@ -574,8 +558,6 @@ body[data-dark-map] .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brigh
   .bcard dl{grid-template-columns:90px 1fr}
   .gal3{grid-template-columns:1fr}
   .aifull .chat{height:calc(100vh - 100px)}
-  .hdr .util form.hs{width:100%}
-  .hdr .util form.hs input{flex:1;width:auto}
   .tl li{padding-left:20px}
   .amain section>h2{font-size:24px}
 }
@@ -627,7 +609,7 @@ body[data-dark-map] .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brigh
 .gbl time{font:400 14px var(--font-mono);color:var(--text-muted);margin-right:12px}
 .gbl p{margin:4px 0 0;max-width:80ch}
 .gform textarea{width:100%;min-height:110px}
-.ok{background:var(--pastel);border-left:5px solid var(--level);padding:10px 14px;margin-top:12px}
+.ok:not(.tag):not(.st){background:var(--pastel);border-left:5px solid var(--level);padding:10px 14px;margin-top:12px}
 .poll th{text-align:left;font-weight:400;width:34%}
 .poll .bar{display:block;height:18px;background:var(--bg-tint)}
 .poll .bar i{display:block;height:100%;background:var(--level)}
@@ -699,7 +681,6 @@ html[data-vi] .hero.big .plate{background:#000;border:2px solid #fff}
 @media(prefers-reduced-motion:reduce){.car .sl{transition:none}}
 
 .hdr .util{gap:18px;white-space:nowrap}
-.hdr .util .hs input{width:150px}
 @media(max-width:600px){
  .optab{top:auto;bottom:16px;writing-mode:horizontal-tb;transform:none;padding:8px 14px;border-left:2px solid #fff}
  .car .cap{position:static;font-size:15px}
@@ -826,7 +807,6 @@ html[data-vi] .hero.big .plate{background:#000;border:2px solid #fff}
   .aib{right:12px;bottom:12px;width:52px;height:52px;padding:0;gap:0;justify-content:center}
   .aib>span:not(.m){display:none}
   main{padding-bottom:96px}
-  .phase-long{display:none}
 }
 
 /* ---------- детали: фокус, ИИ, печать ---------- */
@@ -835,7 +815,14 @@ html[data-vi] .hero.big .plate{background:#000;border:2px solid #fff}
 .hdr .util a,.hdr .util button{min-height:36px}
 .res .ph{border:1px solid var(--line);background:var(--bg-tint)}
 .m2.wait{color:var(--text-muted);border-left-color:var(--line)}
-.m2 .ai-mode{font-size:13px;padding:0 6px;border:1px solid currentColor}
+/* режим ответа помощника: чип с рамкой, цвет по режиму(по источнику / нет данных / ограничено) */
+.m2 .src3{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:0 0 8px}
+.ai-mode{display:inline-block;font:500 14px/24px var(--font-mono);text-transform:uppercase;white-space:nowrap;padding:0 8px;border:2px solid var(--line-strong);border-radius:var(--r-chip);background:var(--bg-tint);color:var(--text-dark)}
+.ai-mode--source{border-color:var(--level);background:var(--pastel);color:var(--level)}
+.ai-mode--restricted{border-color:#b3261e;background:var(--restricted-bg);color:#8f1d17}
+:root[data-theme="dark"] .ai-mode--restricted{border-color:#ffb4ab;color:#ffb4ab}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]):not([data-theme="dark"]) .ai-mode--restricted{border-color:#ffb4ab;color:#ffb4ab}}
+html[data-vi] .ai-mode{border-color:#fff;background:#000;color:#fff}
 
 /* ---------- «Как читать шифр?» в карточке дела ---------- */
 .cipher-help{margin:20px 0 0;border:1px solid var(--line);background:var(--surface)}
@@ -894,6 +881,116 @@ html[data-vi] .hero.big .plate{background:#000;border:2px solid #fff}
 @media(max-width:600px){
   /* «?» у вкладок визуально компактнее, зона нажатия остаётся 32×32 */
   .tabs .gt-btn{font-size:14px}
-  /* селект сортировки не заходит под плавающую кнопку ИИ (52px справа внизу) */
-  .rtop .sort{max-width:calc(100% - 72px)}
+  /* сортировка во всю ширину: подпись выбранного варианта не обрезается */
+  .rtop .sort{width:100%}
+  .rtop .sort select.inp{flex:1;min-width:0}
+}
+
+/* ---------- шапка на телефоне и планшете ---------- */
+/* одна строка плашки и одна строка шапки: логотип, поиск по иконке, «Меню»;
+   навигация и служебный блок(язык, версия для слабовидящих, тема, телефон) раскрываются по кнопке */
+.phase a{white-space:nowrap}
+@media(max-width:1100px){
+  .phase{padding:0;min-height:0}
+  .phase .wrap{justify-content:space-between;align-items:center;gap:16px;height:44px;white-space:nowrap}
+  .phase-long{display:none}
+  .phase a{display:inline-flex;align-items:center;height:44px}
+  .hdr .main{flex-wrap:wrap;align-items:center;padding:12px 0;margin:0}
+  .logo{width:80px;font-size:15px;line-height:25px}
+  .logo .r{height:26px}
+  .logo .r span{padding:0 7px}
+  .hbtns{display:flex;align-items:center;gap:4px;margin-left:auto}
+  .hsb,.burger{height:44px;background:none;border:2px solid transparent;color:#fff;cursor:pointer;border-radius:0}
+  .hsb{width:44px;display:grid;place-items:center;padding:0}
+  .hsb .ico{width:20px;height:20px}
+  .hsb[aria-expanded="true"]{background:#fff;color:#010101}
+  .burger{display:inline-flex;align-items:center;gap:12px;padding:0 0 0 10px;font:700 18px var(--font-text);white-space:nowrap}
+  .burger i{display:block;flex:none;width:28px;height:22px;border-top:3px solid #fff;border-bottom:3px solid #fff;position:relative}
+  .burger i::after{content:"";position:absolute;left:0;right:0;top:6.5px;border-top:3px solid #fff}
+  /* открытое меню: вместо трёх полос - крест */
+  .burger[aria-expanded="true"] i{border-color:transparent}
+  .burger[aria-expanded="true"] i::before,.burger[aria-expanded="true"] i::after{content:"";position:absolute;left:-2px;right:-2px;top:6.5px;border-top:3px solid #fff;transform:rotate(45deg)}
+  .burger[aria-expanded="true"] i::after{transform:rotate(-45deg)}
+  .hdr form.hs{display:none;flex:0 0 100%;margin:12px 0 4px}
+  .hdr.search form.hs{display:flex}
+  .hdr form.hs input{flex:1;width:auto;min-width:0;height:48px;font-size:17px;padding:0 12px}
+  .hdr form.hs button{width:48px;height:48px}
+  .hdr form.hs button .ico{width:18px;height:18px}
+  .nav{display:none;flex:0 0 100%;width:100%;margin:12px 0 0;border-top:1px solid rgb(255 255 255 / .3)}
+  .hdr.open .nav{display:block}
+  .nav ul{display:block}
+  .nav a{height:48px;line-height:47px;font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  /* служебный блок переставлен скриптом внутрь .main, под навигацию */
+  .hdr .main .util{display:none;flex:0 0 100%;flex-wrap:wrap;justify-content:space-between;gap:12px;height:auto;padding:20px 0 8px}
+  .hdr.open .main .util{display:flex}
+  .hdr .main .util a,.hdr .main .util button{min-height:44px}
+  .hdr .main .util .lang{flex:0 0 100%;display:flex;gap:0}
+  .hdr .main .util .lang button{flex:1 1 0;justify-content:center;border:2px solid #fff;padding:0 4px;min-width:0}
+  .hdr .main .util .lang button+button{border-left:0}
+  .hdr .main .util .lang button[aria-pressed="true"]{background:#fff;color:#010101;text-decoration:none}
+  .main .lang .s{display:none}
+  .main .lang .f{display:inline}
+  .hdr .main .util .vi,.hdr .main .util .tt{flex:1 1 40%;justify-content:center;height:44px;border:2px solid #fff;padding:0 12px}
+  .hdr .main .util .tel,.hdr .main .util .all{text-decoration:underline;text-underline-offset:4px}
+  /* боковая вкладка опроса не перекрывает пункты открытого меню */
+  .hdr.open~.optab{display:none}
+}
+@media(max-width:600px){
+  .logo{width:56px;font-size:11px;line-height:17px}
+  .logo .r{height:18px}
+  .logo .r span{padding:0 5px}
+  .hdr .main .util .vi,.hdr .main .util .tt{flex-basis:100%}
+}
+
+/* ---------- шапка панели управления ---------- */
+.hdr-adm .util{height:auto;padding:12px 0}
+.hdr-adm #adm-user{margin-right:auto}
+.hdr-adm .main{padding-bottom:16px;align-items:center}
+.hdr-adm .main b{font:500 28px var(--font-display);color:#fff;white-space:nowrap}
+@media(max-width:1100px){
+  /* строка с именем сотрудника, под ней - ссылки и язык; ничего не обрезается и не переносится */
+  .hdr-adm .util{flex-wrap:wrap;justify-content:flex-start;gap:0 20px;padding:8px 0 0}
+  .hdr-adm #adm-user{flex:0 0 100%;margin:0;line-height:28px;overflow:hidden;text-overflow:ellipsis}
+  .hdr-adm .util a,.hdr-adm .util button{min-height:44px}
+  .hdr-adm .util .lang{margin-left:auto;gap:0}
+  .hdr-adm .util .lang button{min-width:44px;justify-content:center}
+  .hdr-adm .main{padding:8px 0 16px}
+}
+@media(max-width:600px){
+  /* тема переключается в нижней панели страницы */
+  .hdr-adm .util .tt{display:none}
+  .hdr-adm .main b{font-size:24px}
+}
+
+/* ---------- телефон: единые отступы и однотипные элементы ---------- */
+/* чипы статуса над заголовком карточки: один ряд с равными промежутками */
+.rec-tags{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.rec-tags .status{margin-left:0}
+.rec-tags .tag{line-height:22px;font-size:14px}
+/* заголовки и подписи кнопок переносятся ровно, без одинокого слова на последней строке */
+h1,h2,h3,.btn,.sug button,.themes button,.tile{text-wrap:balance}
+/* длинная подсказка в поле поиска обрезается многоточием, а не посреди слова */
+.sf input,.inp{text-overflow:ellipsis}
+.themebar button{min-height:32px}
+@media(max-width:1024px){
+  .cat{padding-top:24px}
+  /* список филиалов над картой: видно несколько строк, а не одну */
+  .mapside{max-height:520px}
+}
+@media(max-width:768px){
+  /* заглушка «скана нет» занимала пол-экрана в каждой карточке выдачи; статус повторён тегом ниже */
+  .res .ph{display:none}
+  /* поля в столбик: промежуток задаёт сам .fld, без удвоения */
+  .row2{gap:0 16px}
+  /* короткие числовые поля фильтра остаются парой */
+  .filters .row2{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  /* кнопки-сценарии главной: текст слева, стрелка справа у всех трёх */
+  .hero .btns .btn{justify-content:space-between;text-align:left}
+  .themebar{height:auto}
+  .themebar .wrap{justify-content:space-between;gap:8px;height:52px;white-space:nowrap}
+  .themebar .tw{display:none}
+  .themebar button{min-height:44px}
+  .themebar button[aria-pressed="true"]{padding:0 14px}
 }

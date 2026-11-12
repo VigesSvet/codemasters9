@@ -13,6 +13,10 @@
 
   var SEARCH = '<svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M6.5 0a6.5 6.5 0 015.2 10.4l4 4-1.4 1.4-4-4A6.5 6.5 0 116.5 0zm0 2a4.5 4.5 0 100 9 4.5 4.5 0 000-9z"/></svg>';
   var LOGO = '<a class="logo" href="' + B + 'index.html" aria-label="Госархив ВКО"><span class="r"><span>ГОС</span><i></i></span><span class="r"><span>АРХИВ</span></span><span class="r"><span>ВКО</span></span></a>';
+  // язык: в строке шапки - короткие коды, в мобильном меню - полные названия
+  var LANGS = '<span class="lang" role="group" aria-label="Язык / Тіл / Language">' + [["kk", "KZ", "Қазақша"], ["ru", "RU", "Русский"], ["en", "EN", "English"]].map(function (l) {
+    return '<button type="button" data-lang="' + l[0] + '" aria-pressed="' + (l[0] === "ru") + '" aria-label="' + l[2] + '"><span class="s">' + l[1] + '</span><span class="f">' + l[2] + "</span></button>";
+  }).join("") + "</span>";
   var cur = body.dataset.nav || "";
   function nav(href, key, ru, kk, en) { return '<li><a href="' + B + href + '"' + (cur === key ? ' aria-current="page"' : "") + ">" + X(ru, kk, en) + "</a></li>"; }
 
@@ -30,17 +34,18 @@
     '<a class="skip" href="#main">' + X("Перейти к содержимому", "Мазмұнға өту", "Skip to content") + "</a>" +
     '<div class="phase"><div class="wrap"><b>' + X("ПРОТОТИП", "ҮЛГІ", "PROTOTYPE") + "</b><span>" +
     '<span class="phase-long">' + X("Это прототип нового сайта. Сайт информационный: заявки, заказы и платежи не принимаются.", "Бұл жаңа сайттың үлгісі. Сайт ақпараттық: өтініштер, тапсырыстар және төлемдер қабылданбайды.", "This is a prototype of the new website. The site is informational: no applications, orders or payments.") + "</span>" +
-    ' <a href="' + B + 'ob-arhive.html#feedback">' + X("Оставьте отзыв", "Пікір қалдырыңыз", "Leave feedback") + "</a>.</span></div></div>" +
+    ' <a href="' + B + 'ob-arhive.html#feedback">' + X("Оставьте отзыв", "Пікір қалдырыңыз", "Leave feedback") + "</a></span></div></div>" +
     '<header class="hdr"><div class="wrap">' +
-    '<div class="util"><a href="tel:+77232255976">8 (7232) 25-59-76</a>' +
-    '<a href="' + B + 'karta-sayta.html">' + X("Все разделы", "Барлық бөлімдер", "All sections") + "</a>" +
+    '<div class="util" id="util"><a class="tel" href="tel:+77232255976">8 (7232) 25-59-76</a>' +
+    '<a class="all" href="' + B + 'karta-sayta.html">' + X("Все разделы", "Барлық бөлімдер", "All sections") + "</a>" +
     '<button class="vi" type="button" data-vi-toggle aria-pressed="false">' + X("Для слабовидящих", "Нашар көретіндерге", "Accessible version") + "</button>" +
-    '<span class="lang" role="group" aria-label="Язык / Тіл / Language"><button data-lang="kk" aria-pressed="false">KZ</button><button data-lang="ru" aria-pressed="true">RU</button><button data-lang="en" aria-pressed="false">EN</button></span>' +
+    LANGS +
     '<button class="tt" data-theme-toggle type="button"><span data-tt></span></button>' +
-    '<form class="hs" action="' + B + 'katalog.html" role="search"><input type="search" name="q" aria-label="Поиск" data-phkk="Іздеу" data-phen="Search" placeholder="Поиск"><button aria-label="Найти">' + SEARCH + "</button></form>" +
+    '<form class="hs" id="hs" action="' + B + 'katalog.html" role="search"><input type="search" name="q" aria-label="Поиск" data-alkk="Іздеу" data-alen="Search" data-phkk="Іздеу" data-phen="Search" placeholder="Поиск"><button aria-label="Найти" data-alkk="Табу" data-alen="Find">' + SEARCH + "</button></form>" +
     "</div>" +
     '<div class="main">' + LOGO +
-    '<button class="burger" aria-expanded="false" aria-controls="nav"><span>' + X("Меню", "Мәзір", "Menu") + "</span><i></i></button>" +
+    '<div class="hbtns"><button class="hsb" type="button" aria-expanded="false" aria-controls="hs" aria-label="Поиск" data-alkk="Іздеу" data-alen="Search">' + SEARCH + "</button>" +
+    '<button class="burger" type="button" aria-expanded="false" aria-controls="nav util"><span>' + X("Меню", "Мәзір", "Menu") + "</span><i></i></button></div>" +
     '<nav class="nav" id="nav" aria-label="Основная"><ul>' +
     nav("katalog.html", "katalog", "Каталог", "Каталог", "Catalogue") +
     nav("istoriya.html", "istoriya", "Цифровая история региона", "Өңірдің цифрлық тарихы", "Digital history of the region") +
@@ -52,20 +57,22 @@
 
   var ADMTOP =
     '<a class="skip" href="#main">' + X("Перейти к содержимому", "Мазмұнға өту", "Skip to content") + "</a>" +
-    '<header class="hdr"><div class="wrap">' +
-    '<div class="util" style="height:auto;padding:12px 0"><span style="margin-right:auto" id="adm-user">' + X("Администрирование", "Әкімшілік", "Administration") + "</span>" +
+    '<header class="hdr hdr-adm"><div class="wrap">' +
+    '<div class="util"><span id="adm-user">' + X("Администрирование", "Әкімшілік", "Administration") + "</span>" +
     '<a href="' + B + 'index.html">' + X("На сайт", "Сайтқа", "To the site") + "</a>" +
     '<button type="button" id="adm-logout" style="display:none">' + X("Выйти", "Шығу", "Sign out") + "</button>" +
-    '<span class="lang" role="group" aria-label="Язык"><button data-lang="kk" aria-pressed="false">KZ</button><button data-lang="ru" aria-pressed="true">RU</button><button data-lang="en" aria-pressed="false">EN</button></span>' +
+    LANGS +
     '<button class="tt" data-theme-toggle type="button"><span data-tt></span></button></div>' +
-    '<div class="main" style="padding-bottom:16px;align-items:center">' + LOGO +
-    '<b style="font:500 28px var(--font-display);color:#fff">' + X("Панель управления", "Басқару панелі", "Control panel") + "</b></div></div></header>";
+    '<div class="main">' + LOGO +
+    '<b>' + X("Панель управления", "Басқару панелі", "Control panel") + "</b></div></div></header>";
 
+  // подпись кнопки темы: слово «тема» на телефоне скрыто, чтобы три кнопки помещались в строку
+  function TH(ru, kk, en) { return "<span>" + X(ru, kk, en) + '<span class="tw"> ' + X("тема", "тақырып", "theme") + "</span></span>"; }
   var BOTTOM =
     '<div class="themebar"><div class="wrap">' +
-    '<button data-theme-btn="system" aria-pressed="true"><svg class="ico" viewBox="0 0 16 16"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 1.5v11a5.5 5.5 0 010-11z"/></svg>' + X("Системная тема", "Жүйелік тақырып", "System theme") + "</button>" +
-    '<button data-theme-btn="light" aria-pressed="false">' + X("Светлая тема", "Жарық тақырып", "Light theme") + "</button>" +
-    '<button data-theme-btn="dark" aria-pressed="false">' + X("Тёмная тема", "Қараңғы тақырып", "Dark theme") + "</button></div></div>" +
+    '<button data-theme-btn="system" aria-pressed="true"><svg class="ico" viewBox="0 0 16 16"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 1.5v11a5.5 5.5 0 010-11z"/></svg>' + TH("Системная", "Жүйелік", "System") + "</button>" +
+    '<button data-theme-btn="light" aria-pressed="false">' + TH("Светлая", "Жарық", "Light") + "</button>" +
+    '<button data-theme-btn="dark" aria-pressed="false">' + TH("Тёмная", "Қараңғы", "Dark") + "</button></div></div>" +
     '<footer class="ftr"><div class="wrap">' + fmap() + '<div class="cols">' +
     '<div class="addr">' + LOGO.replace('class="logo"', 'class="logo" style="width:108px"') +
     "<b>" + X("КГУ «Государственный архив» Восточно-Казахстанской области", "ШҚО «Мемлекеттік архив» КММ", "State Archive of East Kazakhstan Region") + "</b>" +
@@ -116,7 +123,7 @@
   function aiBadge(mode) {
     var lbl = AI_MODE[mode] ? L.apply(null, AI_MODE[mode]) : (mode || "");
     var cls = mode === "source" ? "ai-mode--source" : mode === "restricted" ? "ai-mode--restricted" : "ai-mode--no_data";
-    return '<span class="src3">' + L("Архивный помощник", "Архив көмекшісі", "Archive assistant") + ' · <span class="ai-mode ' + cls + '">' + esc(lbl) + "</span></span>";
+    return '<span class="src3"><span>' + L("Архивный помощник", "Архив көмекшісі", "Archive assistant") + '</span><span class="ai-mode ' + cls + '">' + esc(lbl) + "</span></span>";
   }
   function aiSig() {
     return '<p class="disc">' + L("Ответ сформирован автоматически и не является архивной справкой.", "Жауап автоматты түрде қалыптастырылды және архивтік анықтама болып табылмайды.", "This answer was generated automatically and is not an archival certificate.") + " " + L("Офлайн-демо: заранее подготовленный ответ.", "Офлайн-демо: алдын ала дайындалған жауап.", "Offline demo: a pre-prepared answer.") + " " + L("Не указывайте в запросах персональные данные.", "Сұрауларда жеке деректерді көрсетпеңіз.", "Do not include personal data in your queries.") + "</p>";
@@ -264,6 +271,10 @@
       if (el.dataset.phru === undefined) el.dataset.phru = el.placeholder;
       el.placeholder = LANG === "ru" ? el.dataset.phru : (LANG === "kk" ? el.dataset.phkk : el.dataset.phen) || el.dataset.phru;
     });
+    scope.querySelectorAll("[data-alkk],[data-alen]").forEach(function (el) {
+      if (el.dataset.alru === undefined) el.dataset.alru = el.getAttribute("aria-label") || "";
+      el.setAttribute("aria-label", LANG === "ru" ? el.dataset.alru : (LANG === "kk" ? el.dataset.alkk : el.dataset.alen) || el.dataset.alru);
+    });
     scope.querySelectorAll("[data-hk],[data-he]").forEach(function (el) {
       if (el.dataset.hru === undefined) el.dataset.hru = el.getAttribute("data-h") || "";
       el.setAttribute("data-h", LANG === "ru" ? el.dataset.hru : (LANG === "kk" ? el.dataset.hk : el.dataset.he) || el.dataset.hru);
@@ -292,7 +303,8 @@
     var t = e.target.closest("[data-theme-btn]"); if (t) setTheme(t.dataset.themeBtn);
     var tg = e.target.closest("[data-theme-toggle]"); if (tg) setTheme(effTheme() === "dark" ? "light" : "dark");
     var l = e.target.closest("[data-lang]"); if (l) setLang(l.dataset.lang);
-    var b = e.target.closest(".burger"); if (b) { var h = document.querySelector(".hdr"); var o = h.classList.toggle("open"); b.setAttribute("aria-expanded", String(o)); }
+    if (e.target.closest(".burger")) hdrSet(!hdr.classList.contains("open"), false);
+    var sb = e.target.closest(".hsb"); if (sb) { var so = !hdr.classList.contains("search"); hdrSet(false, so); if (so) hdr.querySelector(".hs input").focus(); }
     var c = e.target.closest("[data-copy]"); if (c) { try { navigator.clipboard.writeText(c.dataset.copy); } catch (x) {} var o2 = c.textContent; c.textContent = L("Скопировано", "Көшірілді", "Copied"); setTimeout(function () { c.textContent = o2; }, 1500); }
     var cl = e.target.closest("[data-ai-close]"); if (cl && panel) { panel.classList.remove("on"); document.querySelector(".aib").style.display = ""; }
   });
@@ -300,6 +312,41 @@
     if (e.target.id === "hide-desc") document.querySelector(".full").classList.toggle("hide-desc", e.target.checked);
   });
 
+
+  // ---------- мобильная шапка ----------
+  // на узком экране в строке шапки только логотип, поиск и «Меню»; служебные ссылки переезжают в меню,
+  // а узлы переставляются в DOM, чтобы порядок табуляции совпадал с видимым
+  var hdr = document.querySelector(".hdr");
+  function hdrSet(menu, search) {
+    hdr.classList.toggle("open", menu); hdr.classList.toggle("search", search);
+    var bg = hdr.querySelector(".burger"), sb = hdr.querySelector(".hsb");
+    if (bg) bg.setAttribute("aria-expanded", String(menu));
+    if (sb) sb.setAttribute("aria-expanded", String(search));
+  }
+  if (hdr && hdr.querySelector(".burger")) {
+    var hMain = hdr.querySelector(".main"), hUtil = hdr.querySelector(".util"), hForm = hdr.querySelector(".hs"), hNav = hdr.querySelector(".nav");
+    var hOrder = [].slice.call(hUtil.children);
+    var mq = window.matchMedia("(max-width:1100px)");
+    var hdrPlace = function () {
+      if (mq.matches) {
+        hMain.insertBefore(hForm, hNav); hMain.appendChild(hUtil);
+        [".lang", ".vi", ".tt", ".tel", ".all"].forEach(function (c) { hUtil.appendChild(hUtil.querySelector(c)); });
+      } else {
+        hOrder.forEach(function (n) { hUtil.appendChild(n); });
+        hMain.parentNode.insertBefore(hUtil, hMain);
+        hdrSet(false, false);
+      }
+    };
+    hdrPlace();
+    if (mq.addEventListener) mq.addEventListener("change", hdrPlace); else if (mq.addListener) mq.addListener(hdrPlace);
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "Escape") return;
+      var m = hdr.classList.contains("open"), s = hdr.classList.contains("search");
+      if (!m && !s) return;
+      hdrSet(false, false);
+      hdr.querySelector(m ? ".burger" : ".hsb").focus();
+    });
+  }
 
   // ---------- режим для слабовидящих ----------
   function setVI(on) {

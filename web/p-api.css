@@ -31,16 +31,6 @@
 }
 .unavail b { color: var(--text-dark); }
 
-/* Бейджи режима ответа ИИ */
-.ai-mode {
-  display: inline-block;
-  font: 400 12px var(--font-mono);
-  color: var(--text-muted);
-}
-.ai-mode--source { color: var(--level); }
-.ai-mode--no_data { color: var(--text-muted); }
-.ai-mode--restricted { color: #b3261e; }
-
 /* Список источников в ответе ИИ */
 .m2 ul.ai-srcs { margin: 8px 0 8px; padding-left: 20px; }
 .m2 ul.ai-srcs li { margin: 0 0 4px; }

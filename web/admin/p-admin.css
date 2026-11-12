@@ -89,7 +89,9 @@
 .divider { border: 0; border-top: 5px solid var(--line-strong); margin: 32px 0; }
 @media (max-width: 760px) {
   .adm { grid-template-columns: 1fr; }
-  .aside { display: none; }
+  /* разделы панели на телефоне - строка ссылок под шапкой, без заголовка */
+  .aside h2 { display: none; }
+  .aside a, .aside a:visited { display: flex; align-items: center; min-height: 44px; white-space: nowrap; }
 }
 
 /* панель действий в конце формы - обычный блок, не липкий, чтобы не перекрывать поля */
