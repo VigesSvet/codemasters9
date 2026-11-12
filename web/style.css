@@ -132,7 +132,7 @@ img{display:block;max-width:100%}
 .chev{display:inline-block;width:.45em;height:.45em;border-right:.14em solid currentColor;border-top:.14em solid currentColor;transform:rotate(45deg);margin-left:.4em;vertical-align:.12em}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:32px}
 .card{border:1px solid var(--line);display:flex;flex-direction:column;background:transparent}
-.card img{width:100%;aspect-ratio:3/2;object-fit:cover;border-bottom:1px solid var(--line);filter:grayscale(1) contrast(1.02)}
+.card img{width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;border-bottom:1px solid var(--line);filter:grayscale(1) contrast(1.02)}
 .card .b{padding:16px 16px 24px}
 .card .chip{margin-bottom:6px}
 .card h3{font:700 19px/1.5 var(--font-text);margin:0 0 6px}
@@ -278,8 +278,8 @@ dl.f{margin:16px 0 0;border-top:1px solid var(--line-strong)}
   .burger{display:inline-flex;align-items:center;gap:16px;background:none;border:0;color:#fff;font:700 18px var(--font-text);cursor:pointer;padding:0}
   .burger i{display:block;width:32px;height:24px;border-top:4px solid #fff;border-bottom:4px solid #fff;position:relative}
   .burger i::after{content:"";position:absolute;left:0;right:0;top:6px;border-top:4px solid #fff}
-  .nav{display:none;width:100%;margin:16px 0 0}
-  .hdr.open .nav{display:block}
+  .nav{display:none;flex:0 0 100%;width:100%;margin:16px 0 0}
+  .hdr.open .nav{display:block;flex:0 0 100%}
   .nav ul{display:block}
   .hero{padding:32px 0}
   .hero .sub{font-size:20px;margin:16px 0 24px}
@@ -384,7 +384,7 @@ select.inp{appearance:none;background-image:linear-gradient(45deg,transparent 50
 .doc .news time{font:400 14px var(--font-mono);color:var(--text-muted)}
 .gal3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .gal3 figure{margin:0}
-.gal3 img{aspect-ratio:3/2;width:100%;object-fit:cover;filter:grayscale(1)}
+.gal3 img{aspect-ratio:3/2;width:100%;height:auto;object-fit:cover;filter:grayscale(1)}
 .gal3 figcaption{font-size:14px;color:var(--text-muted);margin-top:4px;line-height:1.4}
 .ok-msg{background:var(--pastel);border-left:5px solid var(--level);padding:16px 20px;margin:16px 0;display:none}
 /* карта */
@@ -440,7 +440,7 @@ body[data-dark-map] .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brigh
 .thumbs{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:16px}
 .thumbs button{padding:0;border:3px solid transparent;background:none;cursor:pointer;opacity:.7;border-radius:0}
 .thumbs button[aria-current="true"]{border-color:var(--mark);opacity:1}
-.thumbs img{aspect-ratio:3/2;width:100%;object-fit:cover}
+.thumbs img{aspect-ratio:3/2;width:100%;height:auto;object-fit:cover}
 .lbx{position:fixed;inset:0;background:rgb(0 0 0 / .92);z-index:60;display:none;overflow:auto}
 .lbx.on{display:block}
 .lbx img{margin:0 auto;max-width:none;width:150%;min-width:100%}
@@ -488,7 +488,7 @@ body[data-dark-map] .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brigh
 .drop{border:2px dashed var(--line-strong);padding:24px;text-align:center;background:var(--surface);font-size:16px}
 .scans{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px}
 .scans figure{margin:0;border:1px solid var(--line);padding:8px;background:var(--surface);font:400 13px var(--font-mono)}
-.scans img{aspect-ratio:3/4;width:100%;object-fit:cover;object-position:top;filter:grayscale(1);margin-bottom:6px}
+.scans img{aspect-ratio:3/4;width:100%;height:auto;object-fit:cover;object-position:top;filter:grayscale(1);margin-bottom:6px}
 .wf{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 24px;font-size:14px}
 .wf .st{opacity:.5}
 .wf .st.cur{opacity:1;border-width:2px}
@@ -635,7 +635,7 @@ body[data-dark-map] .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brigh
 .car{position:relative;background:var(--card-dark);border:1px solid var(--line-strong);overflow:hidden}
 .car .sl{display:none;position:relative}
 .car .sl.on{display:block}
-.car .sl img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
+.car .sl img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
 .car .sl a{display:block}
 .car .cap{position:absolute;left:0;bottom:0;right:0;background:#010101;color:#fff;font:600 17px/1.4 var(--font-text);padding:10px 16px 10px 20px;border-top:5px solid var(--level)}
 .car button.ar{position:absolute;top:50%;margin-top:-26px;width:52px;height:52px;border:2px solid #fff;background:#010101;color:#fff;cursor:pointer;display:grid;place-items:center;padding:0;border-radius:0}
@@ -652,7 +652,7 @@ body[data-dark-map] .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brigh
 .tile:hover small{color:#26262a}
 .tile svg{width:44px;height:44px;flex:none;stroke:currentColor;fill:none;stroke-width:2}
 .hnews{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:24px}
-.hnews .card img{filter:none;aspect-ratio:3/2}
+.hnews .card img{filter:none;height:auto;aspect-ratio:3/2}
 .hnews time{font:400 14px var(--font-mono);color:var(--text-muted);display:block;margin-bottom:4px}
 .rcol{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 32px;margin-top:20px}
 .rcol a{display:block;border-bottom:1px solid var(--line);padding:9px 0;font-size:17px}

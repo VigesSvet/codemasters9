@@ -189,7 +189,9 @@
     function ask(q) {
       var old = box.querySelector(".sug"); if (old) old.remove();
       add("m1", escHtml(q));
-      window.gosApi.post("/api/ai/ask", { question: q, lang: LANG }).then(function (res) {
+      // без api.js(window.gosApi) - сразу офлайн-ответ, иначе TypeError глушит виджет
+      var req = window.gosApi ? window.gosApi.post("/api/ai/ask", { question: q, lang: LANG }) : Promise.reject(new Error("no gosApi"));
+      req.then(function (res) {
         add("m2", aiAnswer(res));
         sug();
       }).catch(function () {
