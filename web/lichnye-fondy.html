@@ -34,7 +34,7 @@
   function lang(){ return getLang() === "kk" ? "kk" : "ru"; }
   function esc(v){ return window.gosEsc ? gosEsc(v) : String(v == null ? "" : v).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
   function field(o, k){ var v = o[k]; if (v && typeof v === "object") { var l = lang(); return v[l] || v.ru || v.kk || v.en || ""; } if (v != null) return String(v); var l = lang(); return o[k + "_" + l] || o[k + "_ru"] || o[k + "_kk"] || o[k + "_en"] || ""; }
-  function years(o){ if (o.years_from || o.years_to) return (o.years_from || "") + "–" + (o.years_to || ""); return ""; }
+  function years(o){ if (o.years_from || o.years_to) return (o.years_from || "") + "–" + (o.years_to || ""); var a = o.years || []; if (a.length >= 2 && a[0] === a[1]) return String(a[0]); if (a.length >= 2) return (a[0] || "") + "–" + (a[1] || ""); if (a.length === 1) return String(a[0]); return ""; }
   function render(items){
     if (!items.length) { res.innerHTML = '<div class="gos-state gos-state--empty">' + tr("Ничего не найдено", "Ештеңе табылмады", "Nothing found") + '</div>'; return; }
     res.innerHTML = items.map(function(o){

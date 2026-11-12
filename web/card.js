@@ -40,6 +40,31 @@
     if (n >= 1024) return Math.round(n / 1024) + " КБ";
     return n + " Б";
   }
+  // Мини-markdown: сначала экранируем, затем жирный/курсив/абзацы/переносы.
+  function md(s) {
+    if (!s) return "";
+    s = esc(String(s));
+    var paras = s.split(/\n[ \t]*\n+/);
+    return paras.map(function (p) {
+      p = p.replace(/\*\*([^*\n]+)\*\*/g, "<strong>$1</strong>");
+      p = p.replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, "$1<em>$2</em>");
+      p = p.replace(/\n/g, "<br>");
+      return "<p>" + p + "</p>";
+    }).join("");
+  }
+  // Описание с fallback, если его нет.
+  function descHtml(text) {
+    var d = md(text);
+    if (d) return d;
+    return '<p class="desc-empty">' + t("Описание готовится", "Сипаттама дайындалуда", "Description is being prepared") + "</p>";
+  }
+  // Код типа документа -> локальный текст.
+  function typeLabel(code) {
+    var L = (window.gosLabels && window.gosLabels.types) || {};
+    var v = L[code];
+    if (!v) return code || "";
+    return t(v[0], v[1], v[2]);
+  }
   var LEVELS = {
     fond: ["ФОНД", "ҚОР", "FONDS"],
     opis: ["ОПИСЬ", "ТІЗІМДЕМЕ", "INVENTORY"],
@@ -159,14 +184,14 @@
       '<h1 style="margin-top:12px">' + esc(field(u, "title")) + "</h1>" +
       refLine(u.code || "", true) +
       '<div class="two">' +
-      '<section class="box"><h2>' + t("О чём дело", "Іс не туралы", "What is it about?") + "</h2><p>" + esc(field(u, "description") || "") + "</p></section>" +
+      '<section class="box"><h2>' + t("О чём дело", "Іс не туралы", "What is it about?") + "</h2>" + descHtml(field(u, "description")) + "</section>" +
       '<section class="box"><h2>' + t("Как ознакомиться", "Қалай танысуға болады", "How to view it") + "</h2><p>" +
       (hasFile ? t("Скан доступен онлайн без регистрации.", "Скан онлайн тіркеусіз қолжетімді.", "The scan is available online without registration.") : t("Скан онлайн недоступен. Подлинник выдаётся в читальном зале.", "Скан онлайн қолжетімсіз. Түпнұсқа оқу залында беріледі.", "The scan is not online. The original is consulted in the reading room.")) +
       ' <a href="' + B + 'ob-arhive.html#reading">' + t("Читальный зал", "Оқу залы", "Reading room") + "</a>.</p></section></div>" +
       viewer(u) +
       '<div class="meta" style="margin-top:24px">' +
       (yr ? "<span><b>" + t("Даты:", "Күндер:", "Dates:") + "</b> " + esc(yr) + "</span>" : "") +
-      (u.doc_type ? "<span><b>" + t("Тип:", "Түрі:", "Type:") + "</b> " + esc(u.doc_type) + "</span>" : "") +
+      (u.doc_type ? "<span><b>" + t("Тип:", "Түрі:", "Type:") + "</b> " + esc(typeLabel(u.doc_type)) + "</span>" : "") +
       (u.extent ? "<span><b>" + t("Объём:", "Көлемі:", "Extent:") + "</b> " + esc(u.extent) + "</span>" : "") +
       (branch ? "<span><b>" + t("Хранится:", "Сақталады:", "Held by:") + "</b> " + branch + "</span>" : "") +
       "</div>" +
@@ -208,7 +233,7 @@
       '<h1 style="margin-top:12px">' + esc(field(f, "title")) + "</h1>" +
       refLine(code, false) +
       '<div class="two">' +
-      '<section class="box"><h2>' + t("О чём фонд", "Қор туралы", "What is this fonds about?") + "</h2><p>" + esc(field(f, "description") || "") + "</p></section>" +
+      '<section class="box"><h2>' + t("О чём фонд", "Қор туралы", "What is this fonds about?") + "</h2>" + descHtml(field(f, "description")) + "</section>" +
       '<section class="box"><h2>' + t("Как ознакомиться", "Қалай танысуға болады", "How to consult it") + "</h2><p>" + t("Подлинники выдаются в читальном зале на ул. Головкова, 26/1. Заявок и платежей на сайте нет.", "Түпнұсқалар Головков к-сі, 26/1 оқу залында беріледі. Сайтта өтініштер мен төлемдер жоқ.", "Originals are consulted in the reading room at Golovkov st., 26/1. The site has no applications or payments.") + ' <a href="' + B + 'ob-arhive.html#reading">' + t("Читальный зал", "Оқу залы", "Reading room") + "</a>.</p></section></div>" +
       '<div class="cols4" style="margin-top:40px">' +
       (yr ? "<div><h3>" + t("Крайние даты", "Кезең", "Dates") + "</h3><p>" + esc(yr) + "</p></div>" : "") +

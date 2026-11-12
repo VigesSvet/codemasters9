@@ -23,7 +23,7 @@
  <div>
 <section>
  <form class="nf" id="nf" role="search" aria-label="Фильтр новостей">
-  <div class="fld"><label for="ny" data-kk="Жыл" data-en="Year">Год</label><select class="inp" id="ny"><option value="" data-kk="Барлық жылдар" data-en="All years">Все годы</option><option value="2026">2026 (30)</option><option value="2025">2025 (35)</option><option value="2024">2024 (34)</option><option value="2023">2023 (35)</option><option value="2022">2022 (48)</option><option value="2021">2021 (53)</option><option value="2020">2020 (46)</option><option value="2019">2019 (97)</option><option value="2018">2018 (71)</option><option value="2017">2017 (78)</option><option value="2016">2016 (24)</option><option value="2015">2015 (17)</option><option value="2014">2014 (69)</option><option value="2012">2012 (1)</option></select></div>
+  <div class="fld"><label for="ny" data-kk="Жыл" data-en="Year">Год</label><select class="inp" id="ny"><option value="" data-kk="Барлық жылдар" data-en="All years">Все годы</option></select></div>
   <div class="fld"><label for="nq" data-kk="Іздеу" data-en="Search">Поиск по заголовку</label><input class="inp" id="nq" type="search" data-phkk="Тақырып бойынша" data-phen="By title" placeholder="По заголовку"></div>
  </form>
  <p class="src" id="ncount" aria-live="polite"></p>
@@ -46,11 +46,19 @@
   function title(o){ return lang() === "kk" ? (o.title_kk || o.title_ru || "") : (o.title_ru || o.title_kk || ""); }
   function lead(o){ return lang() === "kk" ? (o.lead_kk || o.lead_ru || "") : (o.lead_ru || o.lead_kk || ""); }
   function fd(d){ return d ? d.slice(8,10) + "." + d.slice(5,7) + "." + d.slice(0,4) : ""; }
+  // Селект годов строится из API (счётчики по всей базе).
+  function buildYears(years){
+    var cur = sel.value;
+    var opts = (years || []).map(function(y){
+      return '<option value="' + esc(y.year) + '">' + esc(y.year) + " (" + y.count + ")</option>";
+    }).join("");
+    sel.innerHTML = '<option value="" data-kk="Барлық жылдар" data-en="All years">Все годы</option>' + opts;
+    sel.value = cur;
+    if (window.trEls) window.trEls(sel);
+  }
   function render(){
-    var v = items;
-    if (sel.value) v = v.filter(function(o){ return o.date && o.date.slice(0,4) === sel.value; });
-    C.textContent = tr("Найдено: ", "Табылды: ", "Found: ") + v.length + tr(" из ", " / ", " of ") + items.length;
-    L.innerHTML = v.map(function(o){
+    C.textContent = tr("Найдено: ", "Табылды: ", "Found: ") + total;
+    L.innerHTML = items.map(function(o){
       return '<article class="ni">' + (o.image ? '<a href="novost.html?id=' + encodeURIComponent(o.id) + '"><img src="' + esc(o.image) + '" alt="" loading="lazy"></a>' : '<span class="nph"></span>') +
         '<div><time datetime="' + esc(o.date) + '">' + fd(o.date) + '</time><h3><a href="novost.html?id=' + encodeURIComponent(o.id) + '">' + esc(title(o)) + '<span class="chev"></span></a></h3><p>' + esc(lead(o)) + '</p></div></article>';
     }).join("");
@@ -64,9 +72,10 @@
   }
   function load(){
     gosState(L, "loading");
-    window.gosApi.get("/api/news", { lang: lang(), q: q.value.trim(), page: pg, per_page: PER }).then(function(resp){
+    window.gosApi.get("/api/news", { lang: lang(), q: q.value.trim(), year: sel.value, page: pg, per_page: PER }).then(function(resp){
       items = (resp && resp.items) || (Array.isArray(resp) ? resp : []);
       total = (resp && resp.total) || items.length;
+      buildYears((resp && resp.years) || []);
       if (!items.length) { gosState(L, "empty"); P.innerHTML = ""; C.textContent = ""; return; }
       render();
     }).catch(function(err){
@@ -76,7 +85,7 @@
   }
   P.addEventListener("click", function(e){ var t = e.target.closest("[data-p]"); if (t) { pg = +t.dataset.p; load(); window.scrollTo(0, document.getElementById("nf").offsetTop); } });
   q.oninput = function(){ pg = 1; load(); };
-  sel.onchange = function(){ render(); };
+  sel.onchange = function(){ pg = 1; load(); };
   window.onLang = function(){ if (items.length) render(); else load(); };
   load();
 })();
