@@ -1,0 +1,46 @@
+/* Глоссарий терминов: кнопка «?» и всплывающая подсказка. Стиль строгий:
+   рамка 1px, фон как у .box(пастель), без теней, градиентов и скруглений. */
+
+.gt-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:32px;height:32px;min-width:32px;min-height:32px;margin-left:3px;
+  border:1px solid var(--line-strong);border-radius:0;
+  background:transparent;color:var(--text-dark);
+  font:500 16px/1 var(--font-mono);padding:0;vertical-align:middle;
+  cursor:pointer;box-shadow:none;
+}
+.gt-btn:hover{background:var(--btn-hover-bg);color:var(--btn-hover-text)}
+
+.gtip{
+  position:fixed;z-index:80;display:none;
+  min-width:220px;max-width:340px;
+  background:var(--pastel);
+  border:1px solid var(--line-strong);
+  padding:10px 14px;
+  font:400 15px/1.5 var(--font-text);color:var(--text-dark);
+  box-shadow:none;border-radius:0;
+}
+.gtip.on{display:block}
+.gtip b{font-weight:700;color:var(--text-dark)}
+
+/* вкладки каталога: пара «вкладка + кнопка „?“, чтобы не рвать общий интервал */
+.tabw{display:flex;align-items:center;gap:3px}
+/* подпись группы фильтров «Шифр: фонд, опись, дело» - одна слева, стрелка справа */
+.filters summary .stxt{min-width:0}
+/* маркер уровня(ФОНД/ОПИСЬ/ДЕЛО) в иерархии карточки */
+.glv{font:400 13px var(--font-mono);color:var(--level);margin-right:6px;text-transform:uppercase}
+
+/* кнопка „?“ внутри строки шифра карточки(там свой стиль .ref button) */
+.ref .gt-btn{
+  width:32px;height:32px;min-width:32px;padding:0;margin-left:2px;
+  border:1px solid var(--line-strong);font:500 16px/1 var(--font-mono);
+}
+.ref .gt-btn:hover{background:var(--btn-bg);color:#fff}
+
+/* блок «Как устроен архив» внизу каталога */
+.how{border:1px solid var(--line);background:var(--surface);padding:20px 24px;margin:8px 0 0}
+.how h2{font:700 22px/1.3 var(--font-display);color:var(--text-dark);margin:0 0 10px}
+.how-line{font:600 18px/1.7 var(--font-text);color:var(--text-dark);margin:0 0 12px}
+.how-line .sep{color:var(--text-muted)}
+.how code{font:400 15px/1.5 var(--font-mono);background:var(--bg-tint);color:var(--text-dark);padding:2px 6px}
+.how p:last-child{margin:0;font-size:17px;line-height:1.65}
