@@ -191,6 +191,8 @@
     if (role === "admin" || role === "editor") a("import.html", PAGE === "import", "Импорт", "Импорт", "Import");
     if (role === "admin" || role === "branch_admin") a("filial.html", PAGE === "filial", "Филиалы", "Филиалдар", "Branches");
     if (role === "admin" || role === "moderator") a("audit.html", PAGE === "audit", "Журнал", "Әрекеттер журналы", "Audit log");
+    if (role === "admin" || role === "moderator" || role === "editor") a("news.html", PAGE === "news", "Новости", "Жаңалықтар", "News");
+    if (role === "admin" || role === "moderator") a("content.html", PAGE === "content", "Страницы и FAQ", "Беттер және FAQ", "Pages and FAQ");
     a("../index.html", false, "На сайт", "Сайтқа", "To the site");
     nav.innerHTML = h;
     if (window.trEls) window.trEls(nav);

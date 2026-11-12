@@ -46,6 +46,10 @@ def can(user, action: str, obj=None) -> bool:
         return False
     if action in ("import", "import.preview", "import.apply"):
         return role == "editor"
+    if action in ("news.create", "news.edit"):
+        return role in ("moderator", "editor")
+    if action in ("news.publish", "news.delete", "content.edit"):
+        return role == "moderator"
     if action == "audit.read":
         return role == "moderator"
     if action == "users.manage":

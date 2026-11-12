@@ -138,6 +138,16 @@ CREATE TABLE IF NOT EXISTS news (
     pub_status TEXT NOT NULL DEFAULT 'published'
 );
 
+CREATE TABLE IF NOT EXISTS content_blocks (
+    key TEXT NOT NULL,
+    lang TEXT NOT NULL CHECK (lang IN ('ru', 'kk', 'en')),
+    title TEXT NOT NULL DEFAULT '',
+    body TEXT NOT NULL DEFAULT '',
+    updated_by TEXT,
+    updated_at TEXT,
+    PRIMARY KEY (key, lang)
+);
+
 CREATE TABLE IF NOT EXISTS sessions (
     token_hash TEXT PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id),
