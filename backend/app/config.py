@@ -40,6 +40,9 @@ class Settings:
         default_factory=lambda: os.environ.get("OLLAMA_BASE_URL", "http://127.0.0.1:11434")
     )
     ollama_model: str = field(default_factory=lambda: os.environ.get("OLLAMA_MODEL", "gemma4:26b"))
+    ollama_vision_model: str = field(
+        default_factory=lambda: os.environ.get("OLLAMA_VISION_MODEL", "gemma4:26b")
+    )
     ollama_timeout: int = field(default_factory=lambda: _env_int("OLLAMA_TIMEOUT", 60))
     session_ttl_min: int = field(default_factory=lambda: _env_int("SESSION_TTL_MIN", 30))
     login_max_attempts: int = field(default_factory=lambda: _env_int("LOGIN_MAX_ATTEMPTS", 5))

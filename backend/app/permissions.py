@@ -48,6 +48,10 @@ def can(user, action: str, obj=None) -> bool:
         return role == "editor"
     if action == "audit.read":
         return role == "moderator"
+    if action == "ocr.use":
+        return role in ("moderator", "editor")
+    if action == "analytics.read":
+        return role == "analyst"
     if action == "users.manage":
         return False
     return False

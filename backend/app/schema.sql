@@ -194,3 +194,20 @@ CREATE INDEX IF NOT EXISTS idx_units_pub_status ON units(pub_status);
 CREATE INDEX IF NOT EXISTS idx_units_fond_id ON units(fond_id);
 CREATE INDEX IF NOT EXISTS idx_files_unit_id ON files(unit_id);
 CREATE INDEX IF NOT EXISTS idx_audit_log_ts ON audit_log(ts);
+
+-- журнал поиска: без IP и персональных данных (ТЗ 5.8 Д)
+CREATE TABLE IF NOT EXISTS search_log (
+    id INTEGER PRIMARY KEY,
+    ts TEXT NOT NULL DEFAULT (datetime('now')),
+    query TEXT NOT NULL,
+    results INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS idx_search_log_ts ON search_log(ts);
+
+-- журнал помощника: только режим ответа, без текста
+CREATE TABLE IF NOT EXISTS ai_log (
+    id INTEGER PRIMARY KEY,
+    ts TEXT NOT NULL DEFAULT (datetime('now')),
+    mode TEXT NOT NULL,
+    provider TEXT
+);
