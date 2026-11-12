@@ -415,7 +415,7 @@ def _load_users(db: sqlite3.Connection, branch_by_slug: dict[str, int]) -> None:
         return
     data = json.loads(path.read_text(encoding="utf-8"))
     password = _seed_password()
-    if "SEED_PASSWORD" not in os.environ:
+    if password == DEMO_PASSWORD:
         # SEC-08: общий демо-пароль у всех ролей допустим только на стенде
         print(
             "ВНИМАНИЕ: пользователи созданы с демо-паролем по умолчанию. "

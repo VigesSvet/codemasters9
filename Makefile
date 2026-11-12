@@ -7,7 +7,7 @@ seed:
 	.venv/bin/python -m backend.seed
 
 dev:
-	.venv/bin/uvicorn backend.app.main:app --reload --port 8000
+	API_DOCS=true .venv/bin/uvicorn backend.app.main:app --reload --port 8000
 
 test:
 	.venv/bin/pytest -q
