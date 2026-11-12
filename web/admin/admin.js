@@ -58,10 +58,10 @@
     return false;
   }
   var TRANS_LABEL = {
-    review: ["На проверку", "Тексеруге жіберу", "Submit for review"],
+    review: ["Отправить на проверку", "Тексеруге жіберу", "Submit for review"],
     approved: ["Одобрить", "Мақұлдау", "Approve"],
-    needs_work: ["Требует доработки", "Пысықтауға қайтару", "Request changes"],
-    published: ["Опубликовать", "Жариялау", "Publish"],
+    needs_work: ["Вернуть на доработку", "Пысықтауға қайтару", "Return for revision"],
+    published: ["Опубликовать на сайте", "Сайтта жариялау", "Publish on the site"],
     archived: ["В архив", "Мұрағатқа", "Archive"],
     draft: ["Вернуть в черновик", "Жобаға қайтару", "Return to draft"]
   };
@@ -86,6 +86,10 @@
     doc: ["Документ", "Құжат", "Document"]
   };
   function levelName(l) { var x = LEVEL[l]; return x ? L(x[0], x[1], x[2]) : esc(l); }
+
+  // ---------- справочники типов и тем(общий словарь из api.js, не дублируем) ----------
+  var TYPES = (window.gosLabels && window.gosLabels.types) || {};
+  var THEMES = (window.gosLabels && window.gosLabels.themes) || {};
 
   var USER = null;
 
@@ -114,18 +118,33 @@
     return String(detail) || L("Произошла ошибка", "Қате орын алды", "Something went wrong");
   }
 
+  // сообщение сервера - простыми словами, чтобы сотрудник понял, что исправить
+  function humanDetail(detail) {
+    var s = String(detail || "");
+    if (s.indexOf("Отсутствуют обязательные поля") !== -1) return L("Заполните обязательные поля", "Міндетті өрістерді толтырыңыз", "Fill in the required fields");
+    if (s.indexOf("Такой code") !== -1) return L("Такой шифр уже существует", "Мұндай шифр бұрыннан бар", "This code already exists");
+    if (s.indexOf("Версия устарела") !== -1) return L("Запись изменил другой сотрудник. Обновите страницу и повторите.", "Жазбаны басқа қызметкер өзгертті. Бетті жаңартып, қайталаңыз.", "Another user has changed this record. Reload the page and try again.");
+    if (s.indexOf("Фонд не найден") !== -1) return L("Выберите фонд", "Қорды таңдаңыз", "Select a fonds");
+    if (s.indexOf("Недопустимый переход") !== -1) return L("Это действие сейчас недоступно", "Бұл әрекет қазір қолжетімсіз", "This action is not available right now");
+    if (s.indexOf("Недостаточно прав") !== -1) return L("Нет прав на это действие", "Бұл әрекетке құқық жоқ", "No permission for this action");
+    return s;
+  }
+
   function fmtTs(s) {
     if (!s) return "—";
-    var t = String(s);
+    var t = String(s).trim();
+    var d;
     if (t.indexOf("T") !== -1) {
-      var d = new Date(t);
-      if (!isNaN(d.getTime())) {
-        var p = function (n) { return (n < 10 ? "0" : "") + n; };
-        return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) + " " + p(d.getHours()) + ":" + p(d.getMinutes());
-      }
-      return t.replace("T", " ").slice(0, 16);
+      d = new Date(t);
+    } else if (t.length >= 16) {
+      // datetime('now') из SQLite - UTC без часового пояса, добавляем Z для локального времени
+      d = new Date(t.replace(" ", "T") + "Z");
+    } else {
+      d = new Date(t);
     }
-    return t.slice(0, 16);
+    if (isNaN(d.getTime())) return t.replace("T", " ").slice(0, 16);
+    var p = function (n) { return (n < 10 ? "0" : "") + n; };
+    return p(d.getDate()) + "." + p(d.getMonth() + 1) + "." + d.getFullYear() + ", " + p(d.getHours()) + ":" + p(d.getMinutes());
   }
 
   function humanSize(n) {
@@ -475,9 +494,10 @@
   function bindFileUpload() {
     var inp = document.getElementById("file-input");
     var drop = document.getElementById("file-drop");
-    if (!inp || !unit) return;
+    if (!inp) return;
     function send() {
-      if (!inp.files.length) return;
+      // unit загружается асинхронно, поэтому проверяем здесь, а не при привязке
+      if (!inp.files.length || !unit) return;
       var fd = new FormData();
       fd.append("file", inp.files[0]);
       if (drop) drop.classList.add("busy");
@@ -535,6 +555,25 @@
       sel.innerHTML = opts;
       if (unit) sel.value = unit.branch_id ? String(unit.branch_id) : "";
     }).catch(function () {});
+  }
+
+  // выпадающие списки по кодам(тип, тема) - показываем названия, отправляем код
+  function fillSelect(id, dict) {
+    var sel = document.getElementById(id);
+    if (!sel) return;
+    var cur = sel.value;
+    var opts = '<option value="">' + esc(L("—", "—", "—")) + "</option>";
+    Object.keys(dict).forEach(function (k) {
+      var v = dict[k];
+      var label = Array.isArray(v) ? L(v[0], v[1], v[2]) : String(v);
+      opts += '<option value="' + esc(k) + '">' + esc(label) + "</option>";
+    });
+    sel.innerHTML = opts;
+    sel.value = cur;
+  }
+  function fillCodeSelects() {
+    fillSelect("f-doc-type", TYPES);
+    fillSelect("f-theme", THEMES);
   }
 
   function renderDelo(edit) {
@@ -635,14 +674,14 @@
         else reloadDelo();
       }).catch(function (err) {
         if (btn) btn.disabled = false;
-        if (err && err.status === 422 && err.body && err.body.detail) {
-          var d = String(err.body.detail);
-          var m = d.match(/Отсутствуют обязательные поля:s*(.+)/);
-          if (m) markFields(m[1].split(/,s*/));
-          else if (d.indexOf("Такой code") !== -1) markFields(["code"]);
-          else if (d.indexOf("Фонд") !== -1) markFields(["fond_id"]);
+        var detail = err && err.body && err.body.detail ? String(err.body.detail) : "";
+        if (err && err.status === 422 && detail) {
+          var m = detail.match(/Отсутствуют обязательные поля:\s*(.+)/);
+          if (m) markFields(m[1].split(/,\s*/));
+          else if (detail.indexOf("Такой code") !== -1) markFields(["code"]);
+          else if (detail.indexOf("Фонд") !== -1) markFields(["fond_id"]);
         }
-        toast(err.body && err.body.detail ? String(err.body.detail) : apiErrorText(err), "err");
+        toast(humanDetail(detail) || apiErrorText(err), "err");
       });
     });
   }
@@ -669,6 +708,7 @@
     var edit = !!DELO_ID;
     fillFonds();
     fillBranches();
+    fillCodeSelects();
     renderDelo(edit);
     bindDeloForm();
     bindFileUpload();
@@ -987,7 +1027,7 @@
   window.onLang = function () {
     fillHeader();
     if (PAGE === "index") renderIndex();
-    else if (PAGE === "delo") { if (unit) renderDelo(!!DELO_ID); renderDeloStatus(); renderDeloFiles(); }
+    else if (PAGE === "delo") { fillCodeSelects(); if (unit) renderDelo(!!DELO_ID); renderDeloStatus(); renderDeloFiles(); }
     else if (PAGE === "import") { if (imp) renderPreview(); }
     else if (PAGE === "filial") { renderFilial(); }
     else if (PAGE === "audit") { renderAudit(); }
