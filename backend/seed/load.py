@@ -5,16 +5,13 @@ from __future__ import annotations
 import os
 import sqlite3
 
+from backend.app.security import hash_password
+
 DEFAULT_SEED_PASSWORD = "Demo-2026!"
 
 
 def _seed_password() -> str:
     return os.environ.get("SEED_PASSWORD", DEFAULT_SEED_PASSWORD)
-
-
-def _placeholder_hash(password: str) -> str:
-    """Заглушка-хеш до реализации scrypt в T2 (security.hash_password)."""
-    return "stub$" + password
 
 
 def load_fixture(db: sqlite3.Connection) -> None:
@@ -74,7 +71,7 @@ def load_fixture(db: sqlite3.Connection) -> None:
     for username, role, branch_id, display_name in users:
         db.execute(
             "INSERT INTO users (username, password_hash, role, branch_id, display_name) VALUES (?,?,?,?,?)",
-            (username, _placeholder_hash(password), role, branch_id, display_name),
+            (username, hash_password(password), role, branch_id, display_name),
         )
 
     db.commit()
