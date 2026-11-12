@@ -17,7 +17,6 @@ from backend.app.search import reindex_all
 from backend.app.textnorm import norm
 
 SEED_DIR = Path(__file__).resolve().parent
-REPO_ROOT = SEED_DIR.parents[1]
 
 DEFAULT_SEED_PASSWORD = DEMO_PASSWORD
 
@@ -149,7 +148,7 @@ def load_fixture(db: sqlite3.Connection) -> None:
 
 def _load_branches(db: sqlite3.Connection, branch_by_slug: dict[str, int]) -> None:
     """13 филиалов из CSV + главный архив (uka-main)."""
-    path = REPO_ROOT / "docs" / "materials" / "filialy" / "filialy-2026.csv"
+    path = SEED_DIR / "data" / "filialy-2026.csv"
     if path.exists():
         with open(path, encoding="utf-8-sig", newline="") as fh:
             reader = csv.DictReader(fh)
@@ -202,7 +201,7 @@ def _extent_from_line(first_line: str) -> str:
 
 def _load_personal_funds(db: sqlite3.Connection) -> None:
     """84 личных фонда из personal_funds.json: fond + published-unit уровня fond."""
-    path = REPO_ROOT / "docs" / "research" / "current-site" / "content" / "personal_funds.json"
+    path = SEED_DIR / "data" / "personal_funds.json"
     if not path.exists():
         return
     data = json.loads(path.read_text(encoding="utf-8"))

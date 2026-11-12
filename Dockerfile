@@ -9,9 +9,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY backend backend
 COPY web web
-# исходные данные для наполнения БД(филиалы, личные фонды) - только эти два файла, не весь docs/
-COPY docs/materials/filialy/filialy-2026.csv docs/materials/filialy/
-COPY docs/research/current-site/content/personal_funds.json docs/research/current-site/content/
 
 RUN useradd --create-home --uid 1000 appuser     && mkdir -p backend/data/files     && chown -R appuser:appuser backend/data
 USER appuser

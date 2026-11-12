@@ -1,6 +1,6 @@
 # API-контракт
 
-Источник: docs/plan/2026-11-12-tehnichka.md, раздел «API», сверен с роутерами
+Сверен с роутерами
 `backend/app/routers/`. Все ответы — JSON в UTF-8. Mutating-запросы `/api/*`
 (POST/PUT/PATCH/DELETE) требуют cookie-сессию и заголовок `X-Requested-With: gos`
 (иначе 403 с `{"error":"csrf",...}`).

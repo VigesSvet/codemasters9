@@ -1,4 +1,4 @@
-"""Pydantic-схемы (v2) по API-контракту docs/plan/2026-11-12-tehnichka.md."""
+"""Pydantic-схемы (v2) по API-контракту docs/api.md."""
 
 from __future__ import annotations
 
