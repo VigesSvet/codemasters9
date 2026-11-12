@@ -13,7 +13,7 @@ DISCLAIMER = {
     ),
 }
 
-# Интенты о персональных данных (уже в нормализованном виде — textnorm.norm).
+# интенты о персональных данных (уже в нормализованном виде - textnorm.norm)
 _RESTRICTED_INTENTS = (
     "личное дело",
     "личные данные",
@@ -46,7 +46,7 @@ _RESTRICTED_INTENTS = (
     "adoption",
 )
 
-# Интенты про скачивание/копию файла.
+# интенты про скачивание/копию файла
 _DOWNLOAD_INTENTS = (
     "скачать",
     "скачивание",
@@ -159,11 +159,11 @@ def compose(q, hits, lang):
     nq = textnorm.norm(q)
     units = [h for h in hits if h.get("type") == "unit"]
 
-    # Запрос о персональных данных.
+    # запрос о персональных данных
     if any(t in nq for t in _RESTRICTED_INTENTS):
         return _result("restricted", _mode_text(lang, _RESTRICTED_ANSWER), [], lang)
 
-    # Все найденные единицы закрыты + вопрос про скачивание/копию.
+    # все найденные единицы закрыты + вопрос про скачивание/копию
     if units and all(not h.get("has_public_file") for h in units) and any(t in nq for t in _DOWNLOAD_INTENTS):
         return _result("restricted", _mode_text(lang, _RESTRICTED_ANSWER), [], lang)
 

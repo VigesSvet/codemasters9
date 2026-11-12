@@ -17,7 +17,7 @@ class LocalProvider:
 
 
 class AnthropicProvider:
-    """Внешний провайдер (ленивый импорт SDK). Наружу — только вопрос и открытые фрагменты."""
+    """Внешний провайдер (ленивый импорт SDK). Наружу - только вопрос и открытые фрагменты."""
 
     name = "anthropic"
 
@@ -56,7 +56,7 @@ class AnthropicProvider:
 
 
 def get_provider(settings):
-    """Вернуть провайдера по settings.ai_provider. Без ключа для anthropic — None."""
+    """Вернуть провайдера по settings.ai_provider. Без ключа для anthropic - None."""
     if settings.ai_provider == "anthropic":
         api_key = os.environ.get("ANTHROPIC_API_KEY")
         if api_key:

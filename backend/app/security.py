@@ -28,7 +28,7 @@ CSP = (
     "base-uri 'self'; "
     "frame-ancestors 'none'; "
     "form-action 'self'; "
-    # Карта филиалов: Leaflet с unpkg и тайлы OpenStreetMap; видео — встраивание YouTube.
+    # карта филиалов: Leaflet с unpkg и тайлы OpenStreetMap; видео - встраивание YouTube
     "img-src 'self' data: blob: https://*.tile.openstreetmap.org https://tile.openstreetmap.org "
     "https://unpkg.com https://i.ytimg.com; "
     "style-src 'self' 'unsafe-inline' https://unpkg.com; "

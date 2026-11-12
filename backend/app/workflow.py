@@ -19,14 +19,14 @@ TRANSITIONS = {
     "archived": ["draft"],
 }
 
-# Действие, требуемое для целевого статуса (для проверки прав).
+# действие, требуемое для целевого статуса (для проверки прав)
 _ACTION_FOR = {
     "review": "unit.submit",
     "approved": "unit.review",
     "needs_work": "unit.review",
     "published": "unit.publish",
     "archived": "unit.archive",
-    "draft": "unit.archive",  # восстановление из архива — те же права
+    "draft": "unit.archive",  # восстановление из архива - те же права
 }
 
 

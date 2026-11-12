@@ -1,4 +1,4 @@
-"""Нормализация текста и синонимы для поиска — порт из web/katalog.html."""
+"""Нормализация текста и синонимы для поиска - порт из web/katalog.html."""
 
 from __future__ import annotations
 

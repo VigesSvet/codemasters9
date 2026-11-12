@@ -11,7 +11,7 @@ from .textnorm import expand_query, norm
 
 
 def _normalized_variants(q: Any) -> list[str]:
-    """Синонимичные варианты запроса (нормализованные). Пустой запрос — пусто."""
+    """Синонимичные варианты запроса (нормализованные). Пустой запрос - пусто."""
     if not q or not str(q).strip():
         return []
     return expand_query(str(q))
@@ -190,7 +190,7 @@ def _filters(params: dict) -> tuple[list[str], list[Any]]:
 
 
 def search_units(db: sqlite3.Connection, params: dict) -> dict:
-    """Поиск по опубликованным единицам (FTS5, фолбэк — LIKE)."""
+    """Поиск по опубликованным единицам (FTS5, фолбэк - LIKE)."""
     q = params.get("q")
     variants = _normalized_variants(q)
     fts_expr = _fts_expr(q)

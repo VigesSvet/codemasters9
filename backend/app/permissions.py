@@ -19,7 +19,7 @@ def _get(obj, key):
 
 
 def can(user, action: str, obj=None) -> bool:
-    """Проверить право пользователя на действие. admin — всё."""
+    """Проверить право пользователя на действие. admin - всё."""
     if not user or not user.get("role"):
         return False
     role = user.get("role")

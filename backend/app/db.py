@@ -1,4 +1,4 @@
-"""Работа с SQLite: подключение, схема, зависимость FastAPI (этап 0)."""
+"""Работа с SQLite: подключение, схема, зависимость FastAPI."""
 
 from __future__ import annotations
 
@@ -43,7 +43,6 @@ def get_db(request: Request) -> Iterator[sqlite3.Connection]:
 
 
 def rows(cur: sqlite3.Cursor) -> list[dict[str, Any]]:
-    """Преобразовать курсор в список словарей."""
     cols = [d[0] for d in cur.description] if cur.description else []
     return [dict(zip(cols, r, strict=False)) for r in cur.fetchall()]
 

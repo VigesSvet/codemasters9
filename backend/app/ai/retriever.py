@@ -124,7 +124,7 @@ def search(db, q, lang, k=5):
         try:
             hits.extend(_unit_hits(db, match, lang, k))
         except sqlite3.OperationalError:
-            # FTS5 недоступен в сборке — пропускаем единицы, оставляем LIKE-поиск.
+            # FTS5 недоступен в сборке - пропускаем единицы, оставляем LIKE-поиск
             pass
 
     hits.extend(_news_hits(db, nq, lang, k))
