@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+# Заголовок защиты от CSRF: без него сервер отклоняет любые изменяющие запросы.
+CSRF = {"X-Requested-With": "gos"}
+
 
 def _add_unit(db, code, title, pub_status="published", access=None, fond_id=1):
     cur = db.execute(
@@ -24,7 +27,7 @@ def _add_unit(db, code, title, pub_status="published", access=None, fond_id=1):
 
 
 def _ask(client, question, lang="ru"):
-    return client.post("/api/ai/ask", json={"question": question, "lang": lang})
+    return client.post("/api/ai/ask", json={"question": question, "lang": lang}, headers=CSRF)
 
 
 def test_ai_source_with_published_ids(client, db):

@@ -11,6 +11,9 @@ from openpyxl import Workbook
 
 from backend.app import permissions, security
 
+# Заголовок защиты от CSRF: без него сервер отклоняет любые изменяющие запросы.
+CSRF = {"X-Requested-With": "gos"}
+
 ROOT = Path(__file__).resolve().parent.parent
 SAMPLE_CSV = ROOT / "backend" / "seed" / "sample_import.csv"
 
@@ -32,12 +35,12 @@ def _preview(client, content, filename="import.csv", mapping=None):
     data = {}
     if mapping is not None:
         data["mapping"] = json.dumps(mapping)
-    return client.post("/api/admin/import/preview", files=files, data=data)
+    return client.post("/api/admin/import/preview", files=files, data=data, headers=CSRF)
 
 
 def _apply(client, job_id, mapping=None):
     body = {"mapping": mapping} if mapping is not None else {}
-    return client.post("/api/admin/import/" + job_id + "/apply", json=body)
+    return client.post("/api/admin/import/" + job_id + "/apply", json=body, headers=CSRF)
 
 
 def test_import_csv_preview_no_write(client, authorized, db):
