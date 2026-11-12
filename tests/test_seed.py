@@ -62,3 +62,32 @@ def test_search_leninogorsk_finds_record(tmp_path, monkeypatch):
         assert "риддер" in result["query_variants"]
     finally:
         conn.close()
+
+
+def test_showcase_delo_has_public_file_and_description(tmp_path, monkeypatch):
+    """Витринное дело id 83: публичный скан и непустое описание на карточке."""
+    from backend.app.routers.catalog import get_unit
+
+    conn, _summary = _load(tmp_path, monkeypatch)
+    try:
+        row = conn.execute(
+            "SELECT id FROM units WHERE code = ?",
+            ("Ф. 1-П, оп. 1, д. 245",),
+        ).fetchone()
+        assert row is not None
+        assert row["id"] == 83
+
+        files = conn.execute(
+            "SELECT filename, access FROM files WHERE unit_id = ?",
+            (row["id"],),
+        ).fetchall()
+        public = [f for f in files if f["access"] == "public"]
+        assert public, "у витринного дела должен быть публичный файл"
+        assert any("obzor-semipalatinskoy-oblasti-1893" in f["filename"] for f in public)
+
+        detail = get_unit(row["id"], conn)
+        desc = detail["description"]
+        assert desc["ru"].strip(), "описание не должно быть пустым"
+        assert desc["kk"].strip(), "казахское описание не должно быть пустым"
+    finally:
+        conn.close()

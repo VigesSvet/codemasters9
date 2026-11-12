@@ -286,19 +286,24 @@ def _load_demo_units(db: sqlite3.Connection, branch_by_slug: dict[str, int]) -> 
         if not code or code in fond_by_code:
             continue
         title_ru = title_kk = title_en = ""
+        description_ru = description_kk = ""
         kind = "org"
         for fu in demo:
             if fu.get("fond_code") == code and fu.get("level") == "fond":
                 title_ru = fu.get("title_ru") or ""
                 title_kk = fu.get("title_kk") or ""
                 title_en = fu.get("title_en") or ""
+                description_ru = fu.get("description_ru") or ""
+                description_kk = fu.get("description_kk") or ""
                 kind = _demo_fond_kind(fu.get("doc_type"))
                 break
         if not title_ru:
             title_ru = f"Фонд {code}"
         cur = db.execute(
-            "INSERT INTO fonds (code, kind, title_ru, title_kk, title_en, is_demo) VALUES (?,?,?,?,?,1)",
-            (code, kind, title_ru, title_kk, title_en),
+            "INSERT INTO fonds (code, kind, title_ru, title_kk, title_en,"
+            " description_ru, description_kk, is_demo)"
+            " VALUES (?,?,?,?,?,?,?,1)",
+            (code, kind, title_ru, title_kk, title_en, description_ru, description_kk),
         )
         fond_by_code[code] = cur.lastrowid
 
@@ -306,8 +311,8 @@ def _load_demo_units(db: sqlite3.Connection, branch_by_slug: dict[str, int]) -> 
         cur = db.execute(
             "INSERT INTO units (fond_id, level, code, number, title_ru, title_kk, title_en,"
             " years_from, years_to, doc_type, place, theme, author, keywords, lang, extent,"
-            " branch_id, pub_status, is_demo)"
-            " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,1)",
+            " branch_id, pub_status, access_note, is_demo)"
+            " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,1)",
             (
                 fond_by_code.get(u.get("fond_code")),
                 u.get("level"),
@@ -327,6 +332,7 @@ def _load_demo_units(db: sqlite3.Connection, branch_by_slug: dict[str, int]) -> 
                 u.get("extent") or "",
                 branch_by_slug.get(u.get("branch_slug")),
                 "published",
+                u.get("access_note") or "",
             ),
         )
     db.commit()
@@ -341,33 +347,32 @@ def _sha256(path: Path) -> str:
 
 
 def _load_demo_files(db: sqlite3.Connection, web_dir: str, files_dir: Path) -> None:
-    """Два демо-файла (public и no_publish), привязанных к демо-делам."""
+    """Сканы демо-дел: титульный лист обзора и фото 1885 года открыты, одно дело закрыто."""
     img_dir = Path(web_dir) / "img"
-    candidates = sorted(img_dir.glob("*.jpg")) if img_dir.is_dir() else []
-    if not candidates:
-        return
-    src = candidates[0]
-    public_unit = db.execute("SELECT id FROM units WHERE code = ?", ("Ф. 1-П, оп. 1, д. 245",)).fetchone()
-    restricted_unit = db.execute("SELECT id FROM units WHERE code = ?", ("Ф. 61, оп. 2, д. 38",)).fetchone()
-    if public_unit is None or restricted_unit is None:
-        return
     files_dir.mkdir(parents=True, exist_ok=True)
-    public_name = "demo-public.jpg"
-    restricted_name = "demo-restricted.jpg"
-    shutil.copy2(src, files_dir / public_name)
-    shutil.copy2(src, files_dir / restricted_name)
-    size = src.stat().st_size
-    sha = _sha256(files_dir / public_name)
-    db.execute(
-        "INSERT INTO files (unit_id, filename, mime, size, sha256, kind, access, origin)"
-        " VALUES (?,?,?,?,?,?,?,?)",
-        (public_unit["id"], public_name, "image/jpeg", size, sha, "view", "public", "demo"),
-    )
-    db.execute(
-        "INSERT INTO files (unit_id, filename, mime, size, sha256, kind, access, origin)"
-        " VALUES (?,?,?,?,?,?,?,?)",
-        (restricted_unit["id"], restricted_name, "image/jpeg", size, sha, "view", "no_publish", "demo"),
-    )
+
+    # (шифр дела, исходный файл в web/img, имя в хранилище, доступ)
+    plan = [
+        ("Ф. 1-П, оп. 1, д. 245", "survey1893.jpg", "obzor-semipalatinskoy-oblasti-1893.jpg", "public"),
+        ("Ф. 77-Ф, оп. 1, д. 12", "siberia.jpg", "vid-ust-kamenogorska-gravyura-1885.jpg", "public"),
+        ("Ф. 77-Ф, оп. 1, д. 14", "bazaar.jpg", "semipalatinsk-bazar-1885.jpg", "public"),
+        ("Ф. 77-Ф, оп. 1, д. 15", "ferry.jpg", "irtyshskiy-parom-1885.jpg", "public"),
+        ("Ф. 77-Ф, оп. 1, д. 16", "aul.jpg", "kazahskiy-aul-1885.jpg", "public"),
+        ("Ф. 61, оп. 2, д. 38", "town.jpg", "prikazy-po-lichnomu-sostavu-1938-1945.jpg", "no_publish"),
+    ]
+    for code, src_name, dst_name, access in plan:
+        unit = db.execute("SELECT id FROM units WHERE code = ?", (code,)).fetchone()
+        src = img_dir / src_name
+        if unit is None or not src.exists():
+            continue
+        shutil.copy2(src, files_dir / dst_name)
+        size = src.stat().st_size
+        sha = _sha256(files_dir / dst_name)
+        db.execute(
+            "INSERT INTO files (unit_id, filename, mime, size, sha256, kind, access, origin)"
+            " VALUES (?,?,?,?,?,?,?,?)",
+            (unit["id"], dst_name, "image/jpeg", size, sha, "view", access, "demo"),
+        )
     db.commit()
 
 
