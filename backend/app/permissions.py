@@ -38,15 +38,22 @@ PERMISSIONS = (
     "admin.read",
     "users.manage",
     "roles.manage",
+    "news.create",
+    "news.edit",
+    "news.publish",
+    "news.delete",
+    "content.edit",
 )
 
 _DEFAULTS = {
     "moderator": (
         "unit.create unit.submit unit.edit unit.review unit.publish unit.archive "
-        "file.upload file.set_access audit.read stats.read admin.read"
+        "file.upload file.set_access audit.read stats.read admin.read "
+        "news.create news.edit news.publish news.delete content.edit"
     ).split(),
     "editor": (
-        "unit.create unit.submit unit.edit file.upload import import.preview import.apply admin.read"
+        "unit.create unit.submit unit.edit file.upload import import.preview import.apply admin.read "
+        "news.create news.edit"
     ).split(),
     "branch_admin": ["branch.edit"],
     "staff": ["admin.read"],
@@ -68,12 +75,13 @@ _cache: dict[str, set[str]] | None = None
 def seed_defaults(db) -> None:
     """Заполнить role_permissions значениями по умолчанию для ролей без записей."""
     have = {r[0] for r in db.execute("SELECT DISTINCT role FROM role_permissions")}
+    known = {r[0] for r in db.execute("SELECT DISTINCT permission FROM role_permissions")}
     for role, perms in default_matrix().items():
-        if role in have:
-            continue
+        # новая роль - все права по умолчанию; новое право (появилось в коде) - по умолчанию ролям
+        add = perms if role not in have else perms - known
         db.executemany(
             "INSERT OR IGNORE INTO role_permissions (role, permission) VALUES (?,?)",
-            [(role, p) for p in sorted(perms)],
+            [(role, p) for p in sorted(add)],
         )
     db.commit()
 

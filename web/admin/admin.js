@@ -193,6 +193,8 @@
     if (role === "admin" || role === "superadmin" || role === "moderator" || role === "analyst") a("audit.html", PAGE === "audit", "Журнал", "Әрекеттер журналы", "Audit log");
     if (role === "admin" || role === "superadmin") a("users.html", PAGE === "users", "Пользователи", "Пайдаланушылар", "Users");
     if (role === "superadmin") a("roles.html", PAGE === "roles", "Роли и права", "Рөлдер", "Roles");
+    if (role === "admin" || role === "superadmin" || role === "moderator" || role === "editor") a("news.html", PAGE === "news", "Новости", "Жаңалықтар", "News");
+    if (role === "admin" || role === "superadmin" || role === "moderator") a("content.html", PAGE === "content", "Страницы и FAQ", "Беттер және FAQ", "Pages and FAQ");
     a("../index.html", false, "На сайт", "Сайтқа", "To the site");
     nav.innerHTML = h;
     if (window.trEls) window.trEls(nav);
