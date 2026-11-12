@@ -29,7 +29,16 @@ def connect(path: str) -> sqlite3.Connection:
 def init_schema(conn: sqlite3.Connection) -> None:
     """Применить schema.sql к соединению (идемпотентно)."""
     conn.executescript(SCHEMA_PATH.read_text(encoding="utf-8"))
+    _ensure_unit_description(conn)
     conn.commit()
+
+
+def _ensure_unit_description(conn: sqlite3.Connection) -> None:
+    """Добавить units.description_ru/kk в базу, созданную до появления этих колонок."""
+    have = {r[1] for r in conn.execute("PRAGMA table_info(units)")}
+    for col in ("description_ru", "description_kk"):
+        if col not in have:
+            conn.execute(f"ALTER TABLE units ADD COLUMN {col} TEXT")
 
 
 def get_db(request: Request) -> Iterator[sqlite3.Connection]:

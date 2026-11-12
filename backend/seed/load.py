@@ -311,8 +311,8 @@ def _load_demo_units(db: sqlite3.Connection, branch_by_slug: dict[str, int]) -> 
         cur = db.execute(
             "INSERT INTO units (fond_id, level, code, number, title_ru, title_kk, title_en,"
             " years_from, years_to, doc_type, place, theme, author, keywords, lang, extent,"
-            " branch_id, pub_status, access_note, is_demo)"
-            " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,1)",
+            " branch_id, pub_status, access_note, description_ru, description_kk, is_demo)"
+            " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,1)",
             (
                 fond_by_code.get(u.get("fond_code")),
                 u.get("level"),
@@ -333,6 +333,9 @@ def _load_demo_units(db: sqlite3.Connection, branch_by_slug: dict[str, int]) -> 
                 branch_by_slug.get(u.get("branch_slug")),
                 "published",
                 u.get("access_note") or "",
+                # описание уровня фонда хранится в fonds, у дела - своё
+                "" if u.get("level") == "fond" else (u.get("description_ru") or ""),
+                "" if u.get("level") == "fond" else (u.get("description_kk") or ""),
             ),
         )
     db.commit()

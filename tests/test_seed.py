@@ -91,3 +91,43 @@ def test_showcase_delo_has_public_file_and_description(tmp_path, monkeypatch):
         assert desc["kk"].strip(), "казахское описание не должно быть пустым"
     finally:
         conn.close()
+
+
+def test_delo_does_not_inherit_foreign_description(tmp_path, monkeypatch):
+    """Соседнее дело того же фонда не показывает аннотацию витринного дела."""
+    from backend.app.routers.catalog import get_unit
+
+    conn, _summary = _load(tmp_path, monkeypatch)
+    try:
+        ids = {
+            code: conn.execute("SELECT id FROM units WHERE code = ?", (code,)).fetchone()["id"]
+            for code in ("Ф. 1-П", "Ф. 1-П, оп. 1, д. 245", "Ф. 1-П, оп. 1, д. 244")
+        }
+        assert ids["Ф. 1-П, оп. 1, д. 244"] == 84
+
+        showcase = get_unit(ids["Ф. 1-П, оп. 1, д. 245"], conn)["description"]
+        neighbour = get_unit(ids["Ф. 1-П, оп. 1, д. 244"], conn)["description"]
+        fond = get_unit(ids["Ф. 1-П"], conn)["description"]
+
+        assert "1893" in showcase["ru"]
+        assert neighbour == {"ru": "", "kk": "", "en": ""}
+        # запись уровня «фонд» показывает описание фонда, а не аннотацию одного дела
+        assert fond["ru"].strip()
+        assert "1893" not in fond["ru"]
+    finally:
+        conn.close()
+
+
+def test_schema_upgrade_adds_unit_description(tmp_path):
+    """База, созданная до появления описания у дел, дополняется колонками при запуске."""
+    conn = dbmod.connect(str(tmp_path / "old.db"))
+    try:
+        dbmod.init_schema(conn)
+        conn.execute("ALTER TABLE units DROP COLUMN description_ru")
+        conn.execute("ALTER TABLE units DROP COLUMN description_kk")
+        conn.commit()
+        dbmod.init_schema(conn)
+        cols = {r[1] for r in conn.execute("PRAGMA table_info(units)")}
+        assert {"description_ru", "description_kk"} <= cols
+    finally:
+        conn.close()

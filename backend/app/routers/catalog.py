@@ -131,17 +131,23 @@ def get_unit(unit_id: int, db: DbDep = None):
         (row["inventory_id"],),
     ).fetchone()
 
-    description = {"ru": "", "kk": "", "en": ""}
-    fond_desc = db.execute(
-        "SELECT description_ru, description_kk FROM fonds WHERE id = ?",
-        (row["fond_id"],),
+    # у дела и описи - только собственное описание: аннотация фонда относится к фонду,
+    # а не к каждому делу в нём; описание фонда отдаём лишь для записи уровня «фонд»
+    own = db.execute(
+        "SELECT description_ru, description_kk FROM units WHERE id = ?",
+        (unit_id,),
     ).fetchone()
-    if fond_desc:
-        description = {
-            "ru": fond_desc["description_ru"] or "",
-            "kk": fond_desc["description_kk"] or "",
-            "en": fond_desc["description_ru"] or "",
-        }
+    desc_ru = (own["description_ru"] or "") if own else ""
+    desc_kk = (own["description_kk"] or "") if own else ""
+    if row["level"] == "fond" and not (desc_ru or desc_kk):
+        fond_desc = db.execute(
+            "SELECT description_ru, description_kk FROM fonds WHERE id = ?",
+            (row["fond_id"],),
+        ).fetchone()
+        if fond_desc:
+            desc_ru = fond_desc["description_ru"] or ""
+            desc_kk = fond_desc["description_kk"] or ""
+    description = {"ru": desc_ru, "kk": desc_kk, "en": desc_ru}
 
     parents = {
         "fond": {

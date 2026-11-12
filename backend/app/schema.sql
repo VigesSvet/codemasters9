@@ -88,6 +88,8 @@ CREATE TABLE IF NOT EXISTS units (
     branch_id INTEGER REFERENCES branches(id),
     pub_status TEXT NOT NULL DEFAULT 'draft' CHECK (pub_status IN ('draft','review','needs_work','approved','published','archived')),
     access_note TEXT,
+    description_ru TEXT,
+    description_kk TEXT,
     version INTEGER NOT NULL DEFAULT 1,
     created_by INTEGER REFERENCES users(id),
     status_changed_at TEXT,
