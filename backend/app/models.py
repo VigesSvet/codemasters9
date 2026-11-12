@@ -59,7 +59,7 @@ class Parents(BaseModel):
 
 
 class UnitDetail(UnitCard):
-    description: str = ""
+    description: Localized = Field(default_factory=Localized)
     files: list[FileInfo] = Field(default_factory=list)
     versions_public: list[VersionPublic] = Field(default_factory=list)
     parents: Parents = Field(default_factory=Parents)

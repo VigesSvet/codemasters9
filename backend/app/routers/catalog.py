@@ -131,11 +131,17 @@ def get_unit(unit_id: int, db: DbDep = None):
         (row["inventory_id"],),
     ).fetchone()
 
-    description = ""
-    if row["level"] == "fond":
-        fond_desc = db.execute("SELECT description_ru FROM fonds WHERE id = ?", (row["fond_id"],)).fetchone()
-        if fond_desc:
-            description = fond_desc["description_ru"] or ""
+    description = {"ru": "", "kk": "", "en": ""}
+    fond_desc = db.execute(
+        "SELECT description_ru, description_kk FROM fonds WHERE id = ?",
+        (row["fond_id"],),
+    ).fetchone()
+    if fond_desc:
+        description = {
+            "ru": fond_desc["description_ru"] or "",
+            "kk": fond_desc["description_kk"] or "",
+            "en": fond_desc["description_ru"] or "",
+        }
 
     parents = {
         "fond": {
