@@ -150,6 +150,8 @@ CREATE TABLE IF NOT EXISTS login_attempts (
     ts TEXT NOT NULL DEFAULT (datetime('now')),
     ok INTEGER NOT NULL DEFAULT 0
 );
+-- счётчик неудач по IP за окно(SEC-05)
+CREATE INDEX IF NOT EXISTS idx_login_attempts_ip_ts ON login_attempts(ip, ts);
 
 CREATE TABLE IF NOT EXISTS audit_log (
     id INTEGER PRIMARY KEY,

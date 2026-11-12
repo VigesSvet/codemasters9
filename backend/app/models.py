@@ -123,18 +123,19 @@ class User(BaseModel):
 
 
 class LoginRequest(BaseModel):
-    username: str
-    password: str
+    # потолки длины(SEC-02) - scrypt и запрос к БД не получают мегабайтные строки
+    username: str = Field(max_length=64)
+    password: str = Field(max_length=256)
 
 
 class Transition(BaseModel):
-    to: str
-    comment: str = ""
+    to: str = Field(max_length=32)
+    comment: str = Field(default="", max_length=2000)
 
 
 class AiRequest(BaseModel):
-    question: str
-    lang: str = "ru"
+    question: str = Field(max_length=500)
+    lang: str = Field(default="ru", max_length=8)
 
 
 class AiSource(BaseModel):

@@ -12,14 +12,14 @@ import sqlite3
 from pathlib import Path
 
 from backend.app import security
-from backend.app.config import get_settings
+from backend.app.config import DEMO_PASSWORD, get_settings
 from backend.app.search import reindex_all
 from backend.app.textnorm import norm
 
 SEED_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SEED_DIR.parents[1]
 
-DEFAULT_SEED_PASSWORD = "Demo-2026!"
+DEFAULT_SEED_PASSWORD = DEMO_PASSWORD
 
 _FUND_CODE_RE = re.compile(r"ф\.\s*(\d+)\s*,?\s*(?:оп\.?\s*(\d+))?", re.IGNORECASE)
 
@@ -42,6 +42,16 @@ _BRANCH_SLUGS = [
 
 def _seed_password() -> str:
     return os.environ.get("SEED_PASSWORD", DEFAULT_SEED_PASSWORD)
+
+
+_FIXTURE_HASHES: dict[str, str] = {}
+
+
+def _fixture_hash(password: str) -> str:
+    """Один хеш на пароль для тестовой фикстуры: scrypt(p=5) - около 0,15 с на хеш."""
+    if password not in _FIXTURE_HASHES:
+        _FIXTURE_HASHES[password] = security.hash_password(password)
+    return _FIXTURE_HASHES[password]
 
 
 def _branch_slug(name: str) -> str | None:
@@ -126,11 +136,11 @@ def load_fixture(db: sqlite3.Connection) -> None:
         ("editor", "editor", None, "Редактор"),
         ("ridder", "branch_admin", ridder_id, "Администратор филиала Риддер"),
     ]
-    password = _seed_password()
+    password_hash = _fixture_hash(_seed_password())
     for username, role, branch_id, display_name in users:
         db.execute(
             "INSERT INTO users (username, password_hash, role, branch_id, display_name) VALUES (?,?,?,?,?)",
-            (username, security.hash_password(password), role, branch_id, display_name),
+            (username, password_hash, role, branch_id, display_name),
         )
 
     db.commit()
@@ -405,6 +415,12 @@ def _load_users(db: sqlite3.Connection, branch_by_slug: dict[str, int]) -> None:
         return
     data = json.loads(path.read_text(encoding="utf-8"))
     password = _seed_password()
+    if "SEED_PASSWORD" not in os.environ:
+        # SEC-08: общий демо-пароль у всех ролей допустим только на стенде
+        print(
+            "ВНИМАНИЕ: пользователи созданы с демо-паролем по умолчанию. "
+            "Перед развёртыванием задайте SEED_PASSWORD или смените пароли."
+        )
     for u in data:
         branch_id = branch_by_slug.get(u["branch_slug"]) if u.get("branch_slug") else None
         password_hash = security.hash_password(password)

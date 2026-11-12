@@ -24,8 +24,17 @@ async def lifespan(app: FastAPI):
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
-    app = FastAPI(title="Госархив ВКО API", lifespan=lifespan)
-    app.state.settings = settings or get_settings()
+    settings = settings or get_settings()
+    # /docs, /redoc, /openapi.json - только при API_DOCS=true(SEC-11), иначе 404
+    docs = settings.api_docs
+    app = FastAPI(
+        title="Госархив ВКО API",
+        lifespan=lifespan,
+        docs_url="/docs" if docs else None,
+        redoc_url="/redoc" if docs else None,
+        openapi_url="/openapi.json" if docs else None,
+    )
+    app.state.settings = settings
 
     app.include_router(catalog.router)
     app.include_router(catalog.files_router)

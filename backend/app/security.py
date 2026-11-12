@@ -15,10 +15,14 @@ from fastapi.responses import JSONResponse
 from .audit import log as audit_log
 from .db import get_db
 
+# параметры OWASP Password Storage(N=2^14, r=8, p=5 - 16 МиБ памяти); старые хеши p=1 проверяются,
+# так как параметры хранятся в строке хеша(SEC-09)
 SCRYPT_N = 16384
 SCRYPT_R = 8
-SCRYPT_P = 1
+SCRYPT_P = 5
 SALT_BYTES = 16
+# потолок тела запроса - файл единицы до 20 МБ плюс запас на multipart
+MAX_BODY_BYTES = 25 * 1024 * 1024
 SESSION_COOKIE = "gos_session"
 DEFAULT_TTL_MIN = 30
 
@@ -74,6 +78,29 @@ def verify_password(password: str, password_hash: str) -> bool:
         return hmac.compare_digest(dk, expected)
     except (ValueError, TypeError, OSError):
         return False
+
+
+_DUMMY_HASH: str | None = None
+
+
+def burn_password_check(password: str) -> None:
+    """Проверка против фиктивного хеша - неизвестный логин отвечает так же долго, как известный(SEC-05)."""
+    global _DUMMY_HASH
+    if _DUMMY_HASH is None:
+        _DUMMY_HASH = hash_password(secrets.token_urlsafe(16))
+    verify_password(password, _DUMMY_HASH)
+
+
+_DEFAULT_PASSWORD_CACHE: dict[str, bool] = {}
+
+
+def is_default_password(password_hash: str, default: str) -> bool:
+    """Совпадает ли хеш с демо-паролем(SEC-08); кэш по строке хеша - смена пароля меняет ключ."""
+    if password_hash not in _DEFAULT_PASSWORD_CACHE:
+        if len(_DEFAULT_PASSWORD_CACHE) > 1000:
+            _DEFAULT_PASSWORD_CACHE.clear()
+        _DEFAULT_PASSWORD_CACHE[password_hash] = verify_password(default, password_hash)
+    return _DEFAULT_PASSWORD_CACHE[password_hash]
 
 
 def _sha256(value: str) -> str:
@@ -191,31 +218,54 @@ def detect_mime(data: bytes) -> str | None:
     return None
 
 
-def _apply_headers(response, path: str) -> None:
+def _apply_headers(response, path: str, secure: bool = False) -> None:
     response.headers["Content-Security-Policy"] = CSP
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["Permissions-Policy"] = PERMISSIONS_POLICY
+    # изоляция окна и ресурсов от чужих origin(SEC-10); YouTube и тайлы встраиваются у нас, а не наоборот
+    response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
+    response.headers["Cross-Origin-Resource-Policy"] = "same-origin"
+    if secure:
+        # HSTS только при COOKIE_SECURE=true - значит, сайт точно за TLS; год без includeSubDomains
+        response.headers["Strict-Transport-Security"] = "max-age=31536000"
     if path.startswith("/admin") or path.startswith("/api/admin"):
         response.headers["X-Robots-Tag"] = "noindex, nofollow"
         response.headers["Cache-Control"] = "no-store"
 
 
+def _too_large(path: str, status: int, detail: str, secure: bool) -> JSONResponse:
+    resp = JSONResponse(status_code=status, content={"error": "too_large", "detail": detail})
+    _apply_headers(resp, path, secure)
+    return resp
+
+
 def install_security(app) -> None:
-    """CSRF-проверка mutating /api/* и заголовки безопасности на всех ответах."""
+    """CSRF-проверка mutating /api/*, лимит тела и заголовки безопасности на всех ответах."""
 
     @app.middleware("http")
     async def _security_middleware(request: Request, call_next):
         path = request.url.path
+        secure = request.app.state.settings.cookie_secure
         if request.method in {"POST", "PUT", "PATCH", "DELETE"} and path.startswith("/api/"):
+            # лимит тела(SEC-02) до чтения - иначе тело в 2 ГБ целиком оседает в памяти процесса
+            length = request.headers.get("content-length")
+            if length is None and "chunked" in request.headers.get("transfer-encoding", "").lower():
+                return _too_large(path, 411, "Требуется заголовок Content-Length", secure)
+            try:
+                too_big = length is not None and int(length) > MAX_BODY_BYTES
+            except ValueError:
+                too_big = True
+            if too_big:
+                return _too_large(path, 413, "Тело запроса больше 25 МБ", secure)
             if request.headers.get("X-Requested-With") != "gos":
                 resp = JSONResponse(
                     status_code=403,
                     content={"error": "csrf", "detail": "Требуется заголовок X-Requested-With: gos"},
                 )
-                _apply_headers(resp, path)
+                _apply_headers(resp, path, secure)
                 return resp
         response = await call_next(request)
-        _apply_headers(response, path)
+        _apply_headers(response, path, secure)
         return response

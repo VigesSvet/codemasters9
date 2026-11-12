@@ -945,11 +945,29 @@
     loadAudit();
   }
 
+  // ---------- демо-пароль(SEC-08) ----------
+  // сервер сообщает, что вход выполнен с общим паролем seed - его нельзя оставлять на проде
+  function showDefaultPasswordBanner() {
+    var m = document.getElementById("main");
+    if (!m || document.getElementById("adm-default-pass")) return;
+    var d = document.createElement("div");
+    d.id = "adm-default-pass";
+    d.className = "gos-state gos-state--error";
+    d.setAttribute("role", "alert");
+    d.textContent = L(
+      "Демо-пароль: смените перед развёртыванием",
+      "Демо-құпиясөз: орналастыру алдында ауыстырыңыз",
+      "Demo password: change it before deployment"
+    );
+    m.insertBefore(d, m.firstChild);
+  }
+
   // ---------- загрузка ----------
   function boot() {
     if (PAGE === "login") { initLogin(); return; }
     window.gosApi.get("/api/auth/me").then(function (res) {
       USER = res.user;
+      if (res.password_is_default) showDefaultPasswordBanner();
       fillHeader();
       bindLogout();
       renderNav();

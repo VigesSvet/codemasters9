@@ -24,6 +24,7 @@ router = APIRouter(prefix="/api/admin", tags=["admin"])
 ALLOWED_LEVELS = ("fond", "opis", "delo", "doc")
 MAX_FILE_SIZE = 20 * 1024 * 1024  # 20 МБ
 PER_PAGE = 20
+MAX_PER_PAGE = 100
 
 _EDITABLE_UNIT_FIELDS = (
     "number",
@@ -97,9 +98,19 @@ def _resolve_fond(db, body: dict) -> int:
     return row["id"]
 
 
-def _unit_row(db, unit_id: int) -> dict:
+def _page(page: int, per_page: int) -> tuple[int, int]:
+    """Границы пагинации(SEC-12): отрицательный OFFSET и per_page=10^9 не доходят до SQL."""
+    return max(1, min(page, 100_000)), max(1, min(per_page, MAX_PER_PAGE))
+
+
+def _foreign_branch(user, unit) -> bool:
+    """branch_admin видит только единицы своего филиала(SEC-13); чужое отвечает как несуществующее."""
+    return user["role"] == "branch_admin" and unit["branch_id"] != user.get("branch_id")
+
+
+def _unit_row(db, unit_id: int, user=None) -> dict:
     row = db.execute("SELECT * FROM units WHERE id = ?", (unit_id,)).fetchone()
-    if row is None:
+    if row is None or (user is not None and _foreign_branch(user, row)):
         raise HTTPException(status_code=404, detail="Единица не найдена")
     return dict(row)
 
@@ -118,8 +129,12 @@ def list_units(
     page: int = 1,
     per_page: int = PER_PAGE,
 ):
+    page, per_page = _page(page, per_page)
     where: list[str] = []
     params: list[Any] = []
+    if user["role"] == "branch_admin":
+        where.append("u.branch_id IS ?")
+        params.append(user.get("branch_id"))
     if status:
         where.append("u.pub_status = ?")
         params.append(status)
@@ -237,7 +252,7 @@ def get_unit(
     db: Annotated[Any, Depends(get_db)],
     user: Annotated[Any, Depends(security.require_user())],
 ):
-    return _unit_row(db, unit_id)
+    return _unit_row(db, unit_id, user)
 
 
 @router.put("/units/{unit_id}")
@@ -330,9 +345,7 @@ def unit_versions(
     db: Annotated[Any, Depends(get_db)],
     user: Annotated[Any, Depends(security.require_user())],
 ):
-    row = db.execute("SELECT id FROM units WHERE id = ?", (unit_id,)).fetchone()
-    if row is None:
-        raise HTTPException(status_code=404, detail="Единица не найдена")
+    _unit_row(db, unit_id, user)
     # имена автора и согласующего для истории версий
     cur = db.execute(
         "SELECT v.*, a.username AS author_name, r.username AS reviewer_name"
@@ -361,7 +374,8 @@ def upload_unit_file(
     if row is None:
         raise HTTPException(status_code=404, detail="Единица не найдена")
 
-    data = file.file.read()
+    # читаем на байт больше лимита(SEC-02) - превышение видно без загрузки всего файла в память
+    data = file.file.read(MAX_FILE_SIZE + 1)
     if len(data) > MAX_FILE_SIZE:
         raise HTTPException(status_code=413, detail="Файл больше 20 МБ")
 
@@ -439,9 +453,7 @@ def list_unit_files(
     user: Annotated[Any, Depends(security.require_user())],
 ):
     """Список файлов единицы для админки (доступ и загрузчик)."""
-    row = db.execute("SELECT id FROM units WHERE id = ?", (unit_id,)).fetchone()
-    if row is None:
-        raise HTTPException(status_code=404, detail="Единица не найдена")
+    _unit_row(db, unit_id, user)
     cur = db.execute(
         "SELECT f.id, f.filename, f.mime, f.size, f.access, f.kind, f.sha256,"
         " f.uploaded_by, f.uploaded_at, u.username AS uploader"
@@ -511,6 +523,7 @@ def list_audit(
     page: int = 1,
     per_page: int = PER_PAGE,
 ):
+    page, per_page = _page(page, per_page)
     where: list[str] = []
     params: list[Any] = []
     if user:
@@ -536,6 +549,16 @@ def list_audit(
 
 
 # ---------- выгрузка ----------
+
+# первые символы, с которых Excel/LibreOffice начинают формулу(SEC-07, CSV-инъекция)
+_CSV_FORMULA_START = ("=", "+", "-", "@", "\t", "\r")
+
+
+def _csv_safe(value: Any) -> Any:
+    """Строку-формулу экранировать апострофом - таблица покажет текст, а не выполнит =HYPERLINK(...)."""
+    if isinstance(value, str) and value.startswith(_CSV_FORMULA_START):
+        return "'" + value
+    return value
 
 
 @router.get("/export.csv")
@@ -574,7 +597,7 @@ def export_csv(
     for r in rows(cur):
         writer.writerow(
             [
-                r[c]
+                _csv_safe(r[c])
                 for c in (
                     "id",
                     "code",

@@ -12,6 +12,8 @@ from . import audit, textnorm
 
 MAX_FILE_BYTES = 5 * 1024 * 1024
 MAX_ROWS = 5000
+# ширина таблицы реестра - около 20 полей, 64 колонки с запасом; шире - вероятно, мусор или бомба
+MAX_COLUMNS = 64
 MAX_PREVIEW_ROWS = 20
 
 CURRENT_YEAR = datetime.now().year
@@ -19,6 +21,10 @@ CURRENT_YEAR = datetime.now().year
 
 class ImporterError(Exception):
     """Ошибка импорта (формат/лимит), показывается пользователю."""
+
+
+class ImportForbidden(ImporterError):
+    """Чужая задача импорта(SEC-04) - роутер отвечает 403, а не 404."""
 
 
 # синонимы колонок: каноническое поле -> возможные заголовки
@@ -98,25 +104,43 @@ def _parse_csv(content):
 
 
 def _parse_xlsx(content):
+    import zipfile
+
     from openpyxl import load_workbook
 
-    wb = load_workbook(io.BytesIO(content), read_only=True, data_only=True)
-    ws = wb.active
-    it = ws.iter_rows(values_only=True)
     try:
-        header = next(it)
-    except StopIteration:
+        wb = load_workbook(io.BytesIO(content), read_only=True, data_only=True)
+    except (zipfile.BadZipFile, KeyError, ValueError, OSError):
+        # битый или поддельный xlsx(SEC-03) - понятная 422 вместо 500
+        raise ImporterError("файл не похож на корректный XLSX") from None
+    try:
+        ws = wb.active
+        # читаем не больше MAX_COLUMNS колонок - иначе лист шириной 16384 раздувает каждую строку
+        it = ws.iter_rows(values_only=True, max_col=MAX_COLUMNS + 1)
+        header = next(it, None)
+        if header is None:
+            return [], []
+        # max_col дополняет строку пустыми ячейками до 65 - хвостовые пустые заголовки отбрасываем
+        header = list(header)
+        while header and header[-1] in (None, ""):
+            header.pop()
+        if len(header) > MAX_COLUMNS:
+            raise ImporterError(f"слишком много колонок (максимум {MAX_COLUMNS})")
+        columns = [_cell_str(c) for c in header]
+        rows = []
+        for raw in it:
+            # стоп на MAX_ROWS + 1 - zip-бомба из миллиона строк не попадает в память целиком
+            if len(rows) > MAX_ROWS:
+                break
+            row: dict[str, str] = {}
+            for i, col in enumerate(columns):
+                row[col] = _cell_str(raw[i]) if i < len(raw) else ""
+            rows.append(row)
+        return columns, rows
+    except (zipfile.BadZipFile, KeyError, ValueError, OSError):
+        raise ImporterError("файл не похож на корректный XLSX") from None
+    finally:
         wb.close()
-        return [], []
-    columns = [_cell_str(c) for c in header]
-    rows = []
-    for raw in it:
-        row: dict[str, str] = {}
-        for i, col in enumerate(columns):
-            row[col] = _cell_str(raw[i]) if i < len(raw) else ""
-        rows.append(row)
-    wb.close()
-    return columns, rows
 
 
 def _parse_rows(filename, content):
@@ -298,6 +322,9 @@ def apply(db, user, job_id, mapping=None):
     job = db.execute("SELECT * FROM import_jobs WHERE id = ?", (jid,)).fetchone()
     if job is None:
         raise ImporterError("задача импорта не найдена")
+    # применить preview может только его автор или admin(SEC-04, п. 3.5 дополнений - права на объект)
+    if not user or (user.get("role") != "admin" and job["user_id"] != user.get("id")):
+        raise ImportForbidden("чужая задача импорта")
     if job["status"] == "applied":
         raise ImporterError("импорт уже применён")
 

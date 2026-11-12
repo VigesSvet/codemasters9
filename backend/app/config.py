@@ -20,6 +20,10 @@ def _env_int(name: str, default: int) -> int:
     return int(raw)
 
 
+# демо-пароль seed(docs/tz - стенд для жюри); вход с ним помечается флагом password_is_default(SEC-08)
+DEMO_PASSWORD = "Demo-2026!"
+
+
 @dataclass
 class Settings:
     db_path: str = field(default_factory=lambda: os.environ.get("DB_PATH", "backend/data/archive.db"))
@@ -29,7 +33,11 @@ class Settings:
     session_ttl_min: int = field(default_factory=lambda: _env_int("SESSION_TTL_MIN", 30))
     login_max_attempts: int = field(default_factory=lambda: _env_int("LOGIN_MAX_ATTEMPTS", 5))
     login_window_min: int = field(default_factory=lambda: _env_int("LOGIN_WINDOW_MIN", 10))
+    # счётчик по одному IP на все логины(SEC-05) - перебор имён с одного адреса
+    login_ip_max_attempts: int = field(default_factory=lambda: _env_int("LOGIN_IP_MAX_ATTEMPTS", 30))
     cookie_secure: bool = field(default_factory=lambda: _env_bool("COOKIE_SECURE", False))
+    # Swagger и схема OpenAPI раскрывают всю поверхность API - на проде выключены(SEC-11)
+    api_docs: bool = field(default_factory=lambda: _env_bool("API_DOCS", False))
 
 
 def get_settings() -> Settings:
