@@ -245,11 +245,11 @@ SRI для внешних скриптов (сейчас внешних скри
 `.github/workflows/ci.yml` на каждый push и pull request:
 
 - `backend`: `pip-audit -r requirements.txt`, `ruff check`, `ruff format --check`, `pytest -q`
-  (142 теста), seed + uvicorn + curl-smoke `/api/health` и поиска;
+  (179 тестов), seed + uvicorn + curl-smoke `/api/health` и поиска;
 - `web`: `html-validate`, `scripts/check_links.py web`;
 - `docker`: сборка образа.
 
-Тесты безопасности - 92 из 142:
+Тесты безопасности (состав на момент аудита: 92 из 142; сейчас в репозитории 179 тестов):
 
 | Файл | Тестов | Что проверяют |
 |---|---|---|

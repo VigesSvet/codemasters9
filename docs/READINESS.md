@@ -36,7 +36,7 @@ e-arhiv.vko.gov.kz; в репозитории остались только фа
 
 CI (.github/workflows/ci.yml) при каждом push и PR:
 
-- backend: установка зависимостей, ruff check, ruff format --check, pip-audit, pytest -q (142 теста),
+- backend: установка зависимостей, ruff check, ruff format --check, pip-audit, pytest -q (179 тестов),
   загрузка демо-БД (python -m backend.seed) и smoke-проверка — запуск uvicorn в фоне и
   curl /api/health и /api/catalog/search?q=риддер;
 - web: html-validate и scripts/check_links.py web;
