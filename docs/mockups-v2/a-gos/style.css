@@ -764,3 +764,7 @@ html[data-vi] .hero.big .plate{background:#000;border:2px solid #fff}
 .art-rel .card img{filter:none}
 @media(max-width:1024px){.art{grid-template-columns:1fr;gap:40px}.art-side{position:static}.art-rel{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.art{padding-top:24px}.art-pn{grid-template-columns:1fr}.art-nb.next{text-align:left}.art-rel{grid-template-columns:1fr}.art-fig{margin-left:calc(-1*var(--pad-x));margin-right:calc(-1*var(--pad-x))}.art-fig figcaption{padding-left:var(--pad-x)}}
+
+/* D3-D5 filialy */
+.bcard .bnote{color:var(--text-muted);font-size:12px}
+.doc h3.faq-g{margin:22px 0 6px;font-size:18px}
