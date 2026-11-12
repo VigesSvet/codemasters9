@@ -6,6 +6,7 @@
 <title>Новость — Госархив ВКО</title>
 <meta name="description" content="Новость Государственного архива ВКО.">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="p-api.css">
 </head>
 <body data-nav="">
 <div class="readbar" aria-hidden="true"><i id="rb"></i></div>
@@ -18,63 +19,57 @@
 <div class="wrap art-more" id="more"></div>
 </main>
 <div id="bottom"></div>
+<script src="api.js"></script>
 <script src="app.js"></script>
-<script src="news-data.js"></script>
 <script>
 (function(){
-var N=window.NEWS, q=new URLSearchParams(location.search), id=+q.get("id");
-var o=N.filter(function(x){return x.id===id})[0]||N.filter(function(x){return x.t[0]})[0]||N[0], i=N.indexOf(o);
-var MON={ru:["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"],
- kk:["қаңтар","ақпан","наурыз","сәуір","мамыр","маусым","шілде","тамыз","қыркүйек","қазан","қараша","желтоқсан"],
- en:["January","February","March","April","May","June","July","August","September","October","November","December"]};
-var BR=[["Алтай","Алтай","Altai",/алтай|зырян/i],["Риддер","Риддер","Ridder",/риддер/i],["Зайсан","Зайсан","Zaisan",/зайсан/i],["Жарма","Жарма","Zharma",/жарм|калбатау|қалбатау/i],["Усть-Каменогорск","Өскемен","Oskemen",/усть-каменогорск|өскемен/i]];
-function lang(){return (window.getLang&&getLang())||document.documentElement.lang||"ru"}
-function fdl(d,L){var m=+d.slice(5,7)-1,day=+d.slice(8,10),y=d.slice(0,4);return L==="en"?MON.en[m]+" "+day+", "+y:day+" "+MON[L==="kk"?"kk":"ru"][m]+" "+y+(L==="kk"?" ж.":"")}
-function fd(d){return d.slice(8,10)+"."+d.slice(5,7)+"."+d.slice(0,4)}
-function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;")}
-function T(x,k){return (k?x.t[1]:x.t[0])||x.t[0]||x.t[1]}
-function H(x,k){return (k?x.h[1]:x.h[0])||x.h[0]||x.h[1]||""}
-function strip(h){var d=document.createElement("div");d.innerHTML=h;return (d.textContent||"").replace(/\s+/g," ").trim()}
-function branch(x){var s=strip(x.h[0]+" "+x.h[1]);for(var j=0;j<BR.length;j++)if(BR[j][3].test(s))return BR[j];return null}
-function render(){
- var L=lang(),k=L==="kk",t=T(o,k),h=H(o,k),txt=strip(h),words=txt.split(" ").length,min=Math.max(1,Math.round(words/180)),b=branch(o);
- document.title=t+" — Госархив ВКО";
- document.getElementById("crumb").textContent=t.length>48?t.slice(0,46)+"…":t;
- /* лид = первое предложение, тело без него */
- var d=document.createElement("div");d.innerHTML=h;
- var firstP=d.querySelector("p"),lead="";
- if(firstP){var s=firstP.textContent.trim(),m=s.match(/^(.{40,280}?[.!?])\s+(?=[А-ЯЁӘҒҚҢӨҰҮҺІA-Z«\d])/);lead=m?m[1]:"";if(lead){firstP.textContent=s.slice(lead.length).trim();if(!firstP.textContent)firstP.remove()}}
- d.querySelectorAll("img").forEach(function(im){im.removeAttribute("width");im.removeAttribute("height")});
- d.querySelectorAll("[style]").forEach(function(e){e.removeAttribute("style")});
- var url=location.href,ut=encodeURIComponent(url),tt=encodeURIComponent(t);
- var has=function(x){return x.t[k?1:0]};var latest=N.filter(function(x){return x!==o&&has(x)}).slice(0,6);
- var bn=b?(k?b[1]:L==="en"?b[2]:b[0]):"";
- document.getElementById("art").innerHTML=
- '<article class="art-main">'+
-  '<p class="art-kicker"><a class="chip" href="news.html">'+tr("Новости","Жаңалықтар","News")+'</a>'+(b?' <span class="chip alt">'+bn+'</span>':'')+'</p>'+
-  '<h1 class="art-h">'+esc(t)+'</h1>'+
-  (lead?'<p class="art-lead">'+esc(lead)+'</p>':'')+
-  '<div class="art-meta"><time datetime="'+o.d+'">'+fdl(o.d,L)+'</time><span>'+min+' '+tr("мин чтения","мин оқу","min read")+'</span><span>'+tr("Госархив ВКО","ШҚО мемлекеттік архиві","State Archive of East Kazakhstan")+'</span></div>'+
-  '<div class="art-share"><span>'+tr("Поделиться:","Бөлісу:","Share:")+'</span><a href="https://t.me/share/url?url='+ut+'&text='+tt+'" target="_blank" rel="noopener">Telegram</a><a href="https://wa.me/?text='+tt+'%20'+ut+'" target="_blank" rel="noopener">WhatsApp</a><a href="https://www.facebook.com/sharer/sharer.php?u='+ut+'" target="_blank" rel="noopener">Facebook</a><button type="button" id="cp">'+tr("Скопировать ссылку","Сілтемені көшіру","Copy link")+'</button></div>'+
-  (o.i?'<figure class="art-fig"><img src="'+o.i+'" alt="'+esc(t)+'"><figcaption>'+tr("Фото: Государственный архив ВКО","Фото: ШҚО мемлекеттік архиві","Photo: State Archive of East Kazakhstan")+'</figcaption></figure>':'')+
-  '<div class="art-body">'+d.innerHTML+'</div>'+
-  '<p class="art-tags"><a class="tag" href="news.html?year='+o.d.slice(0,4)+'">'+o.d.slice(0,4)+'</a>'+(b?'<a class="tag" href="filialy.html">'+bn+'</a>':'')+'<a class="tag" href="news.html">'+tr("Все новости","Барлық жаңалықтар","All news")+'</a></p>'+
-  '<p class="art-src">'+tr("Опубликовано на прежнем сайте архива: ","Архивтің бұрынғы сайтында жарияланған: ","Originally published at: ")+'<a href="http://e-arhiv.vko.gov.kz/ru/Page/Index/'+o.id+'" target="_blank" rel="noopener">e-arhiv.vko.gov.kz</a></p>'+
- '</article>'+
- '<aside class="art-side"><h2>'+tr("Последние новости","Соңғы жаңалықтар","Latest news")+'</h2><ol>'+
-  latest.map(function(x){return '<li><time>'+fd(x.d)+'</time><a href="novost.html?id='+x.id+'">'+esc(T(x,k))+'</a></li>'}).join("")+
-  '</ol><a class="btn" href="news.html">'+tr("Все новости","Барлық жаңалықтар","All news")+' ›</a></aside>';
- var nw=N[i-1],ol=N[i+1],rel=N.filter(function(x){return x!==o&&x.i&&x.t[k?1:0]}).slice(0,3);
- function nb(x,lbl,cls){return x?'<a class="art-nb '+cls+'" href="novost.html?id='+x.id+'"><span>'+lbl+'</span><b>'+esc(T(x,k))+'</b><time>'+fd(x.d)+'</time></a>':'<span></span>'}
- document.getElementById("more").innerHTML=
-  '<nav class="art-pn" aria-label="'+tr("Соседние новости","Көрші жаңалықтар","Adjacent news")+'">'+nb(ol,"‹ "+tr("Предыдущая","Алдыңғы","Previous"),"prev")+nb(nw,tr("Следующая","Келесі","Next")+" ›","next")+'</nav>'+
-  '<h2 class="art-rel-h">'+tr("Читайте также","Сонымен қатар оқыңыз","Read also")+'</h2><div class="art-rel">'+
-  rel.map(function(x){return '<div class="card"><img src="'+x.i+'" alt="" loading="lazy"><div class="b"><time class="nd">'+fd(x.d)+'</time><h3><a href="novost.html?id='+x.id+'">'+esc(T(x,k))+'</a></h3></div></div>'}).join("")+'</div>';
- var cp=document.getElementById("cp");cp.onclick=function(){(navigator.clipboard?navigator.clipboard.writeText(url):Promise.reject()).then(function(){cp.textContent=tr("Ссылка скопирована","Сілтеме көшірілді","Link copied")},function(){prompt("URL",url)})};
-}
-window.onLang=render;render();
-var rb=document.getElementById("rb"),art=document.getElementById("art");
-addEventListener("scroll",function(){var r=art.getBoundingClientRect(),p=Math.min(1,Math.max(0,-r.top/Math.max(1,r.height-innerHeight)));rb.style.transform="scaleX("+p+")"},{passive:true});
+  var id = new URLSearchParams(location.search).get("id");
+  var art = document.getElementById("art"), more = document.getElementById("more");
+  var last = null;
+  function esc(v){ return window.gosEsc ? gosEsc(v) : String(v == null ? "" : v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  function lang(){ return getLang() === "kk" ? "kk" : "ru"; }
+  function title(o){ return lang() === "kk" ? (o.title_kk || o.title_ru || "") : (o.title_ru || o.title_kk || ""); }
+  function lead(o){ return lang() === "kk" ? (o.lead_kk || o.lead_ru || "") : (o.lead_ru || o.lead_kk || ""); }
+  function body(o){ return lang() === "kk" ? (o.html_kk || o.html_ru || "") : (o.html_ru || o.html_kk || ""); }
+  var MON = { ru: ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"],
+    kk: ["қаңтар","ақпан","наурыз","сәуір","мамыр","маусым","шілде","тамыз","қыркүйек","қазан","қараша","желтоқсан"],
+    en: ["January","February","March","April","May","June","July","August","September","October","November","December"] };
+  function fd(d){ return d ? d.slice(8,10) + "." + d.slice(5,7) + "." + d.slice(0,4) : ""; }
+  function fdl(d){ if (!d) return ""; var L = lang(), m = +d.slice(5,7) - 1, day = +d.slice(8,10), y = d.slice(0,4);
+    return L === "en" ? MON.en[m] + " " + day + ", " + y : day + " " + MON[L === "kk" ? "kk" : "ru"][m] + " " + y + (L === "kk" ? " ж." : ""); }
+  function render(o){
+    last = o;
+    document.title = title(o) + " — Госархив ВКО";
+    var crumb = document.getElementById("crumb");
+    if (crumb) crumb.textContent = title(o).length > 48 ? title(o).slice(0, 46) + "…" : title(o);
+    var url = location.href, ut = encodeURIComponent(url), tt = encodeURIComponent(title(o));
+    art.innerHTML =
+      '<article class="art-main">' +
+      '<p class="art-kicker"><a class="chip" href="news.html">' + tr("Новости", "Жаңалықтар", "News") + '</a></p>' +
+      '<h1 class="art-h">' + esc(title(o)) + '</h1>' +
+      (lead(o) ? '<p class="art-lead">' + esc(lead(o)) + '</p>' : '') +
+      '<div class="art-meta"><time datetime="' + esc(o.date) + '">' + fdl(o.date) + '</time><span>' + tr("Госархив ВКО", "ШҚО мемлекеттік архиві", "State Archive of East Kazakhstan") + '</span></div>' +
+      '<div class="art-share"><span>' + tr("Поделиться:", "Бөлісу:", "Share:") + '</span><a href="https://t.me/share/url?url=' + ut + '&text=' + tt + '" target="_blank" rel="noopener">Telegram</a><a href="https://wa.me/?text=' + tt + '%20' + ut + '" target="_blank" rel="noopener">WhatsApp</a><button type="button" id="cp">' + tr("Скопировать ссылку", "Сілтемені көшіру", "Copy link") + '</button></div>' +
+      (o.image ? '<figure class="art-fig"><img src="' + esc(o.image) + '" alt="' + esc(title(o)) + '"><figcaption>' + tr("Фото: Государственный архив ВКО", "Фото: ШҚО мемлекеттік архиві", "Photo: State Archive of East Kazakhstan") + '</figcaption></figure>' : '') +
+      '<div class="art-body">' + body(o) + '</div>' +
+      '<p class="art-tags"><a class="tag" href="news.html">' + tr("Все новости", "Барлық жаңалықтар", "All news") + '</a></p>' +
+      '</article>' +
+      '<aside class="art-side"><h2>' + tr("Новости архива", "Архив жаңалықтары", "Archive news") + '</h2><p>' + tr("Сообщения о новых оцифрованных фондах и выставках.", "Жаңа цифрландырылған қорлар мен көрмелер туралы хабарлар.", "Updates on newly digitised fonds and exhibitions.") + '</p><a class="btn" href="news.html">' + tr("Все новости", "Барлық жаңалықтар", "All news") + ' ›</a></aside>';
+    var cp = document.getElementById("cp");
+    if (cp) cp.onclick = function(){ (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(function(){ cp.textContent = tr("Ссылка скопирована", "Сілтеме көшірілді", "Link copied"); }, function(){ prompt("URL", url); }); };
+  }
+  if (!id) {
+    art.innerHTML = '<div class="gos-state gos-state--empty">' + tr("Новость не выбрана.", "Жаңалық таңдалмады.", "No article selected.") + ' <a href="news.html">' + tr("К новостям", "Жаңалықтарға", "To the news") + '</a></div>';
+  } else {
+    gosState(art, "loading");
+    window.gosApi.get("/api/news/" + encodeURIComponent(id)).then(function(o){ render(o); }).catch(function(err){
+      if (err && err.name === "ApiError" && err.status === 404) gosState(art, "empty");
+      else gosState(art, (err && err.name === "ApiError") ? "error" : "offline");
+    });
+  }
+  window.onLang = function(){ if (last) render(last); };
+  var rb = document.getElementById("rb");
+  addEventListener("scroll", function(){ var r = art.getBoundingClientRect(); var p = Math.min(1, Math.max(0, -r.top / Math.max(1, r.height - innerHeight))); rb.style.transform = "scaleX(" + p + ")"; }, { passive: true });
 })();
 </script>
 </body>

@@ -6,6 +6,7 @@
 <title>Электронный каталог — Госархив ВКО</title>
 <meta name="description" content="Поиск по фондам, описям и делам Государственного архива ВКО: 12 параметров поиска, фильтры, сортировка.">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="p-api.css">
 </head>
 <body data-nav="katalog">
 <div id="top"></div>
@@ -53,101 +54,7 @@
 </div>
 </main>
 <div id="bottom"></div>
+<script src="api.js"></script>
 <script src="app.js"></script>
-<script>
-var R=[
-{lv:"fond",c:"Ф. 1-П",f:"1-П",o:"",d:"",t:["Коллекция дореволюционных печатных изданий","Революцияға дейінгі баспа басылымдарының жинағы","Collection of pre-revolutionary printed works"],y1:1860,y2:1917,type:"print",cat:"fond",place:"Усть-Каменогорск",br:"uka-main",th:"hist",au:"",kw:"обзор памятная книжка печатные",lang:"ru",av:"open",dig:true,n:"1 опись, 312 дел",href:"fond.html",img:"survey1893.jpg"},
-{lv:"opis",c:"Ф. 1-П, оп. 1",f:"1-П",o:"1",d:"",t:["Печатные издания, 1860-1917","Баспа басылымдары, 1860-1917","Printed works, 1860-1917"],y1:1860,y2:1917,type:"print",cat:"opis",place:"Усть-Каменогорск",br:"uka-main",th:"hist",au:"",kw:"печатные издания",lang:"ru",av:"open",dig:true,n:"312 дел",href:"fond.html"},
-{lv:"delo",c:"Ф. 1-П, оп. 1, д. 245",f:"1-П",o:"1",d:"245",t:["Обзор Семипалатинской области за 1893 год","1893 жылғы Семей облысына шолу","Survey of Semipalatinsk region for 1893"],y1:1893,y2:1894,type:"print",cat:"delo",place:"Семипалатинск",br:"uka-main",th:"hist",au:"Военный губернатор Семипалатинской области",kw:"обзор население уезды 1893",lang:"ru",av:"open",dig:true,n:"48 л.",href:"delo.html",img:"survey1893.jpg"},
-{lv:"delo",c:"Ф. 1-П, оп. 1, д. 244",f:"1-П",o:"1",d:"244",t:["Памятная книжка Семипалатинской области, 1892","1892 жылғы Семей облысының естелік кітапшасы","Memorial handbook of Semipalatinsk region, 1892"],y1:1892,y2:1892,type:"print",cat:"delo",place:"Семипалатинск",br:"uka-main",th:"hist",au:"Семипалатинский областной статистический комитет",kw:"памятная книжка справочник",lang:"ru",av:"open",dig:true,n:"36 л.",href:"delo.html",img:"survey1893.jpg"},
-{lv:"fond",c:"Ф. 18",f:"18",o:"",d:"",t:["Метрические книги приходов Семипалатинской области","Семей облысы приходтарының метрикалық кітаптары","Parish registers of Semipalatinsk region"],y1:1895,y2:1917,type:"written",cat:"fond",place:"Семипалатинск",br:"uka-main",th:"fam",au:"Церковные приходы",kw:"метрические книги рождение брак смерть",lang:"ru",av:"lim",dig:false,n:"2 описи, 1 204 дела",href:"fond.html"},
-{lv:"fond",c:"ГАВКО, ф. 1514",f:"1514",o:"",d:"",t:["Аксенов В.С., личный фонд","Аксенов В.С., жеке қор","Aksenov V.S., personal fonds"],y1:1956,y2:2004,type:"personal",cat:"personal",place:"Усть-Каменогорск",br:"uka-pers",th:"people",au:"Аксенов В.С.",kw:"личный фонд письма фотографии",lang:"ru",av:"lim",dig:false,n:"1 опись, 67 ед. хр.",href:"fond.html"},
-{lv:"doc",c:"Ф. 77-Ф, оп. 1, д. 12",f:"77-Ф",o:"1",d:"12",t:["Вид города Усть-Каменогорска, гравюра, 1885","Өскемен қаласының көрінісі, гравюра, 1885","View of Ust-Kamenogorsk, engraving, 1885"],y1:1885,y2:1885,type:"photo",cat:"photo",place:"Усть-Каменогорск",br:"uka-main",th:"city",au:"Дж. Кеннан",kw:"гравюра Иртыш город вид",lang:"ru",av:"open",dig:true,n:"1 л.",href:"delo.html",img:"siberia.jpg"},
-{lv:"doc",c:"Ф. 77-Ф, оп. 1, д. 14",f:"77-Ф",o:"1",d:"14",t:["Семипалатинск. Базар, 1885","Семей. Базар, 1885","Semipalatinsk. The bazaar, 1885"],y1:1885,y2:1885,type:"photo",cat:"photo",place:"Семипалатинск",br:"uka-main",th:"city",au:"Дж. Кеннан",kw:"базар торговля город фотография",lang:"ru",av:"open",dig:true,n:"1 л.",href:"delo.html",img:"bazaar.jpg"},
-{lv:"doc",c:"Ф. 77-Ф, оп. 1, д. 15",f:"77-Ф",o:"1",d:"15",t:["Иртышский паром у Семипалатинска, 1885","Семей маңындағы Ертіс паромы, 1885","The Irtysh ferry near Semipalatinsk, 1885"],y1:1885,y2:1885,type:"photo",cat:"photo",place:"Семипалатинск",br:"uka-main",th:"city",au:"Дж. Кеннан",kw:"паром Иртыш переправа",lang:"ru",av:"open",dig:true,n:"1 л.",href:"delo.html",img:"ferry.jpg"},
-{lv:"doc",c:"Ф. 77-Ф, оп. 1, д. 16",f:"77-Ф",o:"1",d:"16",t:["Казахский аул близ Семипалатинска, 1885","Семей маңындағы қазақ ауылы, 1885","A Kazakh aul near Semipalatinsk, 1885"],y1:1885,y2:1885,type:"photo",cat:"photo",place:"Семипалатинск",br:"uka-main",th:"people",au:"Дж. Кеннан",kw:"аул юрты быт фотография",lang:"ru",av:"open",dig:true,n:"1 л.",href:"delo.html",img:"aul.jpg"},
-{lv:"delo",c:"Ф. 61, оп. 2, д. 38",f:"61",o:"2",d:"38",t:["Приказы по личному составу Риддерского рудника, 1938-1945","Риддер кенішінің жеке құрам бойынша бұйрықтары, 1938-1945","Personnel orders of the Ridder mine, 1938-1945"],y1:1938,y2:1945,type:"org",cat:"delo",place:"Риддер",br:"ridder",th:"industry",au:"Риддерский рудник",kw:"приказы личный состав рудник война",lang:"ru",av:"lim",dig:false,n:"212 л.",href:"delo.html"},
-{lv:"delo",c:"Ф. 9, оп. 1, д. 77",f:"9",o:"1",d:"77",t:["Список населённых мест Зайсанского уезда, 1901","1901 жылғы Зайсан уезінің елді мекендер тізімі","List of settlements of Zaisan district, 1901"],y1:1901,y2:1901,type:"written",cat:"delo",place:"Зайсан",br:"zaisan",th:"hist",au:"Зайсанский уездный начальник",kw:"список населённые места уезд",lang:"ru",av:"open",dig:true,n:"64 л.",href:"delo.html"},
-{lv:"delo",c:"Ф. 33, оп. 1, д. 105",f:"33",o:"1",d:"105",t:["Зыряновский рудник: отчёты о добыче, 1920-1935","Зырян кеніші: өндіру туралы есептер, 1920-1935","Zyryanovsk mine: production reports, 1920-1935"],y1:1920,y2:1935,type:"org",cat:"delo",place:"Алтай",br:"altai",th:"industry",au:"Зыряновский рудник",kw:"рудник отчёты добыча свинец",lang:"ru",av:"open",dig:true,n:"140 л.",href:"delo.html"},
-{lv:"delo",c:"Ф. 120, оп. 3, д. 14",f:"120",o:"3",d:"14",t:["Усть-Каменогорский свинцово-цинковый комбинат: годовые отчёты, 1950-1960","Өскемен қорғасын-мырыш комбинаты: жылдық есептер, 1950-1960","Ust-Kamenogorsk lead-zinc plant: annual reports, 1950-1960"],y1:1950,y2:1960,type:"org",cat:"delo",place:"Усть-Каменогорск",br:"uka-pers",th:"industry",au:"Свинцово-цинковый комбинат",kw:"комбинат отчёты промышленность",lang:"ru",av:"open",dig:false,n:"318 л.",href:"delo.html"},
-{lv:"delo",c:"Ф. 205, оп. 1, д. 3",f:"205",o:"1",d:"3",t:["Карта Семипалатинской области, чертёж, 1905","1905 жылғы Семей облысының картасы, сызба","Map of Semipalatinsk region, drawing, 1905"],y1:1905,y2:1905,type:"map",cat:"map",place:"Семипалатинск",br:"uka-main",th:"hist",au:"Областное правление",kw:"карта чертёж область границы",lang:"ru",av:"open",dig:true,n:"4 л.",href:"delo.html",img:"survey1893.jpg"}
-];
-var TH={hist:["История региона","Өңір тарихы","Regional history"],city:["История городов","Қала тарихы","History of towns"],industry:["Промышленность","Өнеркәсіп","Industry"],people:["Известные личности","Танымал тұлғалар","Notable people"],fam:["История семьи","Отбасы тарихы","Family history"]};
-var TY={print:["Печатное издание","Баспа басылымы","Printed work"],written:["Письменный источник","Жазба дерек","Written source"],photo:["Фотография","Фотосурет","Photograph"],map:["Карта, чертёж","Карта, сызба","Map, drawing"],org:["Документы организаций","Ұйымдар құжаттары","Organisation records"],personal:["Личного происхождения","Жеке шығу тегі","Personal records"]};
-var BR={"uka-main":["ГАВКО, Усть-Каменогорск","ШҚО МА, Өскемен","SAEK, Ust-Kamenogorsk"],"uka-pers":["Усть-Каменогорский филиал (личный состав)","Өскемен филиалы (жеке құрам)","Ust-Kamenogorsk branch (personnel)"],ridder:["Риддерский филиал","Риддер филиалы","Ridder branch"],altai:["Филиал Алтай","Алтай филиалы","Altai branch"],zaisan:["Зайсанский филиал","Зайсан филиалы","Zaisan branch"]};
-var LV={fond:["ФОНД","ҚОР","FONDS"],opis:["ОПИСЬ","ТІЗІМДЕМЕ","INVENTORY"],delo:["ДЕЛО","ІС","FILE"],doc:["ДОКУМЕНТ","ҚҰЖАТ","ITEM"]};
-var CT=[["all","Все","Барлығы","All"],["fond","Фонды","Қорлар","Fonds"],["opis","Описи","Тізімдемелер","Inventories"],["delo","Дела","Істер","Files"],["photo","Фотографии","Фотосуреттер","Photographs"],["map","Карты и чертежи","Карталар","Maps"],["personal","Личные фонды","Жеке қорлар","Personal fonds"]];
-var PLACES=["Усть-Каменогорск","Семипалатинск","Риддер","Алтай","Зайсан"];
-var S={cat:"all",page:1,per:5},P=new URLSearchParams(location.search);
-function lg(a){var l=getLang();return a[l==="kk"?1:l==="en"?2:0]}
-function $(i){return document.getElementById(i)}
-function hl(s,q){if(!q)return s;var r=q.split(/\s+/).filter(Boolean).map(function(w){return w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")});if(!r.length)return s;return s.replace(new RegExp("("+r.join("|")+")","ig"),"<mark>$1</mark>")}
-var SYNONYMS_RAW=[["лениногорск","риддер"],["зыряновск","алтай"],["семипалатинск","семей"],["усть-каменогорск","оскемен"],["серебрянск"],["шемонаиха"]];var SYNONYMS=SYNONYMS_RAW.map(function(g){return g.map(norm)});function synExpand(q){var out=[q];SYNONYMS.forEach(function(g){for(var i=0;i<g.length;i++){var term=g[i],idx=q.indexOf(term);if(idx<0)continue;for(var j=0;j<g.length;j++){if(j===i)continue;var nv=q.slice(0,idx)+g[j]+q.slice(idx+term.length);if(out.indexOf(nv)<0)out.push(nv)}}});return out}
-function norm(s){return String(s).toLowerCase().replace(/ё/g,"е").replace(/ә/g,"а").replace(/і/g,"и").replace(/ң/g,"н").replace(/ғ/g,"г").replace(/ү/g,"у").replace(/ұ/g,"у").replace(/қ/g,"к").replace(/ө/g,"о").replace(/һ/g,"х").replace(/[\-–—]/g," ").replace(/\s+/g," ").trim()}
-function buildFacets(){
-  var ty="",br="";
-  Object.keys(TY).forEach(function(k){var n=R.filter(function(r){return r.type===k}).length;ty+='<label class="chk"><input type="checkbox" name="type" value="'+k+'"><span class="l">'+lg(TY[k])+'</span><span class="cnt">'+n+'</span></label>'});
-  Object.keys(BR).forEach(function(k){var n=R.filter(function(r){return r.br===k}).length;br+='<label class="chk"><input type="checkbox" name="br" value="'+k+'"><span class="l">'+lg(BR[k])+'</span><span class="cnt">'+n+'</span></label>'});
-  var keep=function(sel){return [].map.call(document.querySelectorAll(sel+":checked"),function(x){return x.value})};
-  var st=keep("[name=type]"),sb=keep("[name=br]");
-  $("g_type").innerHTML=ty;$("g_branch").innerHTML=br;
-  st.forEach(function(v){document.querySelector("[name=type][value="+v+"]").checked=true});sb.forEach(function(v){document.querySelector("[name=br][value="+v+"]").checked=true});
-  var th=$("f_theme"),v1=th.value,pl=$("f_place"),v2=pl.value;
-  th.innerHTML='<option value="">'+tr("Любая","Кез келген","Any")+"</option>"+Object.keys(TH).map(function(k){return '<option value="'+k+'">'+lg(TH[k])+"</option>"}).join("");th.value=v1;
-  pl.innerHTML='<option value="">'+tr("Любой","Кез келген","Any")+"</option>"+PLACES.map(function(p){return "<option>"+p+"</option>"}).join("");pl.value=v2;
-}
-function vals(n){return [].map.call(document.querySelectorAll("[name="+n+"]:checked"),function(x){return x.value})}
-function filt(){
-  var q=norm($("q").value),qv=q?synExpand(q):[],fo=$("f_fond").value.trim().toLowerCase(),op=$("f_opis").value.trim(),de=$("f_delo").value.trim(),
-  per=$("f_per").value,y1=+$("f_y1").value||0,y2=+$("f_y2").value||0,au=$("f_auth").value.trim().toLowerCase(),th=$("f_theme").value,pl=$("f_place").value,kw=$("f_kw").value.trim().toLowerCase(),
-  ty=vals("type"),br=vals("br"),dig=$("f_dig").checked,opn=$("f_open").checked,lang=$("f_lang").value;
-  if(per){var p=per.split("-");y1=y1||+p[0];y2=y2||+p[1]}
-  return R.filter(function(r){
-    if(S.cat!=="all"&&r.cat!==S.cat&&!(S.cat==="personal"&&r.type==="personal"))return false;
-    if(q){var hay=norm(r.t.join(" ")+" "+r.c+" "+r.kw+" "+r.au);if(!qv.some(function(v){return v.split(/\s+/).every(function(w){return hay.indexOf(w)>-1})}))return false}
-    if(fo&&r.f.toLowerCase().indexOf(fo)<0)return false;
-    if(op&&r.o!==op)return false;if(de&&r.d!==de)return false;
-    if(y1&&r.y2<y1)return false;if(y2&&r.y1>y2)return false;
-    if(au&&(r.au||"").toLowerCase().indexOf(au)<0)return false;
-    if(th&&r.th!==th)return false;if(pl&&r.place!==pl)return false;
-    if(kw&&r.kw.toLowerCase().indexOf(kw)<0)return false;
-    if(ty.length&&ty.indexOf(r.type)<0)return false;if(br.length&&br.indexOf(r.br)<0)return false;
-    if(dig&&!r.dig)return false;if(opn&&r.av!=="open")return false;if(lang&&r.lang!==lang)return false;
-    return true;
-  });
-}
-function render(){
-  var rs=filt(),s=$("sort").value;
-  if(s==="d1")rs.sort(function(a,b){return a.y1-b.y1});if(s==="d2")rs.sort(function(a,b){return b.y1-a.y1});if(s==="code")rs.sort(function(a,b){return a.c.localeCompare(b.c,"ru",{numeric:true})});
-  var pages=Math.max(1,Math.ceil(rs.length/S.per));if(S.page>pages)S.page=pages;
-  $("count").textContent=rs.length?tr("Найдено: ","Табылды: ","Found: ")+rs.length+tr(" · показано "," · көрсетілді "," · showing ")+((S.page-1)*S.per+1)+"-"+Math.min(S.page*S.per,rs.length):tr("Ничего не найдено","Ештеңе табылмады","Nothing found");
-  var q=$("q").value.trim(),h="";
-  rs.slice((S.page-1)*S.per,S.page*S.per).forEach(function(r){
-    var th=r.img?'<img class="th" src="img/'+r.img+'" alt="" loading="lazy">':'<div class="ph">'+lg(TY[r.type])+"</div>";
-    var av=r.av==="open"?'<span class="tag ok">'+tr("Открыто","Ашық","Open")+"</span>":'<span class="tag lim">'+tr("Ограничено","Шектеулі","Restricted")+"</span>";
-    var dg=r.dig?'<span class="tag ok">'+tr("Скан онлайн","Скан онлайн","Scan online")+"</span>":'<span class="tag">'+tr("Без скана","Скансыз","No scan")+"</span>";
-    var yr=r.y1===r.y2?r.y1:r.y1+"-"+r.y2;
-    h+='<article class="res"><div>'+th+'</div><div><span class="chip'+(r.lv==="opis"?" l2":r.lv==="delo"||r.lv==="doc"?" l3":"")+'">'+lg(LV[r.lv])+'</span><h3><a href="'+r.href+'">'+hl(lg(r.t),q)+'<span class="chev"></span></a></h3><dl><dt>'+tr("Шифр","Шифр","Reference")+"</dt><dd>"+hl(r.c,q)+"</dd><dt>"+tr("Даты","Күндер","Dates")+"</dt><dd>"+yr+"</dd><dt>"+tr("Хранится","Сақталады","Held by")+"</dt><dd>"+lg(BR[r.br])+"</dd><dt>"+tr("Объём","Көлемі","Extent")+"</dt><dd>"+r.n+'</dd></dl><div class="tags">'+av+dg+'<span class="tag">'+lg(TY[r.type])+"</span></div></div></article>";
-  });
-  $("results").innerHTML=h||'<div class="empty"><p><b>'+tr("По вашему запросу ничего не найдено","Сұрауыңыз бойынша ештеңе табылмады","Nothing matches your query")+"</b></p><p>"+tr("Измените формулировку или сбросьте фильтры. Можно спросить ИИ-помощника.","Тұжырымды өзгертіңіз немесе сүзгілерді тастаңыз. ЖИ көмекшіден сұрауға болады.","Try different wording or reset the filters. You can also ask the AI assistant.")+'</p><ul style="text-align:left;margin:8px auto 16px;max-width:46ch"><li>'+tr("Проверьте написание (например, «Усть-Каменогорск» и «Өскемен»).","Жазылуын тексеріңіз (мысалы, «Усть-Каменогорск» және «Өскемен»).","Check the spelling (e.g. “Ust-Kamenogorsk” and “Oskemen”).")+'</li><li>'+tr("Уберите часть фильтров.","Сүзгілердің бір бөлігін алып тастаңыз.","Remove some filters.")+'</li><li>'+tr("Расширьте период поиска.","Іздеу кезеңін кеңейтіңіз.","Widen the date range.")+'</li></ul><button class="btn sm" type="button" onclick="resetAll()">'+tr("Сбросить фильтры","Сүзгілерді тастау","Reset filters")+"</button></div>";
-  var pg="";if(pages>1){pg+='<li><button '+(S.page===1?"disabled":"")+' data-p="'+(S.page-1)+'" aria-label="'+tr("Назад","Артқа","Previous")+'">&larr;</button></li>';for(var i=1;i<=pages;i++)pg+='<li><button data-p="'+i+'"'+(i===S.page?' aria-current="page"':"")+">"+i+"</button></li>";pg+='<li><button '+(S.page===pages?"disabled":"")+' data-p="'+(S.page+1)+'" aria-label="'+tr("Вперёд","Алға","Next")+'">&rarr;</button></li>'}
-  $("pager").innerHTML=pg;
-  var base=S.cat;S.cat="all";var all=filt();S.cat=base;
-  $("cats").innerHTML=CT.map(function(c){var n=c[0]==="all"?all.length:all.filter(function(r){return r.cat===c[0]||(c[0]==="personal"&&r.type==="personal")}).length;var t=tr(c[1],c[2],c[3])+" ("+n+")";return c[0]===S.cat?"<span>"+t+"</span>":'<a href="#" data-cat="'+c[0]+'">'+t+"</a>"}).join("");
-}
-function resetAll(){$("ff").reset();$("q").value="";S.cat="all";S.page=1;render()}
-window.resetAll=resetAll;
-document.addEventListener("click",function(e){
-  var p=e.target.closest("[data-p]");if(p&&!p.disabled){S.page=+p.dataset.p;render();window.scrollTo({top:document.querySelector(".cat").offsetTop-40})}
-  var c=e.target.closest("[data-cat]");if(c){e.preventDefault();S.cat=c.dataset.cat;S.page=1;render()}
-});
-function upd(){S.page=1;render()}
-$("ff").addEventListener("input",upd);$("ff").addEventListener("change",upd);$("sort").addEventListener("change",upd);
-$("ff").addEventListener("reset",function(){setTimeout(function(){S.page=1;render()},0)});
-$("qf").addEventListener("submit",function(e){e.preventDefault();upd()});
-$("q").addEventListener("input",upd);$("apply").onclick=upd;
-window.onLang=function(){buildFacets();render()};
-if(P.get("q"))$("q").value=P.get("q");if(P.get("cat"))S.cat=P.get("cat");
-buildFacets();render();
-</script>
+<script src="catalog.js"></script>
 </body></html>
