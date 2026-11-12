@@ -796,3 +796,25 @@ html[data-vi] .hero.big .plate{background:#000;border:2px solid #fff}
 /* правки по замечаниям */
 .tabs{overflow-x:auto}
 .mapoff{padding:16px;font-size:15px;color:var(--text-muted)}
+
+/* ---------- мобильная версия ---------- */
+/* каталог: первый результат на первом экране, поэтому фильтры свёрнуты и открываются кнопкой */
+.fbtn{display:none}
+@media(max-width:1024px){
+  .cat{display:flex;flex-direction:column;align-items:stretch;gap:16px}
+  .filters{display:none}
+  .filters.open{display:block}
+  .fbtn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;padding:4px 20px;border:4px solid var(--btn-bg);background:var(--btn-bg);color:var(--btn-text);font:700 18px/32px var(--font-text);cursor:pointer;border-radius:0}
+  .fbtn:hover{background:var(--btn-hover-bg);color:var(--btn-hover-text)}
+  .fbtn .fcn{font:500 16px var(--font-mono)}
+  .fbtn::after{content:"";width:8px;height:8px;border-right:2.5px solid currentColor;border-bottom:2.5px solid currentColor;transform:rotate(45deg);flex:none;margin-top:-3px}
+  .fbtn[aria-expanded="true"]::after{transform:rotate(-135deg);margin-top:3px}
+}
+/* плавающие кнопки и плашка прототипа: на узком экране меньше слоёв и меньше текста */
+@media(max-width:600px){
+  .optab,.opp,.opp.on{display:none}
+  .aib{right:12px;bottom:12px;width:52px;height:52px;padding:0;gap:0;justify-content:center}
+  .aib>span:not(.m){display:none}
+  main{padding-bottom:96px}
+  .phase-long{display:none}
+}
