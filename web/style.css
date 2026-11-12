@@ -796,3 +796,12 @@ html[data-vi] .hero.big .plate{background:#000;border:2px solid #fff}
 /* правки по замечаниям */
 .tabs{overflow-x:auto}
 .mapoff{padding:16px;font-size:15px;color:var(--text-muted)}
+
+/* ---------- первый экран главной ---------- */
+.hero .kicker{font:500 14px/1.4 var(--font-mono);text-transform:uppercase;letter-spacing:.04em;color:var(--text-muted);margin:0 0 8px}
+.hero .sub{font:400 20px/1.5 var(--font-text);max-width:62ch}
+.hero .sf{max-width:760px;margin:20px 0 8px}
+.hero .sf input{height:56px;font-size:19px}
+.hero .sf button{width:auto;height:56px;padding:0 24px;font:700 18px var(--font-text)}
+.hero .hint{font-size:16px;margin:0 0 24px}
+
