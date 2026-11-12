@@ -827,6 +827,8 @@ html[data-vi] .hero.big .plate{background:#000;border:2px solid #fff}
   .aib>span:not(.m){display:none}
   main{padding-bottom:96px}
   .phase-long{display:none}
+}
+
 /* ---------- детали: фокус, ИИ, печать ---------- */
 .lang button{padding:8px 6px;min-width:36px}
 .car .dots button{height:24px;background-clip:content-box;padding:8px 0}
@@ -834,7 +836,6 @@ html[data-vi] .hero.big .plate{background:#000;border:2px solid #fff}
 .res .ph{border:1px solid var(--line);background:var(--bg-tint)}
 .m2.wait{color:var(--text-muted);border-left-color:var(--line)}
 .m2 .ai-mode{font-size:13px;padding:0 6px;border:1px solid currentColor}
-}
 
 /* ---------- «Как читать шифр?» в карточке дела ---------- */
 .cipher-help{margin:20px 0 0;border:1px solid var(--line);background:var(--surface)}
@@ -884,3 +885,15 @@ html[data-vi] .hero.big .plate{background:#000;border:2px solid #fff}
   .print-url{font:400 9pt/1.4 var(--font-mono);color:#333;margin:4pt 0 0;word-break:break-all}
 }
 
+/* ---------- сценарии и мелочи ---------- */
+/* кнопка-сценарий .sec2 в hero больше не используется; страховка от прижатого текста */
+.btn.sec2,.btn.sec2:visited{padding:4px 20px}
+/* вкладки каталога: подписи не переносим и не сжимаем, строка прокручивается по горизонтали */
+.tabs .tabw{flex:none}
+.tabs a,.tabs span{white-space:nowrap}
+@media(max-width:600px){
+  /* «?» у вкладок визуально компактнее, зона нажатия остаётся 32×32 */
+  .tabs .gt-btn{font-size:14px}
+  /* селект сортировки не заходит под плавающую кнопку ИИ (52px справа внизу) */
+  .rtop .sort{max-width:calc(100% - 72px)}
+}
