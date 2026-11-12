@@ -82,6 +82,7 @@ var S={cat:"all",page:1,per:5},P=new URLSearchParams(location.search);
 function lg(a){var l=getLang();return a[l==="kk"?1:l==="en"?2:0]}
 function $(i){return document.getElementById(i)}
 function hl(s,q){if(!q)return s;var r=q.split(/\s+/).filter(Boolean).map(function(w){return w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")});if(!r.length)return s;return s.replace(new RegExp("("+r.join("|")+")","ig"),"<mark>$1</mark>")}
+var SYNONYMS_RAW=[["лениногорск","риддер"],["зыряновск","алтай"],["семипалатинск","семей"],["усть-каменогорск","оскемен"],["серебрянск"],["шемонаиха"]];var SYNONYMS=SYNONYMS_RAW.map(function(g){return g.map(norm)});function synExpand(q){var out=[q];SYNONYMS.forEach(function(g){for(var i=0;i<g.length;i++){var term=g[i],idx=q.indexOf(term);if(idx<0)continue;for(var j=0;j<g.length;j++){if(j===i)continue;var nv=q.slice(0,idx)+g[j]+q.slice(idx+term.length);if(out.indexOf(nv)<0)out.push(nv)}}});return out}
 function norm(s){return String(s).toLowerCase().replace(/ё/g,"е").replace(/ә/g,"а").replace(/і/g,"и").replace(/ң/g,"н").replace(/ғ/g,"г").replace(/ү/g,"у").replace(/ұ/g,"у").replace(/қ/g,"к").replace(/ө/g,"о").replace(/һ/g,"х").replace(/[\-–—]/g," ").replace(/\s+/g," ").trim()}
 function buildFacets(){
   var ty="",br="";
@@ -97,13 +98,13 @@ function buildFacets(){
 }
 function vals(n){return [].map.call(document.querySelectorAll("[name="+n+"]:checked"),function(x){return x.value})}
 function filt(){
-  var q=norm($("q").value),fo=$("f_fond").value.trim().toLowerCase(),op=$("f_opis").value.trim(),de=$("f_delo").value.trim(),
+  var q=norm($("q").value),qv=q?synExpand(q):[],fo=$("f_fond").value.trim().toLowerCase(),op=$("f_opis").value.trim(),de=$("f_delo").value.trim(),
   per=$("f_per").value,y1=+$("f_y1").value||0,y2=+$("f_y2").value||0,au=$("f_auth").value.trim().toLowerCase(),th=$("f_theme").value,pl=$("f_place").value,kw=$("f_kw").value.trim().toLowerCase(),
   ty=vals("type"),br=vals("br"),dig=$("f_dig").checked,opn=$("f_open").checked,lang=$("f_lang").value;
   if(per){var p=per.split("-");y1=y1||+p[0];y2=y2||+p[1]}
   return R.filter(function(r){
     if(S.cat!=="all"&&r.cat!==S.cat&&!(S.cat==="personal"&&r.type==="personal"))return false;
-    if(q){var hay=norm(r.t.join(" ")+" "+r.c+" "+r.kw+" "+r.au);if(!q.split(/\s+/).every(function(w){return hay.indexOf(w)>-1}))return false}
+    if(q){var hay=norm(r.t.join(" ")+" "+r.c+" "+r.kw+" "+r.au);if(!qv.some(function(v){return v.split(/\s+/).every(function(w){return hay.indexOf(w)>-1})}))return false}
     if(fo&&r.f.toLowerCase().indexOf(fo)<0)return false;
     if(op&&r.o!==op)return false;if(de&&r.d!==de)return false;
     if(y1&&r.y2<y1)return false;if(y2&&r.y1>y2)return false;

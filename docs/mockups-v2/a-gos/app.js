@@ -106,10 +106,10 @@
     en: "Where can I find parish (metric) registers of Semipalatinsk from the 1900s?"
   };
   function aiSig() {
-    return '<p class="disc">' + L("Ответ сформирован автоматически и не является архивной справкой.", "Жауап автоматты түрде қалыптастырылды және архивтік анықтама болып табылмайды.", "This answer was generated automatically and is not an archival certificate.") + " " + L("Демо-режим: заранее подготовленный ответ.", "Демо-режим: алдын ала дайындалған жауап.", "Demo mode: a pre-prepared answer.") + "</p>";
+    return '<p class="disc">' + L("Ответ сформирован автоматически и не является архивной справкой.", "Жауап автоматты түрде қалыптастырылды және архивтік анықтама болып табылмайды.", "This answer was generated automatically and is not an archival certificate.") + " " + L("Демо-режим: заранее подготовленный ответ.", "Демо режимі: алдын ала дайындалған жауап.", "Demo mode: a pre-prepared answer.") + " " + L("Не указывайте в запросах персональные данные.", "Сұрауларда жеке деректерді көрсетпеңіз.", "Do not include personal data in your queries.") + "</p>";
   }
   function answer(q) {
-    var closed = /личное дело|личных дел|личного дела|персональн|персонал|иванов|петров|сидоров|жеке іс|жеке дерек|personal|personnel/i.test(q);
+    var closed = /личное дело|личных дел|личного дела|персональн|персонал|иванов|петров|сидоров|жеке іс|жеке дерек|personal file|personnel file|personal data|personnel/i.test(q);
     var m = /метри[чк]|metric|parish|кітап/i.test(q);
     var a = '<span class="src3">' + L("Архивный помощник", "Архив көмекшісі", "Archive assistant") + "</span>";
     if (closed) {
@@ -125,7 +125,7 @@
     } else {
       a += "<p>" + L("В открытых материалах сайта ответа нет.", "Сайттың ашық материалдарында жауап жоқ.", "There is no answer in the open materials on the site.") + "</p>";
       a += "<p>" + L("Я не выдумываю сведения и не привожу непроверенные шифры. Чтобы уточнить информацию, обратитесь в архив или читальный зал.", "Мен мәліметтер мен тексерілмеген шифрларды ойлап таппаймын. Ақпаратты нақтылау үшін архивке немесе оқу залына хабарласыңыз.", "I do not invent facts or cite unverified references. Contact the archive or the reading room to clarify.") + "</p>";
-      a += '<ul><li><a href="' + B + 'ob-arhive.html#contacts">' + L("Контакты архива", "Архив байланыстары", "Archive contacts") + '</a></li><li><a href="' + B + 'ob-arhive.html#reading">' + L("Читальный зал", "Оқу залы", "Reading room") + "</a></li></ul>";
+      a += '<ul><li><a href="' + B + 'katalog.html?q=' + encodeURIComponent(q) + '">' + L("Попробовать поиск в каталоге", "Каталогтан іздеп көру", "Try searching the catalogue") + '</a></li><li><a href="' + B + 'ob-arhive.html#contacts">' + L("Контакты архива", "Архив байланыстары", "Archive contacts") + '</a></li><li><a href="' + B + 'ob-arhive.html#reading">' + L("Читальный зал", "Оқу залы", "Reading room") + "</a></li></ul>";
     }
     a += aiSig();
     return a;
@@ -218,6 +218,10 @@
     scope.querySelectorAll("[data-phkk],[data-phen]").forEach(function (el) {
       if (el.dataset.phru === undefined) el.dataset.phru = el.placeholder;
       el.placeholder = LANG === "ru" ? el.dataset.phru : (LANG === "kk" ? el.dataset.phkk : el.dataset.phen) || el.dataset.phru;
+    });
+    scope.querySelectorAll("[data-hk],[data-he]").forEach(function (el) {
+      if (el.dataset.hru === undefined) el.dataset.hru = el.getAttribute("data-h") || "";
+      el.setAttribute("data-h", LANG === "ru" ? el.dataset.hru : (LANG === "kk" ? el.dataset.hk : el.dataset.he) || el.dataset.hru);
     });
   }
   window.trEls = trEls;
