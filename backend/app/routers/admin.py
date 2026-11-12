@@ -333,7 +333,15 @@ def unit_versions(
     row = db.execute("SELECT id FROM units WHERE id = ?", (unit_id,)).fetchone()
     if row is None:
         raise HTTPException(status_code=404, detail="Единица не найдена")
-    cur = db.execute("SELECT * FROM unit_versions WHERE unit_id = ? ORDER BY version DESC", (unit_id,))
+    # имена автора и согласующего для истории версий
+    cur = db.execute(
+        "SELECT v.*, a.username AS author_name, r.username AS reviewer_name"
+        " FROM unit_versions v"
+        " LEFT JOIN users a ON a.id = v.author_id"
+        " LEFT JOIN users r ON r.id = v.reviewer_id"
+        " WHERE v.unit_id = ? ORDER BY v.version DESC",
+        (unit_id,),
+    )
     return {"unit_id": unit_id, "items": rows(cur)}
 
 
@@ -421,6 +429,27 @@ def set_file_access(
         ip=_ip(request),
     )
     return {"id": file_id, "access": access}
+
+
+@router.get("/units/{unit_id}/files")
+def list_unit_files(
+    request: Request,
+    unit_id: int,
+    db: Annotated[Any, Depends(get_db)],
+    user: Annotated[Any, Depends(security.require_user())],
+):
+    """Список файлов единицы для админки (доступ и загрузчик)."""
+    row = db.execute("SELECT id FROM units WHERE id = ?", (unit_id,)).fetchone()
+    if row is None:
+        raise HTTPException(status_code=404, detail="Единица не найдена")
+    cur = db.execute(
+        "SELECT f.id, f.filename, f.mime, f.size, f.access, f.kind, f.sha256,"
+        " f.uploaded_by, f.uploaded_at, u.username AS uploader"
+        " FROM files f LEFT JOIN users u ON u.id = f.uploaded_by"
+        " WHERE f.unit_id = ? ORDER BY f.id",
+        (unit_id,),
+    )
+    return {"unit_id": unit_id, "items": rows(cur)}
 
 
 # --- branches ---
