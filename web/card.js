@@ -114,6 +114,97 @@
       (full ? '<button data-copy="' + esc(location.href) + '">' + t("Поделиться ссылкой", "Сілтемемен бөлісу", "Share link") + "</button>" : "") + "</p>";
   }
 
+  // разбор шифра текущего дела по частям (термины и определения - из глоссария, не дублируем)
+  var CIPHER_LABEL = {
+    fond: ["Фонд", "Қор", "Fonds"],
+    opis: ["Опись", "Тізімдеме", "Inventory"],
+    delo: ["Дело", "Іс", "File"],
+    list: ["Лист", "Парақ", "Folio"]
+  };
+  function cipherParts(code, extent) {
+    var s = String(code || "").trim();
+    var parts = [];
+    var fm = s.match(/^(?:[А-ЯЁ]+\s*,\s*)?[Фф]\s*\.\s*[^,]+/);
+    if (fm) parts.push({ mark: fm[0].trim(), key: "fond" });
+    var om = s.match(/оп\s*\.\s*\d+[^,]*/i);
+    if (om) parts.push({ mark: om[0].trim(), key: "opis" });
+    var dm = s.match(/д\s*\.\s*\d+[^,]*/i);
+    if (dm) parts.push({ mark: dm[0].trim(), key: "delo" });
+    var lm = String(extent || "").match(/(\d+\s*л\.?)/i);
+    if (lm) parts.push({ mark: lm[0].trim(), key: "list" });
+    return parts;
+  }
+  function cipherHelp(u) {
+    var parts = cipherParts(u.code || "", u.extent || "");
+    if (!parts.length) return "";
+    var chain = [["archive", null], ["fond", "fond"], ["opis", "opis"], ["delo", "delo"], ["list", "list"]];
+    var chainHtml = "";
+    chain.forEach(function (c, i) {
+      if (i) chainHtml += '<li class="arr" aria-hidden="true">&rarr;</li>';
+      var on = parts.some(function (p) { return p.key === c[0]; });
+      var label = c[0] === "archive" ? t("Архив", "Мұрағат", "Archive") : t.apply(null, CIPHER_LABEL[c[0]]);
+      chainHtml += '<li' + (on ? ' class="on"' : "") + '>' + (c[1] ? '<span data-term="' + c[1] + '">' + label + "</span>" : label) + "</li>";
+    });
+    var rows = parts.map(function (p) {
+      return '<div class="cp-row"><dt><code>' + esc(p.mark) + '</code></dt><dd><span data-term="' + p.key + '">' + t.apply(null, CIPHER_LABEL[p.key]) + "</span></dd></div>";
+    }).join("");
+    return '<details class="cipher-help"><summary>' + t("Как читать шифр?", "Шифрды қалай оқуға болады?", "How to read a reference?") + "</summary>" +
+      '<div class="cipher-in"><ol class="cipher-chain">' + chainHtml + "</ol>" +
+      '<dl class="cipher-parts">' + rows + "</dl></div></details>";
+  }
+
+  // блок «Поделиться»: QR-код, видимый на экране по кнопке и при печати
+  function shareBlock() {
+    return '<section class="share"><h2>' + t("Поделиться", "Бөлісу", "Share") + "</h2>" +
+      '<button type="button" id="qr-toggle" aria-expanded="false" aria-controls="qrbox">' + t("QR-код", "QR-код", "QR code") + "</button>" +
+      '<div class="qrbox" id="qrbox" hidden><div class="qrimg" data-qr aria-hidden="true"></div>' +
+      '<p class="qr-cap">' + t("Отсканируйте камерой телефона, чтобы открыть эту карточку.", "Бұл картаны ашу үшін телефон камерасымен сканерлеңіз.", "Scan with your phone camera to open this page.") + "</p></div></section>";
+  }
+
+  // печатная карточка: самодостаточная, видна только при печати
+  function printCard(u) {
+    var yr = yrStr(u);
+    var branch = u.branch && u.branch.name ? esc(u.branch.name) : "";
+    var hasFile = !!(u.files || []).some(function (f) { return f.downloadable; }) || u.has_public_file;
+    var how = hasFile
+      ? t("Скан доступен онлайн без регистрации; подлинник - в читальном зале.", "Скан онлайн тіркеусіз қолжетімді; түпнұсқа - оқу залында.", "The scan is online without registration; the original is in the reading room.")
+      : t("Подлинник выдаётся в читальном зале архива.", "Түпнұсқа архивтің оқу залында беріледі.", "The original is consulted in the archive reading room.");
+    var loc = lang() === "kk" ? "kk-KZ" : lang() === "en" ? "en-GB" : "ru-RU";
+    var printed = new Date().toLocaleDateString(loc);
+    return '<section class="printcard">' +
+      '<p class="print-org">' + t("КГУ «Государственный архив» Восточно-Казахстанской области", "ШҚО «Мемлекеттік архив» КММ", "State Archive of East Kazakhstan Region") + "</p>" +
+      '<p class="print-ref"><code>' + esc(u.code || "") + "</code></p>" +
+      '<h1>' + esc(field(u, "title")) + "</h1>" +
+      '<dl class="print-meta">' +
+      (yr ? "<div><dt>" + t("Даты", "Күндер", "Dates") + "</dt><dd>" + esc(yr) + "</dd></div>" : "") +
+      (branch ? "<div><dt>" + t("Хранится", "Сақталады", "Held by") + "</dt><dd>" + branch + "</dd></div>" : "") +
+      "<div><dt>" + t("Как ознакомиться с подлинником", "Түпнұсқамен қалай танысуға болады", "How to consult the original") + "</dt><dd>" + how + "</dd></div>" +
+      "<div><dt>" + t("Адрес архива", "Архив мекенжайы", "Archive address") + "</dt><dd>" + t("г. Усть-Каменогорск, ул. Головкова, 26/1", "Өскемен қ., Головков к-сі, 26/1", "Ust-Kamenogorsk, Golovkov st., 26/1") + "</dd></div>" +
+      "<div><dt>" + t("Часы работы", "Жұмыс уақыты", "Opening hours") + "</dt><dd>" + t("пн-пт 9:00-18:00", "дс-жм 9:00-18:00", "Mon-Fri 9:00-18:00") + "</dd></div>" +
+      "<div><dt>" + t("Дата печати", "Басып шығару күні", "Printed") + "</dt><dd>" + printed + "</dd></div>" +
+      "</dl>" +
+      '<div class="print-qr" data-qr aria-hidden="true"></div>' +
+      '<p class="print-url">' + esc(location.href) + "</p></section>";
+  }
+
+  // QR-код генерируется локально (web/vendor/qrcode.js), без внешних запросов
+  function qrSvg(url) {
+    if (!window.qrcode) return "";
+    try {
+      var qr = qrcode(0, "M");
+      qr.addData(url, "Byte");
+      qr.make();
+      return qr.createSvgTag({ cellSize: 4, margin: 4, scalable: true });
+    } catch (e) {
+      return "";
+    }
+  }
+  function injectQr() {
+    var svg = qrSvg(location.href);
+    if (!svg) return;
+    [].forEach.call(document.querySelectorAll("[data-qr]"), function (el) { el.innerHTML = svg; });
+  }
+
   // список файлов: скачивание, если разрешено, иначе блок недоступности
   function filesBlock(u) {
     var files = u.files || [];
@@ -179,9 +270,10 @@
     var crumbsEl = document.querySelector(".crumbs ol") || document.querySelector("#crumbs");
     var h = "";
     if (crumbsEl) crumbsEl.outerHTML = crumbsUnit(u);
-    h += '<span class="chip">' + esc(chip) + "</span>" + status + demo +
+    h += '<div class="rec-screen"><span class="chip">' + esc(chip) + "</span>" + status + demo +
       '<h1 style="margin-top:12px">' + esc(field(u, "title")) + "</h1>" +
       refLine(u.code || "", true) +
+      cipherHelp(u) +
       '<div class="two">' +
       '<section class="box"><h2>' + t("О чём дело", "Іс не туралы", "What is it about?") + "</h2>" + descHtml(field(u, "description")) + "</section>" +
       '<section class="box"><h2>' + t("Как ознакомиться", "Қалай танысуға болады", "How to view it") + "</h2><p>" +
@@ -195,11 +287,22 @@
       (branch ? "<span><b>" + t("Хранится:", "Сақталады:", "Held by:") + "</b> " + branch + "</span>" : "") +
       "</div>" +
       filesBlock(u) +
+      shareBlock() +
       '<section class="rel"><h2>' + t("Иерархия каталога", "Каталог иерархиясы", "Catalogue hierarchy") + "</h2><div class='in' style='margin-top:12px'>" +
       hierarchyUnit(u) + "</div></section>" +
-      '<div style="height:32px"></div>';
+      '<div style="height:32px"></div>' +
+      "</div>" +
+      printCard(u);
     show(h);
     bindViewer();
+    injectQr();
+    var qrToggle = document.getElementById("qr-toggle");
+    var qrbox = document.getElementById("qrbox");
+    if (qrToggle && qrbox) qrToggle.onclick = function () {
+      var open = qrbox.hasAttribute("hidden");
+      if (open) qrbox.removeAttribute("hidden"); else qrbox.setAttribute("hidden", "");
+      qrToggle.setAttribute("aria-expanded", String(open));
+    };
     window.onLang = function () { if (lastUnit) renderUnit(lastUnit); };
   }
 

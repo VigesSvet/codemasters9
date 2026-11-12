@@ -60,6 +60,16 @@ GET /api/branches/{slug}
 GET /api/news?lang&q&page&per_page=12
 GET /api/news/{id}
 
+GET /api/opendata/catalog.json
+  -> массив записей каталога (только published), без служебных полей
+     (created_by, status_changed_by, путей файлов).
+     Поля: id, level, code, fond_id, inventory_id, title_ru/kk/en, years_from/to,
+     doc_type, place, theme, author, extent, branch, has_public_file, is_demo.
+
+GET /api/opendata/catalog.csv
+  -> те же записи в CSV (UTF-8 с BOM, Content-Disposition: attachment;
+     filename=catalog.csv). Значения-формулы экранируются апострофом; лимит 10000 строк.
+
 POST /api/ai/ask  {question, lang}
   -> {mode:"source"|"no_data"|"restricted", answer,
       sources:[{type:"unit"|"news"|"branch"|"page", id, code, title, url}],

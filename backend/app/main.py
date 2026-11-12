@@ -8,7 +8,7 @@ from fastapi import FastAPI
 
 from . import db as dbmod
 from .config import Settings, get_settings
-from .routers import admin, ai, auth, branches, catalog, imports, news, seo
+from .routers import admin, ai, auth, branches, catalog, imports, news, opendata, seo
 from .security import install_security
 from .static import install_static
 
@@ -45,6 +45,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(imports.router)
     app.include_router(ai.router)
     app.include_router(seo.router)
+    app.include_router(opendata.router)
 
     @app.get("/api/health")
     def health() -> dict:
