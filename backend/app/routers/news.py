@@ -19,16 +19,32 @@ DbDep = Annotated[sqlite3.Connection, Depends(get_db)]
 def list_news(
     lang: str = "ru",
     q: str | None = None,
+    year: str | None = None,
     page: int = 1,
     per_page: int = 12,
     db: DbDep = None,
 ):
-    where = ["pub_status = 'published'"]
-    args: list = []
+    # Базовые условия (опубликованные + поиск) — без фильтра по году.
+    base_where = ["pub_status = 'published'"]
+    base_args: list = []
     if q:
-        where.append("(title_ru LIKE ? OR title_kk LIKE ? OR lead_ru LIKE ? OR lead_kk LIKE ?)")
+        base_where.append("(title_ru LIKE ? OR title_kk LIKE ? OR lead_ru LIKE ? OR lead_kk LIKE ?)")
         like = f"%{q}%"
-        args.extend([like, like, like, like])
+        base_args.extend([like, like, like, like])
+
+    # Счётчики по годам (по всей базе, с учётом поиска, но без фильтра по году).
+    years_rows = db.execute(
+        f"SELECT substr(date, 1, 4) AS y, COUNT(*) AS n FROM news "
+        f"WHERE {' AND '.join(base_where)} GROUP BY y ORDER BY y DESC",
+        base_args,
+    ).fetchall()
+    years = [{"year": r["y"], "count": r["n"]} for r in years_rows if r["y"]]
+
+    where = list(base_where)
+    args = list(base_args)
+    if year:
+        where.append("substr(date, 1, 4) = ?")
+        args.append(str(year))
 
     where_sql = " AND ".join(where)
     total = db.execute(f"SELECT COUNT(*) AS n FROM news WHERE {where_sql}", args).fetchone()["n"]
@@ -56,7 +72,7 @@ def list_news(
         }
         for r in rows
     ]
-    return {"total": total, "page": page, "per_page": per_page, "items": items}
+    return {"total": total, "page": page, "per_page": per_page, "years": years, "items": items}
 
 
 @router.get("/{news_id}", response_model=NewsItem)

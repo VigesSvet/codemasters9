@@ -110,4 +110,23 @@
     if (s === null || s === undefined) return "";
     return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   };
+
+  // Общий словарь кодов для перевода на страницах (RU / KZ / EN).
+  // Формат значения: [ru, kk, en]. Используется в card.js и catalog.js.
+  window.gosLabels = {
+    types: {
+      print: ["Печатное издание", "Баспа басылымы", "Printed work"],
+      written: ["Письменный источник", "Жазба дерек", "Written source"],
+      photo: ["Фотография", "Фотосурет", "Photograph"],
+      map: ["Карта, чертёж", "Карта, сызба", "Map, drawing"],
+      org: ["Документы организаций", "Ұйымдар құжаттары", "Organisation records"],
+      personal: ["Личного происхождения", "Жеке шығу тегі", "Personal records"]
+    },
+    levels: {
+      fond: ["Фонд", "Қор", "Fonds"],
+      opis: ["Опись", "Тізімдеме", "Inventory"],
+      delo: ["Дело", "Іс", "File"],
+      doc: ["Документ", "Құжат", "Item"]
+    }
+  };
 })();

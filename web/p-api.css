@@ -50,3 +50,5 @@
 .pf-list .pf-item { border: 1px solid var(--line); padding: 12px 16px; margin: 0 0 8px; background: var(--surface); }
 .pf-item h3 { font: 700 19px/1.4 var(--font-text); margin: 0 0 4px; }
 .pf-item .meta { margin: 0; font-size: 15px; color: var(--text-muted); }
+/* Плейсхолдер «описание готовится» в карточках */
+.desc-empty { color: var(--text-muted); font-style: italic; }
