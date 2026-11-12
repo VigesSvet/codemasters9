@@ -17,7 +17,7 @@ flowchart LR
 | Модуль | Что делает |
 |---|---|
 | `main.py` | `create_app()`: собирает роутеры, подключает безопасность и статику; `/api/health` |
-| `config.py` | `Settings` из переменных окружения (DB_PATH, WEB_DIR, FILES_DIR, AI_PROVIDER, DEEPSEEK_MODEL, DEEPSEEK_BASE_URL, TTL, лимиты) |
+| `config.py` | `Settings` из переменных окружения (DB_PATH, WEB_DIR, FILES_DIR, AI_PROVIDER, DEEPSEEK_MODEL, DEEPSEEK_BASE_URL, OLLAMA_BASE_URL, OLLAMA_MODEL, OLLAMA_TIMEOUT, TTL, лимиты) |
 | `db.py` | `connect()` (Row, WAL, foreign_keys), `init_schema()`, зависимость `get_db`, `fts5_available()` |
 | `schema.sql` | Схема БД (таблицы и индексы ниже) |
 | `models.py` | Pydantic-схемы ответов/запросов (UnitCard, SearchResponse, NewsItem и т. д.) |
@@ -142,8 +142,12 @@ stateDiagram-v2
 
 Ответ всегда `generated: true` и с дисклеймером «сформировано автоматически».
 
-**Внешний провайдер выключен по умолчанию** (`AI_PROVIDER=local`). Подключаемые провайдеры:
+**Сеть не используется по умолчанию** (`AI_PROVIDER=local`). Провайдеры:
 
+- `AI_PROVIDER=ollama` — локальная LLM через Ollama на сервере архива, `POST {OLLAMA_BASE_URL}/api/chat`
+  (по умолчанию `http://127.0.0.1:11434`, модель `OLLAMA_MODEL=gemma4:26b`), stdlib `urllib`, таймаут
+  `OLLAMA_TIMEOUT` (по умолчанию 60 с). Ключ не нужен, данные не покидают сервер. **Рекомендуется
+  для промышленной версии**: ТЗ п. 3.4 запрещает передавать запросы внешнему ИИ без основания;
 - `AI_PROVIDER=deepseek` + `DEEPSEEK_API_KEY` — DeepSeek, OpenAI-совместимый
   `POST {DEEPSEEK_BASE_URL}/chat/completions` (по умолчанию `https://api.deepseek.com`, модель
   `DEEPSEEK_MODEL=deepseek-chat`), stdlib `urllib`, таймаут 20 с. System-промпт: кратко, на языке
@@ -193,7 +197,7 @@ stateDiagram-v2
   миграции (Alembic).
 - **Файлы** — объектное хранилище S3 (совместимое) вместо локального каталога, подписанные ссылки.
 - **Аутентификация** — SSO / Authentik (или Keycloak) вместо локальных паролей, интеграция с eGov.
-- **ИИ** — локальная LLM (самостоятельно развёрнутая) с тем же RAG по открытым материалам,
-  чтобы не отправлять данные наружу.
+- **ИИ** — Ollama на сервере архива (`AI_PROVIDER=ollama`) с тем же RAG по открытым материалам,
+  чтобы не отправлять данные наружу (ТЗ п. 3.4).
 - **Наблюдение** — структурированные логи, метрики, алерты; ротация журнала аудита.
 - **HTTPS** — за reverse proxy (nginx/caddy) с `COOKIE_SECURE=true`.

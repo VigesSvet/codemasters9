@@ -62,10 +62,13 @@ pytest проверяют безопасность; CI дополнительн�
 | DB_PATH | backend/data/archive.db | путь к SQLite |
 | WEB_DIR | web | каталог статики |
 | FILES_DIR | backend/data/files | каталог файлов |
-| AI_PROVIDER | local | local / deepseek / anthropic |
+| AI_PROVIDER | local | local / ollama / deepseek / anthropic |
 | DEEPSEEK_API_KEY | не задан | ключ DeepSeek, только в секретах окружения |
 | DEEPSEEK_MODEL | deepseek-chat | модель DeepSeek |
 | DEEPSEEK_BASE_URL | https://api.deepseek.com | адрес OpenAI-совместимого API |
+| OLLAMA_BASE_URL | http://127.0.0.1:11434 | адрес локального Ollama на сервере архива |
+| OLLAMA_MODEL | gemma4:26b | модель Ollama |
+| OLLAMA_TIMEOUT | 60 | таймаут запроса к Ollama, секунд |
 | SESSION_TTL_MIN | 30 | автовыход, минут |
 | LOGIN_MAX_ATTEMPTS | 5 | лимит неудачных входов |
 | LOGIN_WINDOW_MIN | 10 | окно лимита, минут |
@@ -79,6 +82,12 @@ pytest проверяют безопасность; CI дополнительн�
 `DEEPSEEK_API_KEY`, перезапустить приложение. Наружу уходят только вопрос и заголовки опубликованных
 единиц с публичным файлом; вопросы о персональных данных и вопросы без найденных материалов
 отвечаются локально. Без ключа `/api/ai/ask` возвращает 503, при сбое DeepSeek - локальный ответ.
+
+Подключить локальную нейросеть: установите Ollama на сервере архива, `ollama pull <модель>`,
+задайте `AI_PROVIDER=ollama` (и при необходимости `OLLAMA_MODEL`), перезапустите приложение.
+Данные не покидают сервер: запрос уходит на `OLLAMA_BASE_URL` (по умолчанию `http://127.0.0.1:11434`),
+наружу передаются только вопрос и заголовки опубликованных единиц с публичным файлом; вопросы о
+персональных данных и вопросы без материалов отвечаются локально.
 
 ## Команды make
 

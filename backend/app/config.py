@@ -35,6 +35,12 @@ class Settings:
     deepseek_base_url: str = field(
         default_factory=lambda: os.environ.get("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
     )
+    # локальная LLM через Ollama на сервере архива - данные не покидают сервер
+    ollama_base_url: str = field(
+        default_factory=lambda: os.environ.get("OLLAMA_BASE_URL", "http://127.0.0.1:11434")
+    )
+    ollama_model: str = field(default_factory=lambda: os.environ.get("OLLAMA_MODEL", "gemma4:26b"))
+    ollama_timeout: int = field(default_factory=lambda: _env_int("OLLAMA_TIMEOUT", 60))
     session_ttl_min: int = field(default_factory=lambda: _env_int("SESSION_TTL_MIN", 30))
     login_max_attempts: int = field(default_factory=lambda: _env_int("LOGIN_MAX_ATTEMPTS", 5))
     login_window_min: int = field(default_factory=lambda: _env_int("LOGIN_WINDOW_MIN", 10))
