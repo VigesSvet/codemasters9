@@ -378,7 +378,7 @@ def upload_unit_file(
     cur = db.execute(
         "INSERT INTO files (unit_id, filename, mime, size, sha256, kind, access, origin, uploaded_by)"
         " VALUES (?,?,?,?,?,?,?,?,?)",
-        (unit_id, file.filename, mime, len(data), sha256, "view", "needs_check", stored_name, user["id"]),
+        (unit_id, stored_name, mime, len(data), sha256, "view", "needs_check", file.filename, user["id"]),
     )
     db.commit()
     audit.log(

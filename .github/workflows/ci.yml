@@ -17,7 +17,22 @@ jobs:
       - run: pip install -r requirements-dev.txt
       - run: ruff check .
       - run: ruff format --check .
-      - run: pytest -q
+      - run: pytest -q --durations=5
+      - name: Smoke (seed + uvicorn + curl)
+        env:
+          DB_PATH: /tmp/gos-archive.db
+          FILES_DIR: /tmp/gos-files
+        run: |
+          python -m backend.seed
+          uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 &
+          UVICORN_PID=$!
+          for i in $(seq 1 30); do
+            if curl -sf http://127.0.0.1:8000/api/health >/dev/null 2>&1; then break; fi
+            sleep 1
+          done
+          curl --fail http://127.0.0.1:8000/api/health
+          curl --fail -G "http://127.0.0.1:8000/api/catalog/search" --data-urlencode "q=риддер"
+          kill $UVICORN_PID || true
 
   web:
     runs-on: ubuntu-latest
