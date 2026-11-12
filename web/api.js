@@ -1,4 +1,4 @@
-/* Общий API-клиент и состояния для статики. Подключать на страницы — в T4. */
+/* Общий API-клиент и состояния для статики. Подключать на страницы - в T4. */
 (function () {
   "use strict";
 
@@ -105,14 +105,14 @@
     return div;
   };
 
-  // Общее экранирование для вставки данных API в HTML.
+  // общее экранирование для вставки данных API в HTML
   window.gosEsc = function (s) {
     if (s === null || s === undefined) return "";
     return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   };
 
-  // Общий словарь кодов для перевода на страницах (RU / KZ / EN).
-  // Формат значения: [ru, kk, en]. Используется в card.js и catalog.js.
+  // общий словарь кодов для перевода на страницах(RU / KZ / EN)
+  // формат значения: [ru, kk, en]; используется в card.js и catalog.js
   window.gosLabels = {
     types: {
       print: ["Печатное издание", "Баспа басылымы", "Printed work"],

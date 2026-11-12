@@ -1,4 +1,4 @@
-/* a-gos: «Строгий национальный архив». Референс: UK The National Archives (TNA Frontend). Токены: SYNTHESIS §3.7 */
+/* a-gos: «Строгий национальный архив». Референс: Национальный архив Великобритании(TNA Frontend). Токены: SYNTHESIS §3.7 */
 @font-face{font-family:"Roboto Condensed";font-weight:500;src:url(fonts/RC500.woff2) format("woff2");font-display:swap}
 @font-face{font-family:"Roboto Condensed";font-weight:600;src:url(fonts/RC600.woff2) format("woff2");font-display:swap}
 @font-face{font-family:"Inter";font-weight:400;src:url(fonts/Inter400.woff2) format("woff2");font-display:swap}
@@ -17,7 +17,7 @@
   --fs-h3:clamp(1.25rem,1.157rem + .381vw,1.5rem);
   --fs-small:.875rem;
   --lh-text:1.6;
-  /* TNA light: страница #f4f4f4, текст #343338, пастель #dde5d5 */
+  /* светлая тема TNA: фон #f4f4f4, текст #343338, пастель #dde5d5 */
   --bg:#f4f4f4; --bg-tint:#d9d9d6; --surface:#fff;
   --text:#343338; --text-dark:#010101; --text-muted:#5b5b60;
   --line:rgb(38 38 42 / .25); --line-strong:#26262a;
@@ -78,7 +78,7 @@ img{display:block;max-width:100%}
 .skip{position:absolute;left:-999px}
 .skip:focus{left:8px;top:8px;background:var(--mark);color:#010101;padding:8px 16px;z-index:7}
 
-/* phase banner 44 */
+/* баннер фазы(высота 44) */
 .phase{background:var(--contrast);color:#fff;font-size:16px;line-height:28px;min-height:44px;padding:8px 0}
 :root[data-theme="dark"] .phase{background:#101112}
 .phase .wrap{display:flex;gap:32px}
@@ -86,7 +86,7 @@ img{display:block;max-width:100%}
 .phase b{font-weight:700;letter-spacing:.02em}
 .phase a,.phase a:visited{color:#fff}
 
-/* header */
+/* шапка */
 .hdr{background:var(--header-bg);color:#fff}
 .hdr .util{display:flex;justify-content:flex-end;align-items:center;gap:24px;height:60px;padding-top:12px;font-size:16px}
 .hdr .util a,.hdr .util button{color:#fff;text-decoration:none;font:inherit;background:none;border:0;padding:0;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
@@ -108,7 +108,7 @@ img{display:block;max-width:100%}
 .burger{display:none}
 .search-link svg,.ico{width:16px;height:16px;fill:currentColor;flex:none}
 
-/* hero (pastel band) */
+/* первый экран(пастельная полоса) */
 .hero{background:var(--hero-bg);color:var(--hero-text);padding:48px 0}
 .hero h1{color:var(--hero-text)}
 .hero .sub{font:400 22px/1.5 var(--font-mono);margin:20px 0 29px}
@@ -118,7 +118,7 @@ img{display:block;max-width:100%}
 .btn svg{width:12px;height:16px;stroke:currentColor;fill:none;stroke-width:2.4}
 :root[data-theme="dark"] .btn:not(:hover){border-color:#010101}
 
-/* sections */
+/* секции */
 .sec{padding:48px 0}
 .feat{display:grid;grid-template-columns:400px 1fr;background:var(--card-dark);color:var(--card-dark-text);margin:0}
 .feat{min-height:267px}
@@ -153,14 +153,14 @@ img{display:block;max-width:100%}
 .sf svg{width:18px;height:18px;fill:#fff}
 .srch .more{display:block;margin-top:16px;font-size:16px}
 
-/* theme bar 48 */
+/* панель темы(высота 48) */
 .themebar{background:var(--bg-tint);height:48px}
 .themebar .wrap{display:flex;justify-content:flex-end;align-items:center;gap:32px;height:48px;font-size:14px}
 .themebar button{background:none;border:0;padding:0;font:600 14px var(--font-text);color:var(--accent);text-decoration:underline;cursor:pointer;display:inline-flex;gap:8px;align-items:center}
 .themebar button[aria-pressed="true"]{background:#010101;color:#fff;text-decoration:none;padding:4px 12px;border:2px solid #010101}
 :root[data-theme="dark"] .themebar button[aria-pressed="true"]{border-color:#fff}
 
-/* footer */
+/* подвал */
 .ftr{background:var(--footer-bg);color:var(--footer-text);padding:32px 0 24px;font-size:14px;line-height:1.5}
 .ftr a,.ftr a:visited{color:#fff}
 .ftr .cols{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:32px 32px}
@@ -180,7 +180,7 @@ img{display:block;max-width:100%}
 .legal2 b{font:700 32px var(--font-display);margin-right:16px}
 .src{font-size:13px;color:var(--text-muted);margin-top:24px}
 
-/* breadcrumbs band */
+/* хлебные крошки */
 .crumbs{background:var(--bg-tint)}
 .crumbs ol{list-style:none;margin:0;padding:16px 0 4px;display:flex;flex-wrap:wrap;gap:0;font-size:16px;line-height:33px}
 .crumbs li+li::before{content:"";display:inline-block;width:6px;height:6px;border-right:1.5px solid currentColor;border-top:1.5px solid currentColor;transform:rotate(45deg);margin:0 12px 2px 8px}
@@ -189,7 +189,7 @@ img{display:block;max-width:100%}
 .tabs a,.tabs span{display:inline-block;padding:4px 0 6px;border-bottom:5px solid transparent;color:var(--accent)}
 .tabs span{color:var(--text-dark);border-bottom-color:var(--level)}
 
-/* delo */
+/* дело */
 .rec h1{font-size:clamp(2.25rem,1.6rem + 2.667vw,3.5rem);max-width:19ch;max-width:880px}
 .ref{font:400 16px var(--font-mono);margin:16px 0 0;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .ref code{font:inherit;background:var(--bg-tint);padding:2px 8px;border-radius:var(--r-chip);color:var(--text-dark)}
@@ -249,7 +249,7 @@ dl.f{margin:16px 0 0;border-top:1px solid var(--line-strong)}
 .surv{background:var(--bg-tint);border:1px solid var(--line);text-align:center;padding:24px;max-width:720px;margin:64px auto 0}
 .surv h2{font:700 19px var(--font-text);margin:0 0 12px}
 
-/* responsive */
+/* адаптивность */
 @media(max-width:1024px){
   .feat{grid-template-columns:320px 1fr}
   .feat h2{font-size:32px}
@@ -294,7 +294,7 @@ dl.f{margin:16px 0 0;border-top:1px solid var(--line-strong)}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 
-/* ===== v2 additions: forms, catalogue, map, timeline, gallery, admin, AI ===== */
+/* ---------- дополнения v2: формы, каталог, карта, лента, галерея, админка, ИИ ---------- */
 mark{background:var(--mark);color:#010101;padding:0 1px}
 .util form.hs{display:flex;margin:0}
 .util form.hs input{height:36px;width:200px;border:2px solid #fff;border-right:0;background:transparent;color:#fff;font:400 15px var(--font-text);padding:0 10px;border-radius:0}
@@ -387,7 +387,7 @@ select.inp{appearance:none;background-image:linear-gradient(45deg,transparent 50
 .gal3 img{aspect-ratio:3/2;width:100%;object-fit:cover;filter:grayscale(1)}
 .gal3 figcaption{font-size:14px;color:var(--text-muted);margin-top:4px;line-height:1.4}
 .ok-msg{background:var(--pastel);border-left:5px solid var(--level);padding:16px 20px;margin:16px 0;display:none}
-/* map */
+/* карта */
 .mapwrap{display:grid;grid-template-columns:400px 1fr;gap:0;border:1px solid var(--line);margin:32px 0 64px;background:var(--surface)}
 .mapside{border-right:1px solid var(--line);display:flex;flex-direction:column;max-height:720px}
 .mapside .top{padding:16px;border-bottom:1px solid var(--line)}
@@ -413,7 +413,7 @@ select.inp{appearance:none;background-image:linear-gradient(45deg,transparent 50
 .imgph{height:72px;border:1px dashed var(--line-strong);display:grid;place-items:center;font:400 13px var(--font-mono);color:var(--text-muted);margin-bottom:12px;text-align:center;padding:8px}
 body[data-dark-map] .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.85) contrast(.9)}
 .leaflet-container{font-family:var(--font-text)}
-/* timeline */
+/* лента времени */
 .tl{list-style:none;margin:0;padding:0 0 0 0;border-left:5px solid var(--line-strong)}
 .tl li{position:relative;padding:0 0 32px 28px}
 .tl li::before{content:"";position:absolute;left:-5px;top:12px;width:20px;border-top:5px solid var(--line-strong)}
@@ -427,7 +427,7 @@ body[data-dark-map] .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brigh
 :root[data-theme="dark"] .themes button[aria-pressed="true"]{background:#fff;color:#010101;border-color:#fff}
 .hist{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
 .hplaces{border:1px solid var(--line);margin-top:0}
-/* gallery / exhibition */
+/* галерея / выставка */
 .gal{background:var(--card-dark);color:#fff;padding:32px 0}
 .gal .stage{display:flex;justify-content:center;background:#111;padding:16px;border:1px solid rgb(255 255 255 / .25)}
 .gal .stage img{max-height:520px;width:auto;max-width:100%;object-fit:contain;cursor:zoom-in}
@@ -446,7 +446,7 @@ body[data-dark-map] .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brigh
 .lbx img{margin:0 auto;max-width:none;width:150%;min-width:100%}
 .lbx button{position:fixed;top:16px;right:16px;height:44px;padding:0 16px;background:#fff;color:#010101;border:2px solid #fff;font:700 16px var(--font-text);cursor:pointer}
 .exlist{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
-/* admin */
+/* админка */
 .adm{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 200px)}
 .aside{background:var(--card-dark);color:#fff;padding:0}
 .aside h2{font:600 20px/1.4 var(--font-display);color:#fff;padding:16px;margin:0;border-bottom:1px solid rgb(255 255 255 / .3)}
@@ -496,7 +496,7 @@ body[data-dark-map] .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brigh
 .bad{border-color:#b3261e!important}
 .err{color:#b3261e;font-size:14px;margin-top:4px;display:none}
 .bad+.err{display:block}
-/* AI widget + chat */
+/* виджет ИИ + чат */
 .aib{position:fixed;right:24px;bottom:24px;z-index:50;height:56px;padding:0 20px;background:#010101;color:#fff;border:4px solid #fff;outline:2px solid #010101;font:700 17px var(--font-text);cursor:pointer;display:flex;align-items:center;gap:12px;border-radius:0}
 .aib:hover{background:#fff;color:#010101;border-color:#010101;outline-color:#fff}
 .aib .m{font:500 14px var(--font-mono);border:1px solid currentColor;padding:0 5px}
@@ -580,7 +580,7 @@ body[data-dark-map] .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brigh
 .doc .box h2{border-top:0;padding-top:0;margin-bottom:8px}
 .doc section>.acc{margin-top:0}
 
-/* ===== данные старого сайта e-arhiv.vko.gov.kz (A: TNA, плоско) ===== */
+/* ---------- данные старого сайта e-arhiv.vko.gov.kz(A: TNA, плоско) ---------- */
 [data-lb][hidden]{display:none!important}
 .ci{display:block;max-width:100%;height:auto;margin:12px 0;border:1px solid var(--line)}
 .dbody img.ci,.in img.ci{max-height:420px;width:auto}
@@ -706,7 +706,7 @@ html[data-vi] .hero.big .plate{background:#000;border:2px solid #fff}
 }
 @media(max-width:600px){.tbl.poll td.m{white-space:normal}.poll th{width:auto}.tbl td{overflow-wrap:anywhere}}
 .doc>div{min-width:0}.tblw{overflow-x:auto}
-/* одиночная статья (новость) без бокового меню */
+/* одиночная статья(новость) без бокового меню */
 .doc.single{grid-template-columns:minmax(0,800px);justify-content:start}
 .doc.single #nv h2{font:700 clamp(28px,3vw,40px)/1.2 var(--font-display);margin:8px 0 24px;border-top:0;padding-top:0}
 .doc.single #nv figure{margin:0 0 24px}
@@ -717,7 +717,7 @@ html[data-vi] .hero.big .plate{background:#000;border:2px solid #fff}
 .doc.single #nv img{max-width:100%;height:auto}
 .doc.single #nv table{display:block;max-width:100%;overflow-x:auto}
 @media (max-width:760px){.doc.single{grid-template-columns:minmax(0,1fr)}}
-/* ===== Страница новости (как в новостных изданиях, стиль TNA) ===== */
+/* ---------- страница новости(как в новостных изданиях, стиль TNA) ---------- */
 .readbar{position:fixed;top:0;left:0;right:0;height:4px;z-index:60;pointer-events:none}
 .readbar i{display:block;height:100%;background:var(--level);transform:scaleX(0);transform-origin:0 0}
 .art{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:64px;padding-top:40px;padding-bottom:48px}
@@ -764,7 +764,7 @@ html[data-vi] .hero.big .plate{background:#000;border:2px solid #fff}
 .art-rel .card img{filter:none}
 @media(max-width:1024px){.art{grid-template-columns:1fr;gap:40px}.art-side{position:static}.art-rel{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.art{padding-top:24px}.art-pn{grid-template-columns:1fr}.art-nb.next{text-align:left}.art-rel{grid-template-columns:1fr}.art-fig{margin-left:calc(-1*var(--pad-x));margin-right:calc(-1*var(--pad-x))}.art-fig figcaption{padding-left:var(--pad-x)}}
-/* D1-D2 uslugi */
+/* D1-D2 услуги */
 .steps{border-top:5px solid var(--line-strong)}
 .steps h3{font:700 19px/1.5 var(--font-text);margin:0 0 8px}
 .steps ol{margin:8px 0 4px;padding-left:22px}
@@ -789,10 +789,10 @@ html[data-vi] .hero.big .plate{background:#000;border:2px solid #fff}
 .pr-notes li{margin:4px 0;font-size:16px;line-height:1.6}
 @media(max-width:600px){#paid dl.f>div{grid-template-columns:1fr;gap:2px}}
 
-/* D3-D5 filialy */
+/* D3-D5 филиалы */
 .bcard .bnote{color:var(--text-muted);font-size:12px}
 .doc h3.faq-g{margin:22px 0 6px;font-size:18px}
 
-/* review fixes */
+/* правки по замечаниям */
 .tabs{overflow-x:auto}
 .mapoff{padding:16px;font-size:15px;color:var(--text-muted)}

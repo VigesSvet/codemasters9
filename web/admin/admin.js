@@ -1,4 +1,4 @@
-/* admin.js — логика админки Госархива ВКО (T5).
+/* admin.js - логика админки Госархива ВКО(T5).
    Подключается после app.js на страницах web/admin/*. */
 (function () {
   "use strict";
@@ -6,12 +6,12 @@
   var B = document.body.dataset.base || "";
   var PAGE = document.body.dataset.page || "";
 
-  /* --- i18n (app.js выставляет window.tr / window.gosX / window.trEls) --- */
+  // ---------- i18n(app.js выставляет window.tr / window.gosX / window.trEls) ----------
   function L(ru, kk, en) { return window.tr ? window.tr(ru, kk, en) : ru; }
   function esc(s) { return window.gosEsc ? window.gosEsc(s) : String(s === null || s === undefined ? "" : s); }
   function X(ru, kk, en) { return window.gosX ? window.gosX(ru, kk, en) : '<span>' + esc(ru) + '</span>'; }
 
-  /* --- словари статусов --- */
+  // ---------- словари статусов ----------
   var STATUS_RU = {
     draft: "Черновик", review: "На проверке", needs_work: "Требует доработки",
     approved: "Одобрено", published: "Опубликовано", archived: "Архив"
@@ -41,7 +41,7 @@
   };
   function roleName(r) { var x = ROLE[r]; return x ? L(x[0], x[1], x[2]) : esc(r); }
 
-  /* --- переходы статусов (зеркало workflow.py) --- */
+  // ---------- переходы статусов(зеркало workflow.py) ----------
   var TRANSITIONS = {
     draft: ["review"],
     review: ["approved", "needs_work"],
@@ -70,7 +70,7 @@
     return targets.filter(function (to) { return canAction(role, ACTION_FOR[to]); });
   }
 
-  /* --- доступ к файлам --- */
+  // ---------- доступ к файлам ----------
   var ACCESS = {
     public: ["Открытый доступ", "Ашық қолжетімділік", "Public"],
     no_publish: ["Не публиковать", "Жарияламау", "Do not publish"],
@@ -78,7 +78,7 @@
   };
   function accessName(a) { var x = ACCESS[a]; return x ? L(x[0], x[1], x[2]) : esc(a); }
 
-  /* --- уровни --- */
+  // ---------- уровни ----------
   var LEVEL = {
     fond: ["Фонд", "Қор", "Fonds"],
     opis: ["Опись", "Тізімдеме", "Inventory"],
@@ -89,7 +89,7 @@
 
   var USER = null;
 
-  /* --- уведомление --- */
+  // ---------- уведомление ----------
   function toast(msg, kind) {
     var t = document.querySelector(".toast");
     if (t) t.remove();
@@ -135,7 +135,7 @@
     return n + " Б";
   }
 
-  /* --- шапка: имя/роль + выход --- */
+  // ---------- шапка: имя/роль + выход ----------
   function fillHeader() {
     var u = document.getElementById("adm-user");
     if (u && USER) {
@@ -156,7 +156,7 @@
     });
   }
 
-  /* --- боковое меню по ролям --- */
+  // ---------- боковое меню по ролям ----------
   function renderNav() {
     var nav = document.getElementById("adm-nav");
     if (!nav) return;
@@ -188,7 +188,7 @@
     return true;
   }
 
-  /* ============ ВХОД ============ */
+  // ---------- вход ----------
   function initLogin() {
     var form = document.getElementById("login-form");
     if (!form) return;
@@ -216,7 +216,7 @@
     });
   }
 
-  /* ============ МАТЕРИАЛЫ (очередь) ============ */
+  // ---------- материалы(очередь) ----------
   var idx = { status: "", branch: "", q: "", page: 1, total: 0, items: [], branches: [] };
   function idxQuery() {
     var p = { page: idx.page, per_page: 20 };
@@ -321,7 +321,7 @@
     });
   }
 
-  /* ============ КАРТОЧКА ДЕЛА ============ */
+  // ---------- карточка дела ----------
   var unit = null; var versions = []; var files = []; var fonds = [];
   var DELO_ID = new URLSearchParams(location.search).get("id");
 
@@ -675,7 +675,7 @@
     if (edit) reloadDelo();
   }
 
-  /* ============ ИМПОРТ ============ */
+  // ---------- импорт ----------
   var IMPORT_FIELDS = [
     ["code", "Шифр", "Шифр", "Code"],
     ["fond_code", "Фонд", "Қор", "Fonds"],
@@ -805,7 +805,7 @@
     });
   }
 
-  /* ============ ФИЛИАЛЫ ============ */
+  // ---------- филиалы ----------
   var branches = []; var selBranch = null;
   function renderFilial() {
     var sel = document.getElementById("fil-select");
@@ -818,7 +818,7 @@
       var own = null;
       branches.forEach(function (b) { if (b.id === USER.branch_id) own = b; });
       if (!own) { if (form) form.style.display = "none"; return; }
-      // если ?id задан и это чужой филиал — показать 403
+      // если ?id задан и это чужой филиал - показать 403
       var qid = new URLSearchParams(location.search).get("id");
       if (qid && String(qid) !== String(own.id)) {
         if (box) { box.style.display = ""; box.textContent = L("Нет прав на редактирование этого филиала", "Бұл филиалды өңдеуге құқық жоқ", "No permission to edit this branch"); }
@@ -890,7 +890,7 @@
     });
   }
 
-  /* ============ ЖУРНАЛ ============ */
+  // ---------- журнал ----------
   var aud = { user: "", action: "", object_type: "", result: "", page: 1, total: 0, items: [] };
   function renderAudit() {
     var tbody = document.getElementById("audit-table");
@@ -945,7 +945,7 @@
     loadAudit();
   }
 
-  /* ============ загрузка ============ */
+  // ---------- загрузка ----------
   function boot() {
     if (PAGE === "login") { initLogin(); return; }
     window.gosApi.get("/api/auth/me").then(function (res) {
@@ -965,7 +965,7 @@
     });
   }
 
-  /* перерисовка динамики при смене языка */
+  // перерисовка динамики при смене языка
   window.onLang = function () {
     fillHeader();
     if (PAGE === "index") renderIndex();
