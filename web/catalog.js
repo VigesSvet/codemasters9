@@ -244,7 +244,8 @@
       var href = document.body.dataset.base ? document.body.dataset.base + url : url;
       var demo = r.is_demo ? '<span class="tag demo">' + t("Образец записи", "Жазба үлгісі", "Sample record") + "</span>" : "";
       var branch = r.branch && r.branch.name ? esc(r.branch.name) : "";
-      return '<article class="res"><div class="ph">' + esc(typ) + '</div><div><span class="chip' + lvCls + '">' + esc(lv) + '</span><h3><a href="' + esc(href) + '">' + esc(pick(r.title)) + '<span class="chev"></span></a></h3><dl>' +
+      var ph = r.has_public_file ? t("Скан онлайн", "Скан онлайн", "Scan online") : t("Скана нет", "Скан жоқ", "No scan");
+      return '<article class="res"><div class="ph">' + ph + '</div><div><span class="chip' + lvCls + '">' + esc(lv) + '</span><h3><a href="' + esc(href) + '">' + esc(pick(r.title)) + '<span class="chev"></span></a></h3><dl>' +
         "<dt>" + t("Шифр", "Шифр", "Reference") + "</dt><dd>" + esc(r.code) + "</dd>" +
         "<dt>" + t("Даты", "Күндер", "Dates") + "</dt><dd>" + esc(yr) + "</dd>" +
         (branch ? "<dt>" + t("Хранится", "Сақталады", "Held by") + "</dt><dd>" + branch + "</dd>" : "") +

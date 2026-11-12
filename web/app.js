@@ -157,8 +157,8 @@
       });
       h += "</ul>";
     }
-    var disc = res.disclaimer ? escHtml(res.disclaimer) + " " : "";
-    h += '<p class="disc">' + disc + L("Ответ сформирован автоматически и не является архивной справкой.", "Жауап автоматты түрде қалыптастырылды және архивтік анықтама болып табылмайды.", "This answer was generated automatically and is not an archival certificate.") + "</p>";
+    var disc = res.disclaimer ? escHtml(res.disclaimer) : L("Ответ сформирован автоматически и не является архивной справкой.", "Жауап автоматты түрде қалыптастырылды және архивтік анықтама болып табылмайды.", "This answer was generated automatically and is not an archival certificate.");
+    h += '<p class="disc">' + disc + "</p>";
     return h;
   }
   function aiFallback(q) {
@@ -174,10 +174,10 @@
     el.innerHTML =
       '<div class="chd"><b>' + X("Архивный помощник", "Архив көмекшісі", "Archive assistant") + '</b><span style="display:flex;gap:8px">' + (full ? "" : '<a href="' + B + 'ii.html" style="color:#fff;font-size:14px;align-self:center">' + X("Во весь экран", "Толық экран", "Full screen") + "</a>") + (full ? "" : '<button type="button" data-ai-close>' + X("Закрыть", "Жабу", "Close") + "</button>") + "</span></div>" +
       '<div class="cmsg" aria-live="polite"></div>' +
-      '<form class="cin" autocomplete="off"><input type="text" aria-label="Вопрос" data-phkk="Ваш вопрос об архиве" data-phen="Your question about the archive" placeholder="Ваш вопрос об архиве"><button aria-label="Отправить">&rarr;</button></form>' +
+      '<form class="cin" autocomplete="off"><input type="text" aria-label="Вопрос" data-phkk="Архив туралы сұрағыңыз" data-phen="Your question about the archive" placeholder="Ваш вопрос об архиве"><button aria-label="Отправить">&rarr;</button></form>' +
       '<div class="cnote">' + X("ИИ может ошибаться. Не вводите персональные данные. Заявки не принимаются.", "ЖИ қателесуі мүмкін. Жеке деректерді енгізбеңіз. Өтініштер қабылданмайды.", "AI can make mistakes. Do not enter personal data. Applications are not accepted.") + "</div>";
     trEls(el);
-    var box = el.querySelector(".cmsg"), inp = el.querySelector("input");
+    var box = el.querySelector(".cmsg"), inp = el.querySelector("input"), send = el.querySelector(".cin button");
     function add(cls, html) { var d = document.createElement("div"); d.className = cls; d.innerHTML = html; box.appendChild(d); box.scrollTop = box.scrollHeight; return d; }
     function sug() {
       var s = document.createElement("div"); s.className = "sug";
@@ -189,12 +189,18 @@
     function ask(q) {
       var old = box.querySelector(".sug"); if (old) old.remove();
       add("m1", escHtml(q));
+      var w = add("m2 wait", '<p aria-live="polite">' + L("Ищу в открытых описях…", "Ашық тізімдемелерден іздеп жатырмын…", "Searching open inventories…") + "</p>");
+      if (send) send.disabled = true;
       // без api.js(window.gosApi) - сразу офлайн-ответ, иначе TypeError глушит виджет
       var req = window.gosApi ? window.gosApi.post("/api/ai/ask", { question: q, lang: LANG }) : Promise.reject(new Error("no gosApi"));
       req.then(function (res) {
+        if (w && w.parentNode) w.remove();
+        if (send) send.disabled = false;
         add("m2", aiAnswer(res));
         sug();
       }).catch(function () {
+        if (w && w.parentNode) w.remove();
+        if (send) send.disabled = false;
         add("m2", aiFallback(q));
         sug();
       });

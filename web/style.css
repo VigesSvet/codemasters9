@@ -73,7 +73,9 @@ a{color:var(--accent);text-decoration:underline;text-decoration-thickness:1.5px;
 a:visited{color:var(--accent-visited)}
 a:hover{text-decoration-thickness:3px}
 img{display:block;max-width:100%}
-:where(a,button,input,select,summary,[tabindex]):focus-visible{outline:3px solid var(--mark);outline-offset:2px;transition:outline-offset .1s ease}
+:where(a,button,input,select,summary,[tabindex]):focus-visible{outline:3px solid #010101;outline-offset:2px;box-shadow:0 0 0 6px var(--mark)}
+:root[data-theme="dark"] :where(a,button,input,select,summary,[tabindex]):focus-visible{outline-color:#fff}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]):not([data-theme="dark"]) :where(a,button,input,select,summary,[tabindex]):focus-visible{outline-color:#fff}}
 .wrap{max-width:var(--container);margin:0 auto;padding:0 var(--pad-x)}
 .skip{position:absolute;left:-999px}
 .skip:focus{left:8px;top:8px;background:var(--mark);color:#010101;padding:8px 16px;z-index:7}
@@ -796,3 +798,17 @@ html[data-vi] .hero.big .plate{background:#000;border:2px solid #fff}
 /* правки по замечаниям */
 .tabs{overflow-x:auto}
 .mapoff{padding:16px;font-size:15px;color:var(--text-muted)}
+
+/* ---------- детали: фокус, ИИ, печать ---------- */
+.lang button{padding:8px 6px;min-width:36px}
+.car .dots button{height:24px;background-clip:content-box;padding:8px 0}
+.hdr .util a,.hdr .util button{min-height:36px}
+.res .ph{border:1px solid var(--line);background:var(--bg-tint)}
+.m2.wait{color:var(--text-muted);border-left-color:var(--line)}
+.m2 .ai-mode{font-size:13px;padding:0 6px;border:1px solid currentColor}
+@media print{
+  .phase,.hdr,.ftr,.themebar,.aib,.aip,.optab,.opp,.crumbs,.viewer{display:none!important}
+  .rec h1{font-size:28pt!important}
+  a,a:visited{color:#000!important;text-decoration:none!important}
+  a[href]::after{content:" (" attr(href) ")"}
+}
