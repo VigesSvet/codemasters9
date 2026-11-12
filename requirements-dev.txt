@@ -1,7 +1,7 @@
 -r requirements.txt
-pytest
-httpx
-ruff
-pillow
-fonttools
-brotli
+pytest==9.2.0
+httpx==0.28.1
+ruff==0.17.4
+pillow==13.0.0
+fonttools==4.68.0
+brotli==1.2.1
