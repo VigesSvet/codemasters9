@@ -1,9 +1,4 @@
-"""Тесты полной демо-загрузки load_all на временной БД.
-
-Проверяем не только количество записей, но и что повторный запуск ничего
-не дублирует (идемпотентность) и что нормализация/синонимы поиска
-находят запись по старому названию города («лениногорск» -> «риддер»).
-"""
+"""Тесты полной демо-загрузки load_all: счётчики, идемпотентность, синонимы поиска."""
 
 from __future__ import annotations
 
@@ -18,7 +13,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 
 def _settings(tmp_path) -> Settings:
-    """Настройки, изолирующие тест: БД и файлы в tmp, статика — реальная web/."""
+    """Настройки, изолирующие тест: БД и файлы в tmp, статика - реальная web/."""
     return Settings(
         db_path=str(tmp_path / "archive.db"),
         files_dir=str(tmp_path / "files"),
@@ -28,7 +23,7 @@ def _settings(tmp_path) -> Settings:
 
 def _load(tmp_path, monkeypatch) -> tuple[dbmod.sqlite3.Connection, dict]:
     settings = _settings(tmp_path)
-    # load_all() вызывает get_settings() внутри — подменяем на тестовые настройки.
+    # load_all() вызывает get_settings() внутри - подменяем на тестовые настройки
     monkeypatch.setattr(load, "get_settings", lambda: settings)
     conn = dbmod.connect(settings.db_path)
     dbmod.init_schema(conn)

@@ -24,7 +24,7 @@ def list_news(
     per_page: int = 12,
     db: DbDep = None,
 ):
-    # Базовые условия (опубликованные + поиск) — без фильтра по году.
+    # базовые условия (опубликованные + поиск) - без фильтра по году
     base_where = ["pub_status = 'published'"]
     base_args: list = []
     if q:
@@ -32,7 +32,7 @@ def list_news(
         like = f"%{q}%"
         base_args.extend([like, like, like, like])
 
-    # Счётчики по годам (по всей базе, с учётом поиска, но без фильтра по году).
+    # счётчики по годам (по всей базе, с учётом поиска, но без фильтра по году)
     years_rows = db.execute(
         f"SELECT substr(date, 1, 4) AS y, COUNT(*) AS n FROM news "
         f"WHERE {' AND '.join(base_where)} GROUP BY y ORDER BY y DESC",
