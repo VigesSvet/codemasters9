@@ -105,13 +105,28 @@
     kk: "1900 жылдардағы Семей метрикалық кітаптарын қайдан табуға болады?",
     en: "Where can I find parish (metric) registers of Semipalatinsk from the 1900s?"
   };
+  // Полное экранирование для данных API/пользователя (в отличие от esc, экранирует < и >).
+  function escHtml(s) {
+    return String(s === null || s === undefined ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+  var AI_MODE = {
+    source: ["Источник", "Дереккөз", "Source"],
+    no_data: ["Нет данных", "Дерек жоқ", "No data"],
+    restricted: ["Ограничено", "Шектеулі", "Restricted"]
+  };
+  function aiBadge(mode) {
+    var lbl = AI_MODE[mode] ? L.apply(null, AI_MODE[mode]) : (mode || "");
+    var cls = mode === "source" ? "ai-mode--source" : mode === "restricted" ? "ai-mode--restricted" : "ai-mode--no_data";
+    return '<span class="src3">' + L("Архивный помощник", "Архив көмекшісі", "Archive assistant") + ' · <span class="ai-mode ' + cls + '">' + esc(lbl) + "</span></span>";
+  }
   function aiSig() {
-    return '<p class="disc">' + L("Ответ сформирован автоматически и не является архивной справкой.", "Жауап автоматты түрде қалыптастырылды және архивтік анықтама болып табылмайды.", "This answer was generated automatically and is not an archival certificate.") + " " + L("Демо-режим: заранее подготовленный ответ.", "Демо режимі: алдын ала дайындалған жауап.", "Demo mode: a pre-prepared answer.") + " " + L("Не указывайте в запросах персональные данные.", "Сұрауларда жеке деректерді көрсетпеңіз.", "Do not include personal data in your queries.") + "</p>";
+    return '<p class="disc">' + L("Ответ сформирован автоматически и не является архивной справкой.", "Жауап автоматты түрде қалыптастырылды және архивтік анықтама болып табылмайды.", "This answer was generated automatically and is not an archival certificate.") + " " + L("Офлайн-демо: заранее подготовленный ответ.", "Офлайн-демо: алдын ала дайындалған жауап.", "Offline demo: a pre-prepared answer.") + " " + L("Не указывайте в запросах персональные данные.", "Сұрауларда жеке деректерді көрсетпеңіз.", "Do not include personal data in your queries.") + "</p>";
   }
   function answer(q) {
     var closed = /личное дело|личных дел|личного дела|персональн|персонал|иванов|петров|сидоров|жеке іс|жеке дерек|personal file|personnel file|personal data|personnel/i.test(q);
     var m = /метри[чк]|metric|parish|кітап/i.test(q);
-    var a = '<span class="src3">' + L("Архивный помощник", "Архив көмекшісі", "Archive assistant") + "</span>";
+    var mode = closed ? "restricted" : (m ? "source" : "no_data");
+    var a = aiBadge(mode);
     if (closed) {
       a += "<p>" + L("Материалы с ограниченным доступом (личные дела, персональные данные) на сайте не выдаются.", "Шектеулі қолжетімді материалдар (жеке істер, жеке деректер) сайтта берілмейді.", "Materials with restricted access (personal files, personal data) are not provided on the site.") + "</p>";
       a += "<p>" + L("Скан и файл не выдаются. Ознакомиться можно только в читальном зале архива.", "Скан мен файл берілмейді. Тек архивтің оқу залында танысуға болады.", "The scan and file are not provided. You can consult them only in the archive reading room.") + "</p>";
@@ -129,6 +144,31 @@
     }
     a += aiSig();
     return a;
+  }
+  function aiAnswer(res) {
+    res = res || {};
+    var h = aiBadge(res.mode) + "<p>" + escHtml(res.answer || "") + "</p>";
+    if (res.sources && res.sources.length) {
+      h += '<ul class="ai-srcs">';
+      res.sources.forEach(function (s) {
+        var url = s.url || "";
+        var label = escHtml(s.title || s.code || url || "");
+        h += "<li>" + (url ? '<a href="' + escHtml(url) + '" target="_blank" rel="noopener">' + label + "</a>" : label) + "</li>";
+      });
+      h += "</ul>";
+    }
+    var disc = res.disclaimer ? escHtml(res.disclaimer) + " " : "";
+    h += '<p class="disc">' + disc + L("Ответ сформирован автоматически и не является архивной справкой.", "Жауап автоматты түрде қалыптастырылды және архивтік анықтама болып табылмайды.", "This answer was generated automatically and is not an archival certificate.") + "</p>";
+    return h;
+  }
+  function aiFallback(q) {
+    if (/шифр|reference|code/i.test(q) && !/метри[чк]|metric/i.test(q)) {
+      return aiBadge("no_data") + "<p>" + L("Шифр читается слева направо: Ф. 1-П (фонд), Оп. 1 (опись), Д. 245 (дело). Он однозначно указывает на единицу хранения.", "Шифр солдан оңға оқылады: Ф. 1-П (қор), Оп. 1 (тізімдеме), Д. 245 (іс). Ол сақтау бірлігін бірмәнді көрсетеді.", "Read the code left to right: Ф. 1-П (fonds), Оп. 1 (inventory), Д. 245 (file). It identifies exactly one storage unit.") + '</p><ul><li><a href="' + B + 'delo.html">' + L("Пример карточки дела", "Іс картасының үлгісі", "Example file page") + '</a></li><li><a href="' + B + 'ob-arhive.html#faq">' + L("Справка по шифрам", "Шифрлар анықтамасы", "Reference help") + "</a></li></ul>" + aiSig();
+    }
+    if (/риддер|ridder/i.test(q)) {
+      return aiBadge("source") + "<p>" + L("Риддерский филиал: ул. Ч. Валиханова, 44; 8 (72336) 42-264; пн-пт 9:00-18:00.", "Риддер филиалы: Ч. Уәлиханов к-сі, 44; 8 (72336) 42-264; дс-жм 9:00-18:00.", "Ridder branch: Ch. Valikhanov st., 44; +7 72336 42-264; Mon-Fri 9:00-18:00.") + '</p><ul><li><a href="' + B + 'filialy.html?b=ridder">' + L("Открыть на карте", "Картада ашу", "Open on the map") + "</a></li></ul>" + aiSig();
+    }
+    return answer(q);
   }
   function mountChat(el, full) {
     el.innerHTML =
@@ -148,16 +188,14 @@
     }
     function ask(q) {
       var old = box.querySelector(".sug"); if (old) old.remove();
-      add("m1", esc(q).replace(/&quot;/g, '"'));
-      setTimeout(function () {
-        var q2 = q;
-        if (/шифр|reference|code/i.test(q) && !/метри[чк]|metric/i.test(q)) {
-          add("m2", '<span class="src3">' + L("Архивный помощник", "Архив көмекшісі", "Archive assistant") + "</span><p>" + L("Шифр читается слева направо: Ф. 1-П (фонд), Оп. 1 (опись), Д. 245 (дело). Он однозначно указывает на единицу хранения.", "Шифр солдан оңға оқылады: Ф. 1-П (қор), Оп. 1 (тізімдеме), Д. 245 (іс). Ол сақтау бірлігін бірмәнді көрсетеді.", "Read the code left to right: Ф. 1-П (fonds), Оп. 1 (inventory), Д. 245 (file). It identifies exactly one storage unit.") + '</p><ul><li><a href="' + B + 'delo.html">' + L("Пример карточки дела", "Іс картасының үлгісі", "Example file page") + '</a></li><li><a href="' + B + 'ob-arhive.html#faq">' + L("Справка по шифрам", "Шифрлар анықтамасы", "Reference help") + "</a></li></ul>" + aiSig());
-        } else if (/риддер|ridder/i.test(q)) {
-          add("m2", '<span class="src3">' + L("Архивный помощник", "Архив көмекшісі", "Archive assistant") + "</span><p>" + L("Риддерский филиал: ул. Ч. Валиханова, 44; 8 (72336) 42-264; пн-пт 9:00-18:00.", "Риддер филиалы: Ч. Уәлиханов к-сі, 44; 8 (72336) 42-264; дс-жм 9:00-18:00.", "Ridder branch: Ch. Valikhanov st., 44; +7 72336 42-264; Mon-Fri 9:00-18:00.") + '</p><ul><li><a href="' + B + 'filialy.html?b=ridder">' + L("Открыть на карте", "Картада ашу", "Open on the map") + "</a></li></ul>" + aiSig());
-        } else add("m2", answer(q2));
+      add("m1", escHtml(q));
+      window.gosApi.post("/api/ai/ask", { question: q, lang: LANG }).then(function (res) {
+        add("m2", aiAnswer(res));
         sug();
-      }, 450);
+      }).catch(function () {
+        add("m2", aiFallback(q));
+        sug();
+      });
     }
     el.querySelector("form").onsubmit = function (e) { e.preventDefault(); var v = inp.value.trim(); if (v) { inp.value = ""; ask(v); } };
     var g = add("m2", '<span class="src3">' + L("Архивный помощник", "Архив көмекшісі", "Archive assistant") + "</span><p>" + L("Здравствуйте. Я помогу найти фонды, описи, дела и филиалы на этом сайте. Заявки здесь не принимаются.", "Сәлеметсіз бе. Мен осы сайттағы қорларды, тізімдемелерді, істерді және филиалдарды табуға көмектесемін. Өтініштер қабылданбайды.", "Hello. I can help you find fonds, inventories, files and branches on this site. Applications are not accepted here.") + "</p>");

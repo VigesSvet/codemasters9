@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ИИ-помощник — Госархив ВКО</title>
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="p-api.css">
 </head>
 <body data-nav="ii" data-noai>
 <div id="top"></div>
@@ -26,9 +27,10 @@
 </div>
 </main>
 <div id="bottom"></div>
+<script src="api.js"></script>
 <script src="app.js"></script>
 <script>
-var Q=[["Где найти метрические книги Семипалатинска 1900-х?","1900 жылдардағы Семей метрикалық кітаптарын қайдан табуға болады?","Where can I find parish registers of Semipalatinsk from the 1900s?"],["Есть ли в архиве старинные рецепты казахской кухни?","Архивте қазақ асханасының ескі рецептері бар ма?","Does the archive hold old recipes of Kazakh cuisine?"],["Покажите личное дело Иванова 1950 года","1950 жылғы Ивановтың жеке ісін көрсетіңіз","Show me Ivanov's personal file from 1950"]];
+var Q=[["Где найти метрические книги Семипалатинска 1900-х?","1900 жылдардағы Семей метрикалық кітаптарын қайдан табуға болады?","Where can I find parish registers of Semipalatinsk from the 1900s?"],["Есть ли в архиве рецепт бешбармака?","Архивте бешбармақ рецепті бар ма?","Does the archive hold a recipe for beshbarmak?"],["Покажите личное дело Иванова 1950 года","1950 жылғы Ивановтың жеке ісін көрсетіңіз","Show me Ivanov's personal file from 1950"]];
 function lg(a){var l=getLang();return a[l==="kk"?1:l==="en"?2:0]}
 function build(){mountChat(chat,true);ex.innerHTML="";Q.forEach(function(q){var b=document.createElement("button");b.type="button";b.textContent=lg(q);b.onclick=function(){chat._ask(lg(q))};ex.appendChild(b)});
  if(!build.done){build.done=1;if(new URLSearchParams(location.search).get("run"))chat._ask(lg(Q[0]))}}

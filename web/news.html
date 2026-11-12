@@ -6,6 +6,7 @@
 <title>Новости и события — Госархив ВКО</title>
 <meta name="description" content="Архив новостей: 638 записей, 2012-2026. Фильтр по году и заголовку.">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="p-api.css">
 </head>
 <body data-nav="">
 <div id="top"></div>
@@ -33,30 +34,51 @@
 </div>
 </main>
 <div id="bottom"></div>
+<script src="api.js"></script>
 <script src="app.js"></script>
-<script src="news-data.js"></script>
 <script>
 (function(){
-var N=window.NEWS,PER=20,pg=1,y=new URLSearchParams(location.search).get("year")||"";
-var sel=document.getElementById("ny"),q=document.getElementById("nq"),L=document.getElementById("nlist"),P=document.getElementById("npager"),C=document.getElementById("ncount");
-sel.value=y;
-function lg(){return getLang()==="kk"?1:0}
-function pick(a){var i=lg();return a[i]||a[1-i]||""}
-function fd(d){return d.slice(8,10)+"."+d.slice(5,7)+"."+d.slice(0,4)}
-function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
-function render(){
- var v=N.filter(function(o){return(!sel.value||o.d.slice(0,4)===sel.value)&&(!q.value||pick(o.t).toLowerCase().indexOf(q.value.toLowerCase())>-1)});
- var pages=Math.max(1,Math.ceil(v.length/PER));if(pg>pages)pg=pages;
- C.textContent=tr("Найдено: ","Табылды: ","Found: ")+v.length+tr(" из "," / "," of ")+N.length;
- L.innerHTML=v.slice((pg-1)*PER,pg*PER).map(function(o){
-  return '<article class="ni">'+(o.i?'<a href="novost.html?id='+o.id+'"><img src="'+o.i+'" alt="" loading="lazy"></a>':'<span class="nph"></span>')+'<div><time datetime="'+o.d+'">'+fd(o.d)+'</time><h3><a href="novost.html?id='+o.id+'">'+esc(pick(o.t))+'<span class="chev"></span></a></h3><p>'+esc(pick(o.a))+'</p></div></article>'}).join("");
- var b="";for(var i=1;i<=pages;i++){if(i===1||i===pages||Math.abs(i-pg)<=2)b+='<button data-p="'+i+'"'+(i===pg?' aria-current="page"':"")+'>'+i+'</button>';else if(Math.abs(i-pg)===3)b+='<span>…</span>'}
- P.innerHTML=b;
-}
-P.addEventListener("click",function(e){var t=e.target.closest("[data-p]");if(t){pg=+t.dataset.p;render();window.scrollTo(0,document.getElementById("nf").offsetTop)}});
-sel.onchange=q.oninput=function(){pg=1;render()};
-window.onLang=function(){render()};
-render();
+  var PER = 12, pg = 1, total = 0, items = [];
+  var sel = document.getElementById("ny"), q = document.getElementById("nq");
+  var L = document.getElementById("nlist"), P = document.getElementById("npager"), C = document.getElementById("ncount");
+  function lang(){ return getLang() === "kk" ? "kk" : "ru"; }
+  function esc(v){ return window.gosEsc ? gosEsc(v) : String(v == null ? "" : v).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
+  function title(o){ return lang() === "kk" ? (o.title_kk || o.title_ru || "") : (o.title_ru || o.title_kk || ""); }
+  function lead(o){ return lang() === "kk" ? (o.lead_kk || o.lead_ru || "") : (o.lead_ru || o.lead_kk || ""); }
+  function fd(d){ return d ? d.slice(8,10) + "." + d.slice(5,7) + "." + d.slice(0,4) : ""; }
+  function render(){
+    var v = items;
+    if (sel.value) v = v.filter(function(o){ return o.date && o.date.slice(0,4) === sel.value; });
+    C.textContent = tr("Найдено: ", "Табылды: ", "Found: ") + v.length + tr(" из ", " / ", " of ") + items.length;
+    L.innerHTML = v.map(function(o){
+      return '<article class="ni">' + (o.image ? '<a href="novost.html?id=' + encodeURIComponent(o.id) + '"><img src="' + esc(o.image) + '" alt="" loading="lazy"></a>' : '<span class="nph"></span>') +
+        '<div><time datetime="' + esc(o.date) + '">' + fd(o.date) + '</time><h3><a href="novost.html?id=' + encodeURIComponent(o.id) + '">' + esc(title(o)) + '<span class="chev"></span></a></h3><p>' + esc(lead(o)) + '</p></div></article>';
+    }).join("");
+    var pages = Math.max(1, Math.ceil(total / PER));
+    var b = "";
+    for (var i = 1; i <= pages; i++) {
+      if (i === 1 || i === pages || Math.abs(i - pg) <= 2) b += '<button data-p="' + i + '"' + (i === pg ? ' aria-current="page"' : "") + ">" + i + "</button>";
+      else if (Math.abs(i - pg) === 3) b += "<span>…</span>";
+    }
+    P.innerHTML = b;
+  }
+  function load(){
+    gosState(L, "loading");
+    window.gosApi.get("/api/news", { lang: lang(), q: q.value.trim(), page: pg, per_page: PER }).then(function(resp){
+      items = (resp && resp.items) || (Array.isArray(resp) ? resp : []);
+      total = (resp && resp.total) || items.length;
+      if (!items.length) { gosState(L, "empty"); P.innerHTML = ""; C.textContent = ""; return; }
+      render();
+    }).catch(function(err){
+      gosState(L, (err && err.name === "ApiError") ? "error" : "offline");
+      P.innerHTML = ""; C.textContent = "";
+    });
+  }
+  P.addEventListener("click", function(e){ var t = e.target.closest("[data-p]"); if (t) { pg = +t.dataset.p; load(); window.scrollTo(0, document.getElementById("nf").offsetTop); } });
+  q.oninput = function(){ pg = 1; load(); };
+  sel.onchange = function(){ render(); };
+  window.onLang = function(){ if (items.length) render(); else load(); };
+  load();
 })();
 </script>
 </body>

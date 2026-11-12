@@ -6,6 +6,7 @@
 <title>Материал недоступен — Госархив ВКО</title>
 <meta name="description" content="Материал с ограниченным доступом: причины, порядок ознакомления в читальном зале.">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="p-api.css">
 </head>
 <body data-nav="">
 <div id="top"></div>
@@ -45,14 +46,20 @@
 </div>
 </main>
 <div id="bottom"></div>
+<script src="api.js"></script>
 <script src="app.js"></script>
 <script>
 (function(){
   var id = new URLSearchParams(location.search).get("id");
-  if (id !== null && id !== "") {
-    document.getElementById("recbox").hidden = false;
-    document.getElementById("rec").textContent = id;
-  }
+  if (!id) return;
+  var recbox = document.getElementById("recbox"), rec = document.getElementById("rec");
+  // Подставить шифр и название, если запись опубликована; иначе оставить общий текст.
+  window.gosApi.get("/api/catalog/units/" + encodeURIComponent(id)).then(function (u) {
+    var code = u.code || "";
+    var t = u.title && (u.title.ru || u.title.kk || u.title.en) ? (u.title.ru || u.title.kk || u.title.en) : "";
+    rec.textContent = (code + (t ? " — " + t : "")).trim() || id;
+    recbox.hidden = false;
+  }).catch(function () {});
 })();
 </script>
 </body>
