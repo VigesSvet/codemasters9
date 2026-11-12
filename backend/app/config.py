@@ -20,7 +20,7 @@ def _env_int(name: str, default: int) -> int:
     return int(raw)
 
 
-# демо-пароль seed(docs/tz - стенд для жюри); вход с ним помечается флагом password_is_default(SEC-08)
+# демо-пароль seed - только для стенда; вход с ним помечается флагом password_is_default(SEC-08)
 DEMO_PASSWORD = "Demo-2026!"
 
 
