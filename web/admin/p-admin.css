@@ -91,3 +91,9 @@
   .adm { grid-template-columns: 1fr; }
   .aside { display: none; }
 }
+
+/* панель действий в конце формы - обычный блок, не липкий, чтобы не перекрывать поля */
+.stickybar { position: static; }
+
+/* подсказка о демо-доступе на странице входа */
+.login-demo { margin: 20px 0 0; padding: 10px 12px; background: var(--bg-tint); border-left: 4px solid var(--accent); font-size: 14px; line-height: 1.5; }
