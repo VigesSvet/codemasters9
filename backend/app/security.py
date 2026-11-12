@@ -29,7 +29,8 @@ CSP = (
     "frame-ancestors 'none'; "
     "form-action 'self'; "
     # Карта филиалов: Leaflet с unpkg и тайлы OpenStreetMap; видео — встраивание YouTube.
-    "img-src 'self' data: blob: https://*.tile.openstreetmap.org https://tile.openstreetmap.org https://unpkg.com https://i.ytimg.com; "
+    "img-src 'self' data: blob: https://*.tile.openstreetmap.org https://tile.openstreetmap.org "
+    "https://unpkg.com https://i.ytimg.com; "
     "style-src 'self' 'unsafe-inline' https://unpkg.com; "
     "script-src 'self' 'unsafe-inline' https://unpkg.com; "
     "frame-src https://www.youtube.com https://www.youtube-nocookie.com; "
