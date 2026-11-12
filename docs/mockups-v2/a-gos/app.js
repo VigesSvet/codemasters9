@@ -105,19 +105,29 @@
     kk: "1900 жылдардағы Семей метрикалық кітаптарын қайдан табуға болады?",
     en: "Where can I find parish (metric) registers of Semipalatinsk from the 1900s?"
   };
+  function aiSig() {
+    return '<p class="disc">' + L("Ответ сформирован автоматически и не является архивной справкой.", "Жауап автоматты түрде қалыптастырылды және архивтік анықтама болып табылмайды.", "This answer was generated automatically and is not an archival certificate.") + " " + L("Демо-режим: заранее подготовленный ответ.", "Демо-режим: алдын ала дайындалған жауап.", "Demo mode: a pre-prepared answer.") + "</p>";
+  }
   function answer(q) {
-    var m = /метрик|metric|parish|кітап/i.test(q);
+    var closed = /личное дело|личных дел|личного дела|персональн|персонал|иванов|петров|сидоров|жеке іс|жеке дерек|personal|personnel/i.test(q);
+    var m = /метри[чк]|metric|parish|кітап/i.test(q);
     var a = '<span class="src3">' + L("Архивный помощник", "Архив көмекшісі", "Archive assistant") + "</span>";
-    if (m) {
+    if (closed) {
+      a += "<p>" + L("Материалы с ограниченным доступом (личные дела, персональные данные) на сайте не выдаются.", "Шектеулі қолжетімді материалдар (жеке істер, жеке деректер) сайтта берілмейді.", "Materials with restricted access (personal files, personal data) are not provided on the site.") + "</p>";
+      a += "<p>" + L("Скан и файл не выдаются. Ознакомиться можно только в читальном зале архива.", "Скан мен файл берілмейді. Тек архивтің оқу залында танысуға болады.", "The scan and file are not provided. You can consult them only in the archive reading room.") + "</p>";
+      a += '<ul><li><a href="' + B + 'nedostupno.html">' + L("Подробнее о недоступных материалах", "Қолжетімсіз материалдар туралы толығырақ", "More about unavailable materials") + "</a></li></ul>";
+    } else if (m) {
       a += "<p>" + L("В открытом каталоге найдено два подходящих фонда:", "Ашық каталогтан екі сәйкес қор табылды:", "Two matching fonds were found in the open catalogue:") + "</p><ul>" +
         '<li><a href="' + B + 'katalog.html?q=метрические">' + L("Ф. 18 «Метрические книги приходов Семипалатинской области», 1895-1917", "Ф. 18 «Семей облысы приходтарының метрикалық кітаптары», 1895-1917", "Fonds 18 “Parish registers of Semipalatinsk region”, 1895-1917") + "</a></li>" +
         '<li><a href="' + B + 'fond.html">' + L("Ф. 1-П «Коллекция дореволюционных печатных изданий» (обзоры и памятные книжки области)", "Ф. 1-П «Революцияға дейінгі баспа басылымдарының жинағы»", "Fonds 1-P “Collection of pre-revolutionary printed works”") + "</a></li></ul>" +
         "<p>" + L("Как искать: в каталоге выберите период «1900-1909» и населённый пункт «Семипалатинск». Подробнее о шифрах: ", "Қалай іздеу: каталогта «1900-1909» кезеңін және «Семей» елді мекенін таңдаңыз. Шифрлар туралы: ", "How to search: in the catalogue choose period 1900-1909 and place Semipalatinsk. About reference codes: ") + '<a href="' + B + 'ob-arhive.html#faq">' + L("справка", "анықтама", "help") + "</a>.</p>" +
         "<p>" + L("Семей с 2022 года относится к области Абай, поэтому часть документов может храниться в архиве этой области.", "Семей 2022 жылдан бастап Абай облысына қарайды, сондықтан құжаттардың бір бөлігі сол облыстың архивінде сақталуы мүмкін.", "Since 2022 Semey belongs to Abai region, so some documents may be held by that region's archive.") + "</p>";
     } else {
-      a += "<p>" + L("Я помогаю ориентироваться в каталоге, фондах, выставках и филиалах. По вашему запросу открыт поиск по каталогу:", "Мен каталог, қорлар, көрмелер және филиалдар бойынша бағыт беремін. Сұрауыңыз бойынша каталог іздеуі:", "I help with the catalogue, fonds, exhibitions and branches. Catalogue search for your query:") + '</p><ul><li><a href="' + B + "katalog.html?q=" + encodeURIComponent(q) + '">' + L("Результаты поиска в каталоге", "Каталогтағы іздеу нәтижелері", "Catalogue search results") + '</a></li><li><a href="' + B + 'filialy.html">' + L("Адреса и контакты филиалов", "Филиалдар мекенжайлары мен байланыстары", "Branch addresses and contacts") + "</a></li></ul>";
+      a += "<p>" + L("В открытых материалах сайта ответа нет.", "Сайттың ашық материалдарында жауап жоқ.", "There is no answer in the open materials on the site.") + "</p>";
+      a += "<p>" + L("Я не выдумываю сведения и не привожу непроверенные шифры. Чтобы уточнить информацию, обратитесь в архив или читальный зал.", "Мен мәліметтер мен тексерілмеген шифрларды ойлап таппаймын. Ақпаратты нақтылау үшін архивке немесе оқу залына хабарласыңыз.", "I do not invent facts or cite unverified references. Contact the archive or the reading room to clarify.") + "</p>";
+      a += '<ul><li><a href="' + B + 'ob-arhive.html#contacts">' + L("Контакты архива", "Архив байланыстары", "Archive contacts") + '</a></li><li><a href="' + B + 'ob-arhive.html#reading">' + L("Читальный зал", "Оқу залы", "Reading room") + "</a></li></ul>";
     }
-    a += '<p class="disc">' + L("Сайт носит справочный характер: заявки, архивные запросы и заказы здесь не принимаются. Ответ основан на открытых описях, шифры проверяйте в каталоге. В запросах не указывайте персональные данные.", "Сайт анықтамалық сипатта: өтініштер, архивтік сұраулар мен тапсырыстар қабылданбайды. Жауап ашық тізімдемелерге негізделген, шифрларды каталогтан тексеріңіз. Сұрауларда жеке деректерді көрсетпеңіз.", "This site is informational: applications, archive requests and orders are not accepted. The answer is based on open inventories; verify reference codes in the catalogue. Do not enter personal data.") + "</p>";
+    a += aiSig();
     return a;
   }
   function mountChat(el, full) {
@@ -141,10 +151,10 @@
       add("m1", esc(q).replace(/&quot;/g, '"'));
       setTimeout(function () {
         var q2 = q;
-        if (/шифр|reference|code/i.test(q) && !/метрик|metric/i.test(q)) {
-          add("m2", '<span class="src3">' + L("Архивный помощник", "Архив көмекшісі", "Archive assistant") + "</span><p>" + L("Шифр читается слева направо: Ф. 1-П (фонд), Оп. 1 (опись), Д. 245 (дело). Он однозначно указывает на единицу хранения.", "Шифр солдан оңға оқылады: Ф. 1-П (қор), Оп. 1 (тізімдеме), Д. 245 (іс). Ол сақтау бірлігін бірмәнді көрсетеді.", "Read the code left to right: Ф. 1-П (fonds), Оп. 1 (inventory), Д. 245 (file). It identifies exactly one storage unit.") + '</p><ul><li><a href="' + B + 'delo.html">' + L("Пример карточки дела", "Іс картасының үлгісі", "Example file page") + '</a></li><li><a href="' + B + 'ob-arhive.html#faq">' + L("Справка по шифрам", "Шифрлар анықтамасы", "Reference help") + "</a></li></ul>");
+        if (/шифр|reference|code/i.test(q) && !/метри[чк]|metric/i.test(q)) {
+          add("m2", '<span class="src3">' + L("Архивный помощник", "Архив көмекшісі", "Archive assistant") + "</span><p>" + L("Шифр читается слева направо: Ф. 1-П (фонд), Оп. 1 (опись), Д. 245 (дело). Он однозначно указывает на единицу хранения.", "Шифр солдан оңға оқылады: Ф. 1-П (қор), Оп. 1 (тізімдеме), Д. 245 (іс). Ол сақтау бірлігін бірмәнді көрсетеді.", "Read the code left to right: Ф. 1-П (fonds), Оп. 1 (inventory), Д. 245 (file). It identifies exactly one storage unit.") + '</p><ul><li><a href="' + B + 'delo.html">' + L("Пример карточки дела", "Іс картасының үлгісі", "Example file page") + '</a></li><li><a href="' + B + 'ob-arhive.html#faq">' + L("Справка по шифрам", "Шифрлар анықтамасы", "Reference help") + "</a></li></ul>" + aiSig());
         } else if (/риддер|ridder/i.test(q)) {
-          add("m2", '<span class="src3">' + L("Архивный помощник", "Архив көмекшісі", "Archive assistant") + "</span><p>" + L("Риддерский филиал: ул. Ч. Валиханова, 44; 8 (72336) 42-264; пн-пт 9:00-18:00.", "Риддер филиалы: Ч. Уәлиханов к-сі, 44; 8 (72336) 42-264; дс-жм 9:00-18:00.", "Ridder branch: Ch. Valikhanov st., 44; +7 72336 42-264; Mon-Fri 9:00-18:00.") + '</p><ul><li><a href="' + B + 'filialy.html?b=ridder">' + L("Открыть на карте", "Картада ашу", "Open on the map") + "</a></li></ul>");
+          add("m2", '<span class="src3">' + L("Архивный помощник", "Архив көмекшісі", "Archive assistant") + "</span><p>" + L("Риддерский филиал: ул. Ч. Валиханова, 44; 8 (72336) 42-264; пн-пт 9:00-18:00.", "Риддер филиалы: Ч. Уәлиханов к-сі, 44; 8 (72336) 42-264; дс-жм 9:00-18:00.", "Ridder branch: Ch. Valikhanov st., 44; +7 72336 42-264; Mon-Fri 9:00-18:00.") + '</p><ul><li><a href="' + B + 'filialy.html?b=ridder">' + L("Открыть на карте", "Картада ашу", "Open on the map") + "</a></li></ul>" + aiSig());
         } else add("m2", answer(q2));
         sug();
       }, 450);
