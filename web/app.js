@@ -29,7 +29,7 @@
   var TOP =
     '<a class="skip" href="#main">' + X("Перейти к содержимому", "Мазмұнға өту", "Skip to content") + "</a>" +
     '<div class="phase"><div class="wrap"><b>' + X("ПРОТОТИП", "ҮЛГІ", "PROTOTYPE") + "</b><span>" +
-    X("Это прототип нового сайта. Сайт информационный: заявки, заказы и платежи не принимаются.", "Бұл жаңа сайттың үлгісі. Сайт ақпараттық: өтініштер, тапсырыстар және төлемдер қабылданбайды.", "This is a prototype of the new website. The site is informational: no applications, orders or payments.") +
+    '<span class="phase-long">' + X("Это прототип нового сайта. Сайт информационный: заявки, заказы и платежи не принимаются.", "Бұл жаңа сайттың үлгісі. Сайт ақпараттық: өтініштер, тапсырыстар және төлемдер қабылданбайды.", "This is a prototype of the new website. The site is informational: no applications, orders or payments.") + "</span>" +
     ' <a href="' + B + 'ob-arhive.html#feedback">' + X("Оставьте отзыв", "Пікір қалдырыңыз", "Leave feedback") + "</a>.</span></div></div>" +
     '<header class="hdr"><div class="wrap">' +
     '<div class="util"><a href="tel:+77232255976">8 (7232) 25-59-76</a>' +

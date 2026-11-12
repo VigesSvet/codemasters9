@@ -74,6 +74,25 @@
   function setChecked(nm, vals) {
     document.querySelectorAll('[name="' + nm + '"]').forEach(function (x) { x.checked = vals.indexOf(x.value) !== -1; });
   }
+
+  // число активных фильтров для кнопки «Фильтры (N)» на мобильной версии
+  function activeFilterCount() {
+    var n = 0;
+    ["f_fond", "f_opis", "f_delo", "f_per", "f_y1", "f_y2", "f_auth", "f_theme", "f_place", "f_kw", "f_lang"].forEach(function (id) {
+      var el = $(id); if (el && el.value) n++;
+    });
+    n += checked("type").length;
+    n += checked("branch").length;
+    if ($("f_dig") && $("f_dig").checked) n++;
+    if ($("f_open") && $("f_open").checked) n++;
+    return n;
+  }
+  function updateFbtn() {
+    var b = $("ftoggle"), c = $("fcount");
+    if (!b) return;
+    var n = activeFilterCount();
+    if (c) c.textContent = n ? "(" + n + ")" : "";
+  }
   function applyToForm(s) {
     $("q").value = s.q;
     $("f_fond").value = s.fond;
@@ -286,6 +305,7 @@
     renderItems(resp);
     renderPager(resp);
     if (window.gosGlossary) window.gosGlossary(document);
+    updateFbtn();
   }
 
   function load() {
@@ -347,6 +367,8 @@
   $("sort").addEventListener("change", function () { lastPage = 1; load(); });
   $("qf").addEventListener("submit", function (e) { e.preventDefault(); lastPage = 1; load(); });
   $("apply").addEventListener("click", function () { lastPage = 1; load(); });
+  var ft = $("ftoggle");
+  if (ft) ft.addEventListener("click", function () { var on = ff.classList.toggle("open"); ft.setAttribute("aria-expanded", String(on)); });
   window.resetAll = resetAll;
   window.onLang = function () { buildStaticSelects(); if (last) render(last); };
 
