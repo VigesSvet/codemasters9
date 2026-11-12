@@ -44,11 +44,6 @@ def _seed_password() -> str:
     return os.environ.get("SEED_PASSWORD", DEFAULT_SEED_PASSWORD)
 
 
-def _placeholder_hash(password: str) -> str:
-    """Заглушка-хеш до реализации scrypt в T2 (security.hash_password)."""
-    return "stub$" + password
-
-
 def _branch_slug(name: str) -> str | None:
     n = norm(name)
     for keyword, slug in _BRANCH_SLUGS:
@@ -135,7 +130,7 @@ def load_fixture(db: sqlite3.Connection) -> None:
     for username, role, branch_id, display_name in users:
         db.execute(
             "INSERT INTO users (username, password_hash, role, branch_id, display_name) VALUES (?,?,?,?,?)",
-            (username, _placeholder_hash(password), role, branch_id, display_name),
+            (username, security.hash_password(password), role, branch_id, display_name),
         )
 
     db.commit()
@@ -404,7 +399,7 @@ def _load_news(db: sqlite3.Connection, web_dir: str) -> None:
 
 
 def _load_users(db: sqlite3.Connection, branch_by_slug: dict[str, int]) -> None:
-    """Пользователи из users.json; пароль через security.hash_password (фолбэк — stub)."""
+    """Пользователи из users.json; пароль хешируется через security.hash_password."""
     path = SEED_DIR / "users.json"
     if not path.exists():
         return
@@ -412,10 +407,7 @@ def _load_users(db: sqlite3.Connection, branch_by_slug: dict[str, int]) -> None:
     password = _seed_password()
     for u in data:
         branch_id = branch_by_slug.get(u["branch_slug"]) if u.get("branch_slug") else None
-        try:
-            password_hash = security.hash_password(password)
-        except NotImplementedError:
-            password_hash = _placeholder_hash(password)
+        password_hash = security.hash_password(password)
         db.execute(
             "INSERT INTO users (username, password_hash, role, branch_id, display_name) VALUES (?,?,?,?,?)",
             (u["username"], password_hash, u["role"], branch_id, u.get("display_name") or ""),

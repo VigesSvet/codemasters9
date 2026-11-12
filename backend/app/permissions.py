@@ -1,30 +1,53 @@
-"""Матрица прав доступа. Реализация — в T2, здесь заглушка + полная матрица."""
+"""Матрица прав доступа (проверяется на сервере в каждом хендлере)."""
 
 from __future__ import annotations
 
 ROLES = ("admin", "moderator", "editor", "branch_admin")
 
+_EDITABLE_STATUSES = ("draft", "review", "needs_work")
 
-def can(user, action, obj=None) -> bool:
-    """
-    Проверить право пользователя на действие (проверяется на сервере в каждом хендлере).
 
-    Полная матрица (docs/plan/2026-11-12-tehnichka.md §1):
+def _get(obj, key):
+    if obj is None:
+        return None
+    if isinstance(obj, dict):
+        return obj.get(key)
+    try:
+        return obj[key]  # sqlite3.Row / Mapping
+    except (TypeError, KeyError, IndexError):
+        return getattr(obj, key, None)
 
-    | action | admin | moderator | editor | branch_admin |
-    |---|---|---|---|---|
-    | unit.create / unit.edit (draft/review/needs_work) | v | v | v | - |
-    | unit.edit published | v | v | - | - |
-    | unit.submit (draft/needs_work -> review) | v | v | v | - |
-    | unit.review / unit.publish / unit.archive | v | v | - | - |
-    | unit.delete | v | - | - | - |
-    | file.upload | v | v | v | - |
-    | file.set_access | v | v | - | - |
-    | branch.edit | v (все) | - | - | только obj.id == user.branch_id |
-    | import.preview / import.apply | v | - | v | - |
-    | audit.read | v | v | - | - |
-    | users.manage | v | - | - | - |
 
-    Заглушка этапа 0: разрешено только admin.
-    """
-    return user is not None and user.get("role") == "admin"
+def can(user, action: str, obj=None) -> bool:
+    """Проверить право пользователя на действие. admin — всё."""
+    if not user or not user.get("role"):
+        return False
+    role = user.get("role")
+    if role == "admin":
+        return True
+
+    if action in ("unit.create", "unit.submit"):
+        return role in ("moderator", "editor")
+    if action == "unit.edit":
+        if role == "editor":
+            return _get(obj, "pub_status") in _EDITABLE_STATUSES
+        return role == "moderator"
+    if action in ("unit.review", "unit.publish", "unit.archive"):
+        return role == "moderator"
+    if action == "unit.delete":
+        return False
+    if action == "file.upload":
+        return role in ("moderator", "editor")
+    if action == "file.set_access":
+        return role == "moderator"
+    if action == "branch.edit":
+        if role == "branch_admin":
+            return _get(obj, "id") == user.get("branch_id")
+        return False
+    if action in ("import", "import.preview", "import.apply"):
+        return role == "editor"
+    if action == "audit.read":
+        return role == "moderator"
+    if action == "users.manage":
+        return False
+    return False
