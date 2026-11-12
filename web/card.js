@@ -99,12 +99,12 @@
     var f = u.parents && u.parents.fond, inv = u.parents && u.parents.inventory;
     var fcode = f ? (f.code || f.fond_code || ("Ф. " + (f.id || ""))) : "";
     var fid = f ? f.id : null;
-    if (f) h += '<li><span class="lv" data-term="fond">' + t("ФОНД", "ҚОР", "FONDS") + '</span><a href="' + B + 'fond.html?id=' + encodeURIComponent(fid) + '">' + esc(fcode) + "</a></li>";
+    if (f) h += '<li><span class="lv">' + t("ФОНД", "ҚОР", "FONDS") + '</span><a href="' + B + 'fond.html?id=' + encodeURIComponent(fid) + '">' + esc(fcode) + "</a></li>";
     if (inv) {
       var n = inv.number || inv.id || "";
-      h += '<li><span class="lv" data-term="opis">' + t("ОПИСЬ", "ТІЗІМДЕМЕ", "INV.") + '</span><a href="' + B + 'fond.html?id=' + encodeURIComponent(fid) + '#opisi">' + t("Оп.", "Оп.", "Inv.") + " " + esc(n) + "</a></li>";
+      h += '<li><span class="lv">' + t("ОПИСЬ", "ТІЗІМДЕМЕ", "INV.") + '</span><a href="' + B + 'fond.html?id=' + encodeURIComponent(fid) + '#opisi">' + t("Оп.", "Оп.", "Inv.") + " " + esc(n) + "</a></li>";
     }
-    h += '<li aria-current="page"><span class="lv" data-term="delo">' + t("ДЕЛО", "ІС", "FILE") + "</span>" + esc(u.code || "") + "</li></ol>";
+    h += '<li aria-current="page"><span class="lv">' + t("ДЕЛО", "ІС", "FILE") + "</span>" + esc(u.code || "") + "</li></ol>";
     return h;
   }
 
@@ -143,10 +143,10 @@
       if (i) chainHtml += '<li class="arr" aria-hidden="true">&rarr;</li>';
       var on = parts.some(function (p) { return p.key === c[0]; });
       var label = c[0] === "archive" ? t("Архив", "Мұрағат", "Archive") : t.apply(null, CIPHER_LABEL[c[0]]);
-      chainHtml += '<li' + (on ? ' class="on"' : "") + '>' + (c[1] ? '<span data-term="' + c[1] + '">' + label + "</span>" : label) + "</li>";
+      chainHtml += '<li' + (on ? ' class="on"' : "") + '>' + label + "</li>";
     });
     var rows = parts.map(function (p) {
-      return '<div class="cp-row"><dt><code>' + esc(p.mark) + '</code></dt><dd><span data-term="' + p.key + '">' + t.apply(null, CIPHER_LABEL[p.key]) + "</span></dd></div>";
+      return '<div class="cp-row"><dt><code>' + esc(p.mark) + '</code></dt><dd>' + t.apply(null, CIPHER_LABEL[p.key]) + "</dd></div>";
     }).join("");
     return '<details class="cipher-help"><summary>' + t("Как читать шифр?", "Шифрды қалай оқуға болады?", "How to read a reference?") + "</summary>" +
       '<div class="cipher-in"><ol class="cipher-chain">' + chainHtml + "</ol>" +
@@ -262,15 +262,15 @@
     var chip = CHIP[u.level] ? t.apply(null, CHIP[u.level]) : (u.level || "");
     var hasFile = !!(u.files || []).some(function (f) { return f.downloadable; }) || u.has_public_file;
     var status = hasFile
-      ? '<span class="status" style="color:var(--level);border-color:var(--level)">' + t("Оцифровано, открыто", "Цифрландырылған, ашық", "Digitised, open") + '</span><button type="button" class="gt-btn" data-term="dig" aria-expanded="false"></button>'
-      : '<span class="status">' + t("Доступ ограничен", "Қолжетімділік шектеулі", "Restricted access") + '</span><button type="button" class="gt-btn" data-term="restricted" aria-expanded="false"></button>';
+      ? '<span class="status" style="color:var(--level);border-color:var(--level)">' + t("Оцифровано, открыто", "Цифрландырылған, ашық", "Digitised, open") + "</span>"
+      : '<span class="status">' + t("Доступ ограничен", "Қолжетімділік шектеулі", "Restricted access") + "</span>";
     var yr = yrStr(u);
     var branch = u.branch && u.branch.name ? esc(u.branch.name) : "";
     var demo = u.is_demo ? '<span class="tag demo">' + t("Образец записи", "Жазба үлгісі", "Sample record") + "</span>" : "";
     var crumbsEl = document.querySelector(".crumbs ol") || document.querySelector("#crumbs");
     var h = "";
     if (crumbsEl) crumbsEl.outerHTML = crumbsUnit(u);
-    h += '<div class="rec-screen"><span class="chip">' + esc(chip) + "</span>" + status + demo +
+    h += '<div class="rec-screen"><div class="rec-tags"><span class="chip">' + esc(chip) + "</span>" + status + demo + "</div>" +
       '<h1 style="margin-top:12px">' + esc(field(u, "title")) + "</h1>" +
       refLine(u.code || "", true) +
       cipherHelp(u) +
@@ -311,15 +311,15 @@
     var h = "<ol style='padding-left:20px'><li>" + t("Государственный архив ВКО", "ШҚО мемлекеттік архиві", "State Archive of East Kazakhstan") + "</li>";
     if (f) {
       var fcode = esc(f.code || f.fond_code || ("Ф. " + (f.id || "")));
-      h += '<li><span class="glv" data-term="fond">' + t("ФОНД", "ҚОР", "FONDS") + '</span> <a href="' + B + 'fond.html?id=' + encodeURIComponent(f.id) + '">' + fcode + (f.title ? " — " + esc(typeof f.title === "string" ? f.title : field(f, "title")) : "") + "</a></li>";
+      h += '<li><span class="glv">' + t("ФОНД", "ҚОР", "FONDS") + '</span> <a href="' + B + 'fond.html?id=' + encodeURIComponent(f.id) + '">' + fcode + (f.title ? " — " + esc(typeof f.title === "string" ? f.title : field(f, "title")) : "") + "</a></li>";
     }
-    if (inv) h += '<li><span class="glv" data-term="opis">' + t("ОПИСЬ", "ТІЗІМДЕМЕ", "INV.") + "</span> " + t("Оп.", "Оп.", "Inv.") + " " + esc(inv.number || inv.id || "") + "</li>";
-    h += '<li><span class="glv" data-term="delo">' + t("ДЕЛО", "ІС", "FILE") + "</span> <b>" + esc(u.code || "") + " — " + esc(field(u, "title")) + " (" + t("вы здесь", "сіз осындасыз", "you are here") + ")</b></li></ol>";
+    if (inv) h += '<li><span class="glv">' + t("ОПИСЬ", "ТІЗІМДЕМЕ", "INV.") + "</span> " + t("Оп.", "Оп.", "Inv.") + " " + esc(inv.number || inv.id || "") + "</li>";
+    h += '<li><span class="glv">' + t("ДЕЛО", "ІС", "FILE") + "</span> <b>" + esc(u.code || "") + " — " + esc(field(u, "title")) + " (" + t("вы здесь", "сіз осындасыз", "you are here") + ")</b></li></ol>";
     return h;
   }
 
   function crumbsFond(f) {
-    return '<ol aria-label="' + t("Вы здесь", "Сіз осындасыз", "You are here") + '"><li><a href="' + B + 'index.html">' + t("Главная", "Басты бет", "Home") + '</a></li><li><a href="' + B + 'katalog.html">' + t("Каталог", "Каталог", "Catalogue") + '</a></li><li aria-current="page"><span class="lv" data-term="fond">' + t("ФОНД", "ҚОР", "FONDS") + "</span>" + esc(f.code || "") + "</li></ol>";
+    return '<ol aria-label="' + t("Вы здесь", "Сіз осындасыз", "You are here") + '"><li><a href="' + B + 'index.html">' + t("Главная", "Басты бет", "Home") + '</a></li><li><a href="' + B + 'katalog.html">' + t("Каталог", "Каталог", "Catalogue") + '</a></li><li aria-current="page"><span class="lv">' + t("ФОНД", "ҚОР", "FONDS") + "</span>" + esc(f.code || "") + "</li></ol>";
   }
 
   function renderFond(f, invs) {
@@ -331,7 +331,7 @@
     if (crumbsEl) crumbsEl.outerHTML = crumbsFond(f);
     var invCount = invs ? invs.length : "";
     var h = "";
-    h += '<span class="chip">' + t("Фонд", "Қор", "Fonds") + "</span>" + status + demo +
+    h += '<div class="rec-tags"><span class="chip">' + t("Фонд", "Қор", "Fonds") + "</span>" + status + demo + "</div>" +
       '<h1 style="margin-top:12px">' + esc(field(f, "title")) + "</h1>" +
       refLine(code, false) +
       '<div class="two">' +
