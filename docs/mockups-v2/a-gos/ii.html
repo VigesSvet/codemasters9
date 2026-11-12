@@ -28,7 +28,7 @@
 <div id="bottom"></div>
 <script src="app.js"></script>
 <script>
-var Q=[["Где найти метрические книги Семипалатинска 1900-х?","1900 жылдардағы Семей метрикалық кітаптарын қайдан табуға болады?","Where can I find parish registers of Semipalatinsk from the 1900s?"],["Хочу найти фотографии Усть-Каменогорска 1960-х","1960-жылдардағы Өскемен суреттерін тапқым келеді","I want to find photographs of Ust-Kamenogorsk in the 1960s"],["Как читать архивный шифр?","Архивтік шифрды қалай оқуға болады?","How do I read an archive reference?"],["Адрес и часы работы Риддерского филиала","Риддер филиалының мекенжайы мен жұмыс уақыты","Address and hours of the Ridder branch"]];
+var Q=[["Где найти метрические книги Семипалатинска 1900-х?","1900 жылдардағы Семей метрикалық кітаптарын қайдан табуға болады?","Where can I find parish registers of Semipalatinsk from the 1900s?"],["Есть ли в архиве старинные рецепты казахской кухни?","Архивте қазақ асханасының ескі рецептері бар ма?","Does the archive hold old recipes of Kazakh cuisine?"],["Покажите личное дело Иванова 1950 года","1950 жылғы Ивановтың жеке ісін көрсетіңіз","Show me Ivanov's personal file from 1950"]];
 function lg(a){var l=getLang();return a[l==="kk"?1:l==="en"?2:0]}
 function build(){mountChat(chat,true);ex.innerHTML="";Q.forEach(function(q){var b=document.createElement("button");b.type="button";b.textContent=lg(q);b.onclick=function(){chat._ask(lg(q))};ex.appendChild(b)});
  if(!build.done){build.done=1;if(new URLSearchParams(location.search).get("run"))chat._ask(lg(Q[0]))}}

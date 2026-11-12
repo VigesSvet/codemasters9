@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Материал недоступен — Госархив ВКО</title>
+<meta name="description" content="Материал с ограниченным доступом: причины, порядок ознакомления в читальном зале.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-nav="">
+<div id="top"></div>
+<main id="main">
+<div class="crumbs"><div class="wrap">
+ <ol aria-label="Вы здесь"><li><a href="index.html" data-kk="Басты бет" data-en="Home">Главная</a></li><li aria-current="page" data-kk="Материал қолжетімсіз" data-en="Material unavailable">Материал недоступен</li></ol>
+</div></div>
+<section class="hero sm"><div class="wrap">
+ <h1 data-kk="Материал қолжетімсіз" data-en="Material unavailable">Материал недоступен</h1>
+ <p class="sub" data-kk="Бұл жабық немесе шектеулі қолжетімді материал: сипаттамасы көрсетіледі, бірақ скан мен файл берілмейді." data-en="This is a closed or restricted material: its description is shown, but the scan and file are not provided.">Это закрытый материал или материал с ограниченным доступом: описание показывается, но сам документ не выдаётся.</p>
+</div></section>
+<div class="wrap" style="padding-top:32px;padding-bottom:72px;max-width:820px">
+ <div class="sbox" id="recbox" hidden style="margin-bottom:16px">
+  <p style="margin:0"><span data-kk="Сұралған жазба:" data-en="Requested record:">Запрошенная запись:</span> <code id="rec" style="font:400 15px var(--font-mono)"></code></p>
+ </div>
+ <div class="sbox" style="margin-bottom:16px">
+  <h2 style="font:700 19px var(--font-text);margin:0 0 8px" data-kk="Неге материал қолжетімсіз" data-en="Why the material is unavailable">Почему материал недоступен</h2>
+  <ul style="margin:0;padding-left:20px;font-size:16px;line-height:1.6">
+   <li data-kk="Қолжетімділік Қазақстан Республикасының заңнамасына сәйкес шектелген." data-en="Access is restricted under the laws of the Republic of Kazakhstan.">Ограничение доступа по законодательству Республики Казахстан.</li>
+   <li data-kk="Материалда жариялауға жатпайтын жеке деректер бар." data-en="The material contains personal data that must not be published.">В материале содержатся персональные данные, не подлежащие публикации.</li>
+   <li data-kk="Материал жариялау құқығының тексерісінен өткен жоқ." data-en="The material has not passed the rights review for publication.">Материал не прошёл проверку прав на публикацию.</li>
+  </ul>
+ </div>
+ <div class="sbox" style="margin-bottom:16px">
+  <h2 style="font:700 19px var(--font-text);margin:0 0 8px" data-kk="Не істеуге болады" data-en="What you can do">Что можно сделать</h2>
+  <p style="font-size:16px;line-height:1.6;margin:0 0 12px" data-kk="Материалмен оқу залында немесе архивтің өзінде танысуға болады." data-en="You can view the material in the reading room or at the archive itself.">Ознакомиться с материалом можно в читальном зале или в самом архиве.</p>
+  <div class="btns">
+   <a class="btn sm" href="ob-arhive.html#reading" data-kk="Оқу залы" data-en="Reading room">Читальный зал</a>
+   <a class="btn sm" href="ob-arhive.html" data-kk="Архив" data-en="The archive">Архив</a>
+   <a class="btn sm" href="uslugi.html#gov" data-kk="Қызметтер тәртібі" data-en="Services procedure">Порядок услуг</a>
+  </div>
+ </div>
+ <div class="sbox">
+  <h2 style="font:700 19px var(--font-text);margin:0 0 8px" data-kk="Маңызды" data-en="Important">Важно</h2>
+  <p style="font-size:16px;line-height:1.6;margin:0" data-kk="Скан мен файл сайтта берілмейді. Сайт анықтамалық: өтініштер мен тапсырыстар қабылданбайды." data-en="The scan and the file are not provided on the site. The site is informational: applications and orders are not accepted.">Скан и файл на сайте не выдаются. Сайт справочный: заявки и заказы не принимаются.</p>
+ </div>
+</div>
+</main>
+<div id="bottom"></div>
+<script src="app.js"></script>
+<script>
+(function(){
+  var id = new URLSearchParams(location.search).get("id");
+  if (id !== null && id !== "") {
+    document.getElementById("recbox").hidden = false;
+    document.getElementById("rec").textContent = id;
+  }
+})();
+</script>
+</body>
+</html>

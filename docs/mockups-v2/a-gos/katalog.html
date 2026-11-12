@@ -82,6 +82,7 @@ var S={cat:"all",page:1,per:5},P=new URLSearchParams(location.search);
 function lg(a){var l=getLang();return a[l==="kk"?1:l==="en"?2:0]}
 function $(i){return document.getElementById(i)}
 function hl(s,q){if(!q)return s;var r=q.split(/\s+/).filter(Boolean).map(function(w){return w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")});if(!r.length)return s;return s.replace(new RegExp("("+r.join("|")+")","ig"),"<mark>$1</mark>")}
+function norm(s){return String(s).toLowerCase().replace(/ё/g,"е").replace(/ә/g,"а").replace(/і/g,"и").replace(/ң/g,"н").replace(/ғ/g,"г").replace(/ү/g,"у").replace(/ұ/g,"у").replace(/қ/g,"к").replace(/ө/g,"о").replace(/һ/g,"х").replace(/[\-–—]/g," ").replace(/\s+/g," ").trim()}
 function buildFacets(){
   var ty="",br="";
   Object.keys(TY).forEach(function(k){var n=R.filter(function(r){return r.type===k}).length;ty+='<label class="chk"><input type="checkbox" name="type" value="'+k+'"><span class="l">'+lg(TY[k])+'</span><span class="cnt">'+n+'</span></label>'});
@@ -96,13 +97,13 @@ function buildFacets(){
 }
 function vals(n){return [].map.call(document.querySelectorAll("[name="+n+"]:checked"),function(x){return x.value})}
 function filt(){
-  var q=$("q").value.trim().toLowerCase(),fo=$("f_fond").value.trim().toLowerCase(),op=$("f_opis").value.trim(),de=$("f_delo").value.trim(),
+  var q=norm($("q").value),fo=$("f_fond").value.trim().toLowerCase(),op=$("f_opis").value.trim(),de=$("f_delo").value.trim(),
   per=$("f_per").value,y1=+$("f_y1").value||0,y2=+$("f_y2").value||0,au=$("f_auth").value.trim().toLowerCase(),th=$("f_theme").value,pl=$("f_place").value,kw=$("f_kw").value.trim().toLowerCase(),
   ty=vals("type"),br=vals("br"),dig=$("f_dig").checked,opn=$("f_open").checked,lang=$("f_lang").value;
   if(per){var p=per.split("-");y1=y1||+p[0];y2=y2||+p[1]}
   return R.filter(function(r){
     if(S.cat!=="all"&&r.cat!==S.cat&&!(S.cat==="personal"&&r.type==="personal"))return false;
-    if(q){var hay=(r.t.join(" ")+" "+r.c+" "+r.kw+" "+r.au).toLowerCase();if(!q.split(/\s+/).every(function(w){return hay.indexOf(w)>-1}))return false}
+    if(q){var hay=norm(r.t.join(" ")+" "+r.c+" "+r.kw+" "+r.au);if(!q.split(/\s+/).every(function(w){return hay.indexOf(w)>-1}))return false}
     if(fo&&r.f.toLowerCase().indexOf(fo)<0)return false;
     if(op&&r.o!==op)return false;if(de&&r.d!==de)return false;
     if(y1&&r.y2<y1)return false;if(y2&&r.y1>y2)return false;
@@ -127,7 +128,7 @@ function render(){
     var yr=r.y1===r.y2?r.y1:r.y1+"-"+r.y2;
     h+='<article class="res"><div>'+th+'</div><div><span class="chip'+(r.lv==="opis"?" l2":r.lv==="delo"||r.lv==="doc"?" l3":"")+'">'+lg(LV[r.lv])+'</span><h3><a href="'+r.href+'">'+hl(lg(r.t),q)+'<span class="chev"></span></a></h3><dl><dt>'+tr("Шифр","Шифр","Reference")+"</dt><dd>"+hl(r.c,q)+"</dd><dt>"+tr("Даты","Күндер","Dates")+"</dt><dd>"+yr+"</dd><dt>"+tr("Хранится","Сақталады","Held by")+"</dt><dd>"+lg(BR[r.br])+"</dd><dt>"+tr("Объём","Көлемі","Extent")+"</dt><dd>"+r.n+'</dd></dl><div class="tags">'+av+dg+'<span class="tag">'+lg(TY[r.type])+"</span></div></div></article>";
   });
-  $("results").innerHTML=h||'<div class="empty"><p><b>'+tr("По вашему запросу ничего не найдено","Сұрауыңыз бойынша ештеңе табылмады","Nothing matches your query")+"</b></p><p>"+tr("Измените формулировку или сбросьте фильтры. Можно спросить ИИ-помощника.","Тұжырымды өзгертіңіз немесе сүзгілерді тастаңыз. ЖИ көмекшіден сұрауға болады.","Try different wording or reset the filters. You can also ask the AI assistant.")+'</p><button class="btn sm" type="button" onclick="resetAll()">'+tr("Сбросить фильтры","Сүзгілерді тастау","Reset filters")+"</button></div>";
+  $("results").innerHTML=h||'<div class="empty"><p><b>'+tr("По вашему запросу ничего не найдено","Сұрауыңыз бойынша ештеңе табылмады","Nothing matches your query")+"</b></p><p>"+tr("Измените формулировку или сбросьте фильтры. Можно спросить ИИ-помощника.","Тұжырымды өзгертіңіз немесе сүзгілерді тастаңыз. ЖИ көмекшіден сұрауға болады.","Try different wording or reset the filters. You can also ask the AI assistant.")+'</p><ul style="text-align:left;margin:8px auto 16px;max-width:46ch"><li>'+tr("Проверьте написание (например, «Усть-Каменогорск» и «Өскемен»).","Жазылуын тексеріңіз (мысалы, «Усть-Каменогорск» және «Өскемен»).","Check the spelling (e.g. “Ust-Kamenogorsk” and “Oskemen”).")+'</li><li>'+tr("Уберите часть фильтров.","Сүзгілердің бір бөлігін алып тастаңыз.","Remove some filters.")+'</li><li>'+tr("Расширьте период поиска.","Іздеу кезеңін кеңейтіңіз.","Widen the date range.")+'</li></ul><button class="btn sm" type="button" onclick="resetAll()">'+tr("Сбросить фильтры","Сүзгілерді тастау","Reset filters")+"</button></div>";
   var pg="";if(pages>1){pg+='<li><button '+(S.page===1?"disabled":"")+' data-p="'+(S.page-1)+'" aria-label="'+tr("Назад","Артқа","Previous")+'">&larr;</button></li>';for(var i=1;i<=pages;i++)pg+='<li><button data-p="'+i+'"'+(i===S.page?' aria-current="page"':"")+">"+i+"</button></li>";pg+='<li><button '+(S.page===pages?"disabled":"")+' data-p="'+(S.page+1)+'" aria-label="'+tr("Вперёд","Алға","Next")+'">&rarr;</button></li>'}
   $("pager").innerHTML=pg;
   var base=S.cat;S.cat="all";var all=filt();S.cat=base;
