@@ -834,9 +834,23 @@ html[data-vi] .hero.big .plate{background:#000;border:2px solid #fff}
 .res .ph{border:1px solid var(--line);background:var(--bg-tint)}
 .m2.wait{color:var(--text-muted);border-left-color:var(--line)}
 .m2 .ai-mode{font-size:13px;padding:0 6px;border:1px solid currentColor}
+}
 @media print{
   .phase,.hdr,.ftr,.themebar,.aib,.aip,.optab,.opp,.crumbs,.viewer{display:none!important}
   .rec h1{font-size:28pt!important}
   a,a:visited{color:#000!important;text-decoration:none!important}
   a[href]::after{content:" (" attr(href) ")"}
+}
+
+/* ---------- сценарии и мелочи ---------- */
+/* кнопка-сценарий .sec2 в hero больше не используется; страховка от прижатого текста */
+.btn.sec2,.btn.sec2:visited{padding:4px 20px}
+/* вкладки каталога: подписи не переносим и не сжимаем, строка прокручивается по горизонтали */
+.tabs .tabw{flex:none}
+.tabs a,.tabs span{white-space:nowrap}
+@media(max-width:600px){
+  /* «?» у вкладок визуально компактнее, зона нажатия остаётся 32×32 */
+  .tabs .gt-btn{font-size:14px}
+  /* селект сортировки не заходит под плавающую кнопку ИИ (52px справа внизу) */
+  .rtop .sort{max-width:calc(100% - 72px)}
 }

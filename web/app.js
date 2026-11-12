@@ -216,7 +216,7 @@
   var panel = null;
   if (!ADMIN) {
     var btn = document.createElement("button");
-    btn.className = "aib"; btn.type = "button"; btn.setAttribute("aria-expanded", "false");
+    btn.className = "aib"; btn.type = "button"; btn.setAttribute("aria-expanded", "false"); btn.setAttribute("aria-label", "ИИ-помощник");
     btn.innerHTML = '<span class="m">ИИ</span>' + X("Помощник", "Көмекші", "Assistant");
     if (!body.hasAttribute("data-noai")) {
       document.body.appendChild(btn);
