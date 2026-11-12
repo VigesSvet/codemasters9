@@ -195,6 +195,8 @@
     if (role === "superadmin") a("roles.html", PAGE === "roles", "Роли и права", "Рөлдер", "Roles");
     if (role === "admin" || role === "superadmin" || role === "moderator" || role === "editor") a("news.html", PAGE === "news", "Новости", "Жаңалықтар", "News");
     if (role === "admin" || role === "superadmin" || role === "moderator") a("content.html", PAGE === "content", "Страницы и FAQ", "Беттер және FAQ", "Pages and FAQ");
+    if (role !== "branch_admin") a("ocr.html", PAGE === "ocr", "Распознавание", "Тану", "OCR");
+    if (role === "admin" || role === "superadmin" || role === "analyst") a("analytics.html", PAGE === "analytics", "Аналитика", "Талдау", "Analytics");
     a("../index.html", false, "На сайт", "Сайтқа", "To the site");
     nav.innerHTML = h;
     if (window.trEls) window.trEls(nav);

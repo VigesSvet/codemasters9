@@ -9,7 +9,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse
 
-from .. import audit
+from .. import audit, searchlog
 from ..db import get_db
 from ..models import SearchResponse, UnitDetail
 from ..search import search_units, unit_card
@@ -76,7 +76,9 @@ def search(
         "page": page,
         "per_page": per_page,
     }
-    return search_units(db, params)
+    result = search_units(db, params)
+    searchlog.log_search(db, q, result.get("total", 0))
+    return result
 
 
 def _get_published_unit(db: sqlite3.Connection, unit_id: int) -> sqlite3.Row:

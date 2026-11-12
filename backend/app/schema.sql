@@ -211,3 +211,20 @@ CREATE TABLE IF NOT EXISTS role_permissions (
     permission TEXT NOT NULL,
     PRIMARY KEY (role, permission)
 );
+
+-- журнал поиска: без IP и персональных данных (ТЗ 5.8 Д)
+CREATE TABLE IF NOT EXISTS search_log (
+    id INTEGER PRIMARY KEY,
+    ts TEXT NOT NULL DEFAULT (datetime('now')),
+    query TEXT NOT NULL,
+    results INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS idx_search_log_ts ON search_log(ts);
+
+-- журнал помощника: только режим ответа, без текста
+CREATE TABLE IF NOT EXISTS ai_log (
+    id INTEGER PRIMARY KEY,
+    ts TEXT NOT NULL DEFAULT (datetime('now')),
+    mode TEXT NOT NULL,
+    provider TEXT
+);

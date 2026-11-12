@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title data-kk="Тану — ШҚО мемлекеттік архиві" data-en="OCR — State Archive of EKR">Распознавание — Госархив ВКО</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="p-admin.css">
+</head>
+<body data-base="../" data-admin data-page="ocr">
+<div id="top"></div>
+<div class="adm">
+ <aside class="aside" id="adm-nav" aria-label="Разделы админки"></aside>
+ <main class="amain" id="main">
+  <section>
+   <h2 style="border-top:0" data-kk="Мәтінді тану" data-en="Text recognition">Распознавание скана</h2>
+   <p>Локальная модель Ollama со зрением. Результат — черновик: распознано автоматически, требует проверки.</p>
+   <form id="ocr-form">
+    <div class="fld"><label for="ocr-file">Скан (jpg/png, до 20 МБ)</label><input class="inp" type="file" id="ocr-file" accept="image/jpeg,image/png"></div>
+    <div class="fld"><label for="ocr-unit">ID единицы (необязательно)</label><input class="inp" id="ocr-unit" inputmode="numeric"></div>
+    <div class="fld"><label><input type="checkbox" id="ocr-save"> Добавить в черновик описания (только для единиц в статусе «Черновик»)</label></div>
+    <button class="btn" type="submit" id="ocr-run">Распознать</button>
+   </form>
+   <p id="ocr-note" role="status"></p>
+   <textarea class="inp" id="ocr-out" rows="16" style="width:100%" aria-label="Распознанный текст"></textarea>
+  </section>
+ </main>
+</div>
+<div id="bottom"></div>
+<script src="../api.js"></script>
+<script src="../app.js"></script>
+<script src="admin.js"></script>
+<script src="ocr.js"></script>
+</body>
+</html>

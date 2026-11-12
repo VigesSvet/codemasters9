@@ -43,21 +43,23 @@ PERMISSIONS = (
     "news.publish",
     "news.delete",
     "content.edit",
+    "ocr.use",
+    "analytics.read",
 )
 
 _DEFAULTS = {
     "moderator": (
         "unit.create unit.submit unit.edit unit.review unit.publish unit.archive "
         "file.upload file.set_access audit.read stats.read admin.read "
-        "news.create news.edit news.publish news.delete content.edit"
+        "news.create news.edit news.publish news.delete content.edit ocr.use"
     ).split(),
     "editor": (
         "unit.create unit.submit unit.edit file.upload import import.preview import.apply admin.read "
-        "news.create news.edit"
+        "news.create news.edit ocr.use"
     ).split(),
     "branch_admin": ["branch.edit"],
     "staff": ["admin.read"],
-    "analyst": ["audit.read", "stats.read"],
+    "analyst": ["audit.read", "stats.read", "analytics.read"],
 }
 
 

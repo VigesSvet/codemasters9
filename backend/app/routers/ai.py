@@ -8,6 +8,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Request
 
 from .. import db as dbmod
+from .. import searchlog
 from ..ai import local, providers, retriever
 from ..models import AiRequest, AiResponse
 
@@ -42,6 +43,7 @@ def ask(body: AiRequest, request: Request, db: Annotated[sqlite3.Connection, Dep
     # restricted и no_data решаются локально - вопросы о персональных данных наружу не уходят
     pre = local.compose(question, hits, lang)
     if isinstance(provider, providers.LocalProvider) or pre["mode"] != "source":
+        searchlog.log_ai(db, pre.get("mode"), pre.get("provider"))
         return pre
     try:
         result = provider.answer(question, hits, lang)
@@ -52,4 +54,5 @@ def ask(body: AiRequest, request: Request, db: Annotated[sqlite3.Connection, Dep
         result["answer"] = (
             result["answer"] + "\n\n(Внешний ИИ-провайдер недоступен, ответ сформирован локально.)"
         )
+    searchlog.log_ai(db, result.get("mode"), result.get("provider"))
     return result
