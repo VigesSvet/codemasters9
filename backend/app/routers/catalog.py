@@ -46,7 +46,7 @@ def search(
     theme: str | None = None,
     author: str | None = None,
     keywords: str | None = None,
-    lang: str = "ru",
+    lang: str | None = None,
     digitized: bool | None = None,
     open: bool | None = None,
     sort: str = "rel",
