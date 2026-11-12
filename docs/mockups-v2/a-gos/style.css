@@ -764,3 +764,27 @@ html[data-vi] .hero.big .plate{background:#000;border:2px solid #fff}
 .art-rel .card img{filter:none}
 @media(max-width:1024px){.art{grid-template-columns:1fr;gap:40px}.art-side{position:static}.art-rel{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.art{padding-top:24px}.art-pn{grid-template-columns:1fr}.art-nb.next{text-align:left}.art-rel{grid-template-columns:1fr}.art-fig{margin-left:calc(-1*var(--pad-x));margin-right:calc(-1*var(--pad-x))}.art-fig figcaption{padding-left:var(--pad-x)}}
+/* D1-D2 uslugi */
+.steps{border-top:5px solid var(--line-strong)}
+.steps h3{font:700 19px/1.5 var(--font-text);margin:0 0 8px}
+.steps ol{margin:8px 0 4px;padding-left:22px}
+.steps li{margin:6px 0;font-size:17px;line-height:1.6}
+.pr-note{font-size:16px;margin:16px 0 20px}
+.pr-note a{font-weight:700}
+.pr-langnote{font-size:14px;color:var(--text-muted);margin:12px 0}
+.pr-search{display:flex;flex-direction:column;gap:6px;margin:0 0 16px}
+.pr-search label{font:600 16px/1.4 var(--font-text);color:var(--text-dark)}
+.pr-tbl td.m{white-space:nowrap}
+.pr-tbl td[data-hk="price"]{white-space:nowrap}
+.pr-tbl tr.pr-head td{background:var(--bg-tint);font-weight:700;color:var(--text-dark)}
+.pr-tbl tr.pr-head td.m{font-weight:500}
+.pr-sec summary .pr-sum{font-weight:400;min-width:0}
+.pr-sec summary .pr-sum b{font-weight:700}
+.pr-sec[hidden]{display:none}
+.pr-empty{border:1px solid var(--line);padding:16px 20px;text-align:center;font-size:16px;margin:8px 0 0}
+.pr-empty[hidden]{display:none}
+.pr-notes{margin-top:20px}
+.pr-notes h3{margin:0 0 8px}
+.pr-notes ol{margin:0;padding-left:20px}
+.pr-notes li{margin:4px 0;font-size:16px;line-height:1.6}
+@media(max-width:600px){#paid dl.f>div{grid-template-columns:1fr;gap:2px}}
